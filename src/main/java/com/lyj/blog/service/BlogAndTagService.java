@@ -92,7 +92,7 @@ public class BlogAndTagService {
     }
 
     //删除对应的中间表数据
-    private void deleteBlogAndTag(Integer blogId,Integer tagId) throws Exception {
+    public void deleteBlogAndTag(Integer blogId,Integer tagId) throws Exception {
         //往数据库中删除数据
         BlogAndTagExample blogAndTagExample = new BlogAndTagExample();
         blogAndTagExample.createCriteria().andBlogIdEqualTo(blogId).andTagIdEqualTo(tagId);
@@ -134,7 +134,7 @@ public class BlogAndTagService {
     }
 
     //根据blogId查询所有的tags
-    private List<BlogAndTag> selectBlogAndTagByBlogId(Integer blogId){
+    public List<BlogAndTag> selectBlogAndTagByBlogId(Integer blogId){
         BlogAndTagExample blogAndTagExample = new BlogAndTagExample();
         blogAndTagExample.createCriteria().andBlogIdEqualTo(blogId);
 

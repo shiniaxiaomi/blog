@@ -313,8 +313,6 @@ public class PageController {
     @ResponseBody
     public String uploadImg(HttpServletRequest request){
 
-        //todo 还需要进行登入校验才可以上传文件
-
         String fileName=null;
         Iterator<Part> iterator = null;
         try {

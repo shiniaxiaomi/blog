@@ -105,7 +105,7 @@ public class BlogService {
     }
 
     //更新blog
-    private void updateBlog(Blog blog) throws Exception {
+    public void updateBlog(Blog blog) throws Exception {
         int i = blogDao.updateByPrimaryKeySelective(blog);
         if(i==0){
             throw new Exception("更新失败");
