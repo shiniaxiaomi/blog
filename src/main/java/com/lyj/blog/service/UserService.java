@@ -51,7 +51,7 @@ public class UserService {
     }
     //查询并自增首页的访问次数(redis)
     public Integer selectAndIncrHomePageVisitCount(){
-        Integer homePageCount = userService.selectHomePageCount();
+        int homePageCount = userService.selectHomePageCount();
         userService.updateHomePageVisitCount(++homePageCount);
         return homePageCount;
     }
