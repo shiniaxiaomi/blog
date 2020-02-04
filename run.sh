@@ -1,7 +1,7 @@
 # 关闭应用
 #应用名称
 appName="blog-v4.0"
-app=$(pgrep -f blog)
+app=$(pgrep -f SNAPSHOT.jar)
 if test ${app}null != "null"
 then
     kill -9 $app
