@@ -307,32 +307,23 @@ public class BlogService {
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = "cache",allEntries = true)
     public void deleteBlogById(Integer blogId) throws Exception {
-        //先获取对应的blog
-        Blog blog = blogService.selectBlogById(blogId);
         //删除对应的blog
         int i = blogDao.deleteByPrimaryKey(blogId);
         if(i==0){
             throw new Exception("删除blog失败");
         }
 
-        //维护tag中blog数量
-        String tagNames = blog.getTagNames();
-        if(tagNames.startsWith("[") && tagNames.endsWith("]")){
-            tagNames=tagNames.substring(1,tagNames.length()-1);
+
+        //将blog所对应的所有tag的blog数量递减
+        List<Tag> tags = blogAndTagService.selectTagsByBlogId(blogId);
+        for(Tag tag:tags){
+            if(tag==null) continue;
+            tagService.decrBlogCountByTagId(tag.getId());//对应的tag的数量递减
         }
 
-        //tagNames不为空才进行数据维护
-        if(!"".equals(tagNames)){
-            String[] tags = tagNames.split(",");
-            for(String tagName:tags){
-                Tag tag = tagService.selectTagByTagName(tagName);
-                if(tag==null) continue;
-                tagService.decrBlogCountByTagId(tag.getId());//对应的tag的数量递减
-            }
+        //维护blogAndTag中间表
+        blogAndTagService.deleteByBlogId(blogId);
 
-            //维护blogAndTag中间表
-            blogAndTagService.deleteByBlogId(blogId);
-        }
     }
 
     //查询所有的blogNames
