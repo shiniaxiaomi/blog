@@ -12,7 +12,7 @@
         ${blog.updateTime?string("yyyy-MM-dd")}
     </span>
     <span style="margin-right: 10px">
-        <img class="myIcon" src="/icons/Eye.svg" title="观看人数">
+        <img class="myIcon" src="/icons/eye.svg" title="观看人数">
         ${blog.hot!}
     </span>
 
@@ -39,7 +39,7 @@
         <span id="updateTime"></span>
     </span>
     <span style="margin-right: 10px">
-        <img class="myIcon" src="/icons/Eye.svg" title="观看人数">
+        <img class="myIcon" src="/icons/eye.svg" title="观看人数">
         0
     </span>
 
