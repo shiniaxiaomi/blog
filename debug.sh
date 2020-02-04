@@ -1,3 +1,8 @@
+# 以远程debug模式启动
+
+# 构建项目
+bash build.sh
+
 # 关闭应用
 #应用名称
 appName="blog-v4.0"
@@ -11,5 +16,7 @@ fi
 projectPath=/root/code/$appName
 cd $projectPath/target
 name=$(ls |grep jar$)
-nohup java -jar $projectPath/target/$name --spring.profiles.active=prod  >$projectPath/out &
+nohup java -Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=9200,suspend=n -jar $projectPath/target/$name --spring.profiles.active=prod >$projectPath/out &
 tail -f $projectPath/out
+
+
