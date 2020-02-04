@@ -157,12 +157,6 @@ public class PageController {
         Integer visitCount = blogService.selectAndIncrVisitCount(id);//查询对应博客的访问次数并递增
         blog.setHot(visitCount);
         modelAndView.addObject("blog",blog);
-        //查询所有的tag
-        List<Tag> tags = tagService.getMaxCountBySize(10);
-        modelAndView.addObject("tags",tags);
-        //查询首页访问次数
-        Integer homePageVisitCount = userService.selectAndIncrHomePageVisitCount();
-        modelAndView.addObject("homePageVisitCount",homePageVisitCount);//首页访问次数
 
         //提供介绍数据
         pageDataService.provideIntroduceData(modelAndView);
@@ -269,12 +263,6 @@ public class PageController {
 
         draft.addObject("blogType","blog");
         draft.addObject("draftBlogs",draftBlogs);
-        //查询所有的tag
-        List<Tag> tags = tagService.getMaxCountBySize(10);
-        draft.addObject("tags",tags);
-        //查询首页访问次数
-        Integer homePageVisitCount = userService.selectAndIncrHomePageVisitCount();
-        draft.addObject("homePageVisitCount",homePageVisitCount);//首页访问次数
 
         //提供介绍数据
         pageDataService.provideIntroduceData(draft);
@@ -297,13 +285,6 @@ public class PageController {
 
         draft.addObject("blogName",id);
         draft.addObject("blogType","localDraft");//标记为本地草稿
-
-        //查询所有的tag
-        List<Tag> tags = tagService.getMaxCountBySize(10);
-        draft.addObject("tags",tags);
-        //查询首页访问次数
-        Integer homePageVisitCount = userService.selectAndIncrHomePageVisitCount();
-        draft.addObject("homePageVisitCount",homePageVisitCount);//首页访问次数
 
         //提供介绍数据
         pageDataService.provideIntroduceData(draft);
