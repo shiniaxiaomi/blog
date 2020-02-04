@@ -76,3 +76,10 @@ a,.btn-link{
 /*.ui-front{*/
 /*    z-index: 100000;*/
 /*}*/
+
+/*行代码中的字体*/
+.editormd-html-preview p code, .editormd-preview-container p code {
+    font-size: 80%;
+    padding-left: 0px;
+    padding-right: 0px
+}
