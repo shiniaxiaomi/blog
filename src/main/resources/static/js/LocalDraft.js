@@ -31,7 +31,7 @@ function buildLoaclDraftHtml(page) {
                             `+draft.updateTime+`
                         </span>
                         <span style="margin-right: 10px">
-                            <img class="myIcon" src="/icons/Eye.svg" title="观看人数">
+                            <img class="myIcon" src="/icons/eye.svg" title="观看人数">
                             0
                         </span>
                         <!--编辑按钮-->

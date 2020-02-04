@@ -76,3 +76,8 @@ a,.btn-link{
 /*.ui-front{*/
 /*    z-index: 100000;*/
 /*}*/
+
+/*设置代码块的字体*/
+.markdown-body pre{
+    font: 12px Consolas,"Liberation Mono",Menlo,Courier,monospace ; !important;
+}
