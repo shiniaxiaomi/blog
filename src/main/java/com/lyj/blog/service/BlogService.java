@@ -57,6 +57,8 @@ public class BlogService {
         //生成并保存tag
         List<Integer> tagIds = tagService.save(blog.getTagNames());
 
+
+
         //维护中间表blog和tag之间的关系
         blogAndTagService.save(blog.getId(),tagIds);
     }
@@ -72,6 +74,7 @@ public class BlogService {
     public void save(Blog blog) throws Exception {
         blog.setUpdateTime(new Date());// 更新修改日期
 
+        //如果tagName为null,则说明是更新描述
         if(blog.getTagNames()==null){
             //保存描述
             this.updateBlog(blog);

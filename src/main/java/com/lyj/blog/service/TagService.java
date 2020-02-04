@@ -40,6 +40,7 @@ public class TagService {
     public Integer createTag(String tagName) throws Exception {
         Tag tag = new Tag();
         tag.setName(tagName);
+        tag.setCount(0);//被创建就是因为有一个blog进行关联
         int insert = tagDao.insert(tag);
         if(insert==0){
             throw new Exception("tag创建失败");
@@ -99,7 +100,7 @@ public class TagService {
     @Cacheable(value = "cache",key = "'tagNameToBlogsByPage:tagName:'+#tagName+'-'+#page")
     public List<Blog> getBlogsByTagName(String tagName, Integer page) {
 
-        Tag tag = this.selectTagByTagName(tagName);
+        Tag tag = tagService.selectTagByTagName(tagName);
         if(tag==null){
             //不存在
             return new ArrayList<>();
