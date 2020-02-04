@@ -1,6 +1,6 @@
 # 关闭应用
 #应用名称
-appName="blog-java"
+appName="blog-v4.0"
 app=$(pgrep -f java)
 if test ${app}null != "null"
 then
