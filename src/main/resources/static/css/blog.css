@@ -1,0 +1,78 @@
+body {
+    padding-top: 65px;
+    background-color: #f4f5f5;
+}
+
+.whiteBlock {
+    background-color: #FFF;
+    padding: 20px;
+    margin: 10px -8px 0 -8px;
+}
+
+.center{
+    text-align: center;
+}
+
+.navbar{
+    padding: 5px;
+}
+
+/*自定义徽章颜色*/
+.badge-blue{
+    background-color: #337ab7;
+    color: #fff;
+}
+
+/*图标*/
+.icon-content {
+    width: 28px;
+    height: 28px;
+    line-height: 28px;
+    font-size: 18px;
+    color: #fff;
+    background: #ccc !important;
+    border-radius: 50%;
+    display: inline-block;
+    margin: 0 8px 0 8px;
+}
+
+.icon-body {
+    width: 28px;
+    height: 28px;
+    line-height: 28px;
+    font-size: 18px;
+    display: flex;
+    align-items: center; /*定义body的元素垂直居中*/
+    justify-content: center; /*定义body的里的元素水平居中*/
+}
+
+/*定义自己的icon的大小*/
+.myIcon{
+    width: 20px;
+    height: 20px;
+    margin-top: -3px;
+}
+
+/*设置链接的文字颜色*/
+a,.btn-link{
+    color: #3b86d8;
+}
+
+/*设置markdown中的图片大小*/
+.markdown-body img{
+    max-width: 100%;
+}
+
+/*85%视窗*/
+.vh-85{
+    height: 85vh;
+}
+/*65%视窗*/
+.vh-65{
+    height: 65vh;
+}
+
+/*tag-it*/
+/*.ui-front{*/
+/*    z-index: 100000;*/
+/*}*/

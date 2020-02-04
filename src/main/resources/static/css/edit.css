@@ -1,0 +1,13 @@
+body{
+    background-color: #f4f5f5;
+}
+
+.container{
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.editBlock{
+    background-color: #FFF;
+    padding: 14px;
+}
