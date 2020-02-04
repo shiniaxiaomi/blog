@@ -12,4 +12,4 @@ projectPath=/root/code/$appName
 cd $projectPath/target
 name=$(ls |grep jar$)
 nohup java -jar $projectPath/target/$name --spring.profiles.active=prod >$projectPath/log &
-tail -f $projectPath/log
+tail -f $projectPath/target/logback.log
