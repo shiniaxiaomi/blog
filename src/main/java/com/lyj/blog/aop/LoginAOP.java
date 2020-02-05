@@ -1,5 +1,6 @@
 package com.lyj.blog.aop;
 
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -9,15 +10,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 @Component
 @Aspect
+@Slf4j
 public class LoginAOP {
 
 
     @Autowired
     HttpSession session;
+
+    @Autowired
+    HttpServletRequest request;
 
     //保存和编辑的控制器的切点
     @Pointcut("@annotation(com.lyj.blog.annotation.NeedLogin)")
@@ -42,6 +48,9 @@ public class LoginAOP {
     //在ModelAndView来添加是否登入的信息
     @Around(value = "isLoginPointcut()")
     public Object isLogin(ProceedingJoinPoint pjp) throws Throwable {
+        //记录访问请求
+        log.info("请求:"+request.getServletPath());
+
         //============在业务方法执行之前
         Object proceed = pjp.proceed();//执行业务方法
         //============在业务方法执行之后
