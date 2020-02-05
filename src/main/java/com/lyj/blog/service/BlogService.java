@@ -149,6 +149,7 @@ public class BlogService {
         }
 
         //查询所有不是置顶的blog和不是草稿的blog
+        blogExample.setOrderByClause("updateTime desc");//按照更新时间降序排列
         List<Blog> blogs = blogDao.selectByExample(blogExample);
         PageInfo<Blog> pageInfo = new PageInfo<>(blogs);
 
