@@ -23,7 +23,7 @@ public class MyHandler {
     @ExceptionHandler(Exception.class)
     @ResponseBody   //设置返回字符串,而非对应的错误页面
     public Message handler(HttpServletRequest request, HttpServletResponse response, Exception e){
-        log.error("Controller请求异常：{},异常为：{}",request.getServletPath(),e);
+        log.error("\n异常请求:{}\n{}",request.getServletPath(),"异常信息:"+e.getClass().getName()+":\""+e.getMessage()+"\"\n堆栈信息:"+e.getStackTrace()[0]);
         return Message.error(e.getMessage());
     }
 }
