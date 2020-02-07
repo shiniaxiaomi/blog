@@ -143,7 +143,7 @@ public class PageController {
 
     //查看线上博客和线上草稿
     @RequestMapping("blog")
-    public ModelAndView blog(Integer id,HttpServletRequest request) {
+    public ModelAndView blog(Integer id) {
 
         ModelAndView modelAndView = new ModelAndView("blogContext");
 

@@ -111,7 +111,7 @@ public class TagService {
     }
 
     //通过tagId获取到tag
-    @Cacheable(value = "cache",key = "'tagIdToTag:'+#tagId")
+    @Cacheable(value = "cache",key = "'tagIdToTag:'+#tagId",unless = "#result==null")
     public Tag selectTagByTagId(int tagId){
         return tagDao.selectByPrimaryKey(tagId);
     }
@@ -130,7 +130,7 @@ public class TagService {
     }
 
     //查询所有的tags
-    @Cacheable(value = "cache",key = "'tipTags'")
+    @Cacheable(value = "cache",key = "'tipTags'",unless = "#result==null")
     public String getAllTags() {
         List<Tag> tags = tagDao.selectByExample(new TagExample());
         return buildTagNamesUtil(tags);

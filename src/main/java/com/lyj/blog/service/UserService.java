@@ -25,7 +25,7 @@ public class UserService {
     RedisTemplate redisTemplate;
 
     //根据用户名获取用户信息
-    @Cacheable(value = "user",key = "'name:'+#name")
+    @Cacheable(value = "user",key = "'name:'+#name",unless = "#result==null")
     public User getUserByName(String name){
         UserExample userExample = new UserExample();
         userExample.createCriteria().andUserNameEqualTo(name);
@@ -39,13 +39,13 @@ public class UserService {
     }
 
     //查询admin用户的首页访问次数
-    @Cacheable(value = "user",key = "'homePageCount:admin'")
+    @Cacheable(value = "user",key = "'homePageCount:admin'",unless = "#result==null")
     public Integer selectHomePageCount(){
         User admin = userService.getUserByName("admin");
         return admin.getVisitCount();
     }
     //更新admin用户的首页访问次数(redis)
-    @CachePut(value = "user",key = "'homePageCount:admin'")
+    @CachePut(value = "user",key = "'homePageCount:admin'",unless = "#result==null")
     public Integer updateHomePageVisitCount(Integer homePageCount){
         return homePageCount;//更新redis中的数据
     }

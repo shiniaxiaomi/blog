@@ -200,7 +200,7 @@ public class BlogService {
 
     //=============用于查询和更新blog的访问次数=====================
     //查询对应blog的访问次数,如果缓存有,则从缓存中获取,如果没有,则查询数据库
-    @Cacheable(value = "visitCount",key = "'blogId:'+#id")
+    @Cacheable(value = "visitCount",key = "'blogId:'+#id",unless = "#result==null")
     public Integer selectVisitCount(Integer id) {
         Blog blog = blogDao.selectByPrimaryKey(id);
         return blog.getHot();

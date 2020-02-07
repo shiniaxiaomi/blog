@@ -35,11 +35,12 @@ public class SearchController {
 
         List<Integer> ids=new ArrayList<>();//符合条件的blogId
 
+        blogName=blogName.toLowerCase();//转小写
         List<Map> blogNames = blogService.selectAllBlogNames();
         for(Map map:blogNames){
             String name = (String) map.get("name");
-            //进行关键词匹配
-            if(name.contains(blogName)){
+            //(转小写后)进行关键词匹配
+            if(name.toLowerCase().contains(blogName)){
                 ids.add((Integer) map.get("id"));
             }
         }
