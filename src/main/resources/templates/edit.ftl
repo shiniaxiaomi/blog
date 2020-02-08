@@ -244,6 +244,8 @@
                 //判断如果是移动端,则关闭右侧预览
                 if(isMobile){
                     editor.unwatch();
+                }else{
+                    editor.watch();//刷新一下目录
                 }
 
                 //如果编辑本地草稿或本地草稿描述
