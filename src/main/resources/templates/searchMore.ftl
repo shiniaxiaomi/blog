@@ -5,10 +5,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>搜索博客 | 是你啊小米-陆英杰关注后端Java技术</title>
-    <meta name="keywords" content="SearchBlog、Java、Java后端、JavaBlog、个人博客、技术博客、实用、陆英杰、是你啊小米"/>
-    <meta name="description" content="陆英杰的个人博客,专注于Java后端技术的学习,记录和分享"/>
-    <meta name="robots" content="all">
+    <#include "ftlTemplate/SEOTemplate.ftl">
+    <@title>搜索博客</@title>
+    <@keywords>搜索博客,SearchBlog</@keywords>
+    <@description></@description>
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
