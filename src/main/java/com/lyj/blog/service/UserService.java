@@ -39,19 +39,19 @@ public class UserService {
     }
 
     //查询admin用户的首页访问次数
-    @Cacheable(value = "user",key = "'homePageCount:admin'",unless = "#result==null")
-    public Integer selectHomePageCount(){
+    @Cacheable(value = "user",key = "'homePageVisitCount:admin'",unless = "#result==null")
+    public Integer selectHomePageVisitCount(){
         User admin = userService.getUserByName("admin");
         return admin.getVisitCount();
     }
     //更新admin用户的首页访问次数(redis)
-    @CachePut(value = "user",key = "'homePageCount:admin'",unless = "#result==null")
+    @CachePut(value = "user",key = "'homePageVisitCount:admin'",unless = "#result==null")
     public Integer updateHomePageVisitCount(Integer homePageCount){
         return homePageCount;//更新redis中的数据
     }
     //查询并自增首页的访问次数(redis)
     public Integer selectAndIncrHomePageVisitCount(){
-        Integer homePageCount = userService.selectHomePageCount();
+        Integer homePageCount = userService.selectHomePageVisitCount();
         if(homePageCount==null){
             homePageCount=0;
         }
@@ -60,7 +60,7 @@ public class UserService {
     }
     //定时更新admin用户的首页访问次数(数据库)
     public void updateHomePageVisitCountToDataBase() throws Exception {
-        Integer homePageVisitCount = (Integer) redisTemplate.opsForValue().get("user::homePageCount:admin");
+        Integer homePageVisitCount = (Integer) redisTemplate.opsForValue().get("user::homePageVisitCount:admin");
 
         //将数据保存到数据库中
         User user = new User();

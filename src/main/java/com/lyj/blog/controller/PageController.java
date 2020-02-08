@@ -63,7 +63,7 @@ public class PageController {
         List<Blog> blogs = blogService.getBlogs(0, 10);
         index.addObject("blogs",blogs);
         //提供介绍数据
-        pageDataService.provideIntroduceData(index);
+        pageDataService.provideIntroduceData(index,true);
         //标记访问类型
         index.addObject("blogType","blog");//类型编辑为blog
 
@@ -82,7 +82,7 @@ public class PageController {
         List<Blog> blogs = blogService.getBlogs(intPage, 10);
         modelAndView.addObject("blogs",blogs);
 
-        pageDataService.provideIntroduceData(modelAndView);
+        pageDataService.provideIntroduceData(modelAndView,false);
 
         //标记访问类型
         modelAndView.addObject("blogType","blog");//类型编辑为blog
@@ -106,7 +106,7 @@ public class PageController {
         List<Blog> blogs = blogService.getBlogsByTagName("草稿", intPage, 10);
         modelAndView.addObject("blogs",blogs);
 
-        pageDataService.provideIntroduceData(modelAndView);
+        pageDataService.provideIntroduceData(modelAndView,false);
 
         //标记访问类型
         modelAndView.addObject("blogType","blog");//类型编辑为blog
@@ -126,7 +126,7 @@ public class PageController {
 
         Integer intPage = MyUtil.pageCheck(page);
 
-        pageDataService.provideIntroduceData(modelAndView);
+        pageDataService.provideIntroduceData(modelAndView,false);
 
         //标记访问类型
         modelAndView.addObject("blogType","localDraft");//类型编辑为本地草稿
@@ -159,7 +159,7 @@ public class PageController {
         modelAndView.addObject("blog",blog);
 
         //提供介绍数据
-        pageDataService.provideIntroduceData(modelAndView);
+        pageDataService.provideIntroduceData(modelAndView,true);
 
         return modelAndView;
     }
@@ -199,7 +199,7 @@ public class PageController {
         Tag tag = tagService.selectTagByTagId(id);
         modelAndView.addObject("tag",tag);
 
-        pageDataService.provideIntroduceData(modelAndView);
+        pageDataService.provideIntroduceData(modelAndView,false);
 
         //当前是第几页
         modelAndView.addObject("nowPage",intPage);
@@ -229,7 +229,7 @@ public class PageController {
         modelAndView.addObject("blogs",blogs);
 
 
-        pageDataService.provideIntroduceData(modelAndView);
+        pageDataService.provideIntroduceData(modelAndView,false);
 
         //当前是第几页
         modelAndView.addObject("nowPage",intPage);
@@ -265,7 +265,7 @@ public class PageController {
         draft.addObject("draftBlogs",draftBlogs);
 
         //提供介绍数据
-        pageDataService.provideIntroduceData(draft);
+        pageDataService.provideIntroduceData(draft,false);
 
         //当前是第几页
         draft.addObject("nowPage",intPage);
@@ -287,7 +287,7 @@ public class PageController {
         draft.addObject("blogType","localDraft");//标记为本地草稿
 
         //提供介绍数据
-        pageDataService.provideIntroduceData(draft);
+        pageDataService.provideIntroduceData(draft,false);
 
         return draft;
     }

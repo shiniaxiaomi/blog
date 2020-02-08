@@ -77,7 +77,7 @@ public class SearchController {
         modelAndView.addObject("nowPage",intPage);
         modelAndView.addObject("nowSize",blogs.size());
 
-        pageDataService.provideIntroduceData(modelAndView);
+        pageDataService.provideIntroduceData(modelAndView,false);
 
         return modelAndView;
     }

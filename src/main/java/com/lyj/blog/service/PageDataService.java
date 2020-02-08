@@ -25,13 +25,19 @@ public class PageDataService {
     BlogService blogService;
 
     //提供公共介绍组件的数据
-    public void provideIntroduceData(ModelAndView modelAndView){
+    public void provideIntroduceData(ModelAndView modelAndView,boolean isIncr){
         //查询所有的tag
         List<Tag> tags = tagService.getMaxCountBySize(10);
         modelAndView.addObject("tags",tags);
 
         //查询首页访问次数
-        Integer homePageVisitCount = userService.selectAndIncrHomePageVisitCount();
+        Integer homePageVisitCount=null;
+        //判断是否需要自增
+        if(isIncr){
+            homePageVisitCount = userService.selectAndIncrHomePageVisitCount();
+        }else{
+            homePageVisitCount = userService.selectHomePageVisitCount();
+        }
         modelAndView.addObject("homePageVisitCount",homePageVisitCount);//首页访问次数
 
         //归档数据
