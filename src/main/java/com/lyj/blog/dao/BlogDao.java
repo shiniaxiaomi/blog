@@ -2,12 +2,13 @@ package com.lyj.blog.dao;
 
 import com.lyj.blog.model.Blog;
 import com.lyj.blog.model.BlogExample;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
-import java.util.List;
-import java.util.Map;
 
 @Mapper
 public interface BlogDao {

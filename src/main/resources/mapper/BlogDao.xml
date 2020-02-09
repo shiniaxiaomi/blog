@@ -9,8 +9,8 @@
     <result column="md" jdbcType="VARCHAR" property="md" />
     <result column="mdHtml" jdbcType="VARCHAR" property="mdHtml" />
     <result column="tocHtml" jdbcType="VARCHAR" property="tocHtml" />
-    <result column="createTime" jdbcType="DATE" property="createTime" />
-    <result column="updateTime" jdbcType="DATE" property="updateTime" />
+    <result column="createTime" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="updateTime" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="hot" jdbcType="INTEGER" property="hot" />
     <result column="tagNames" jdbcType="VARCHAR" property="tagNames" />
   </resultMap>
@@ -112,7 +112,7 @@
       tagNames)
     values (#{name,jdbcType=VARCHAR}, #{desc,jdbcType=VARCHAR}, #{descHtml,jdbcType=VARCHAR}, 
       #{md,jdbcType=VARCHAR}, #{mdHtml,jdbcType=VARCHAR}, #{tocHtml,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=DATE}, #{updateTime,jdbcType=DATE}, #{hot,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{hot,jdbcType=INTEGER}, 
       #{tagNames,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.lyj.blog.model.Blog" useGeneratedKeys="true">
@@ -169,10 +169,10 @@
         #{tocHtml,jdbcType=VARCHAR},
       </if>
       <if test="createTime != null">
-        #{createTime,jdbcType=DATE},
+        #{createTime,jdbcType=TIMESTAMP},
       </if>
       <if test="updateTime != null">
-        #{updateTime,jdbcType=DATE},
+        #{updateTime,jdbcType=TIMESTAMP},
       </if>
       <if test="hot != null">
         #{hot,jdbcType=INTEGER},
@@ -213,10 +213,10 @@
         tocHtml = #{record.tocHtml,jdbcType=VARCHAR},
       </if>
       <if test="record.createTime != null">
-        createTime = #{record.createTime,jdbcType=DATE},
+        createTime = #{record.createTime,jdbcType=TIMESTAMP},
       </if>
       <if test="record.updateTime != null">
-        updateTime = #{record.updateTime,jdbcType=DATE},
+        updateTime = #{record.updateTime,jdbcType=TIMESTAMP},
       </if>
       <if test="record.hot != null">
         hot = #{record.hot,jdbcType=INTEGER},
@@ -238,8 +238,8 @@
       md = #{record.md,jdbcType=VARCHAR},
       mdHtml = #{record.mdHtml,jdbcType=VARCHAR},
       tocHtml = #{record.tocHtml,jdbcType=VARCHAR},
-      createTime = #{record.createTime,jdbcType=DATE},
-      updateTime = #{record.updateTime,jdbcType=DATE},
+      createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      updateTime = #{record.updateTime,jdbcType=TIMESTAMP},
       hot = #{record.hot,jdbcType=INTEGER},
       tagNames = #{record.tagNames,jdbcType=VARCHAR}
     <if test="_parameter != null">
@@ -268,10 +268,10 @@
         tocHtml = #{tocHtml,jdbcType=VARCHAR},
       </if>
       <if test="createTime != null">
-        createTime = #{createTime,jdbcType=DATE},
+        createTime = #{createTime,jdbcType=TIMESTAMP},
       </if>
       <if test="updateTime != null">
-        updateTime = #{updateTime,jdbcType=DATE},
+        updateTime = #{updateTime,jdbcType=TIMESTAMP},
       </if>
       <if test="hot != null">
         hot = #{hot,jdbcType=INTEGER},
@@ -290,8 +290,8 @@
       md = #{md,jdbcType=VARCHAR},
       mdHtml = #{mdHtml,jdbcType=VARCHAR},
       tocHtml = #{tocHtml,jdbcType=VARCHAR},
-      createTime = #{createTime,jdbcType=DATE},
-      updateTime = #{updateTime,jdbcType=DATE},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      updateTime = #{updateTime,jdbcType=TIMESTAMP},
       hot = #{hot,jdbcType=INTEGER},
       tagNames = #{tagNames,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}

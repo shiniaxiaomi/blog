@@ -1,10 +1,10 @@
 package com.lyj.blog.model;
 
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+
+import lombok.Data;
 
 /**
  * blog
