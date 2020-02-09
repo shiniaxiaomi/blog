@@ -27,9 +27,9 @@
     </#if>
 
 
-<#elseif blogName??>
 <#--如果是本地草稿-->
 <#--博客参数-->
+<#elseif blogId??>
     <span style="margin-right: 10px">
         <img class="myIcon" src="/icons/calendar.svg" title="创建日期">
         <span id="createTime"></span>
@@ -45,11 +45,11 @@
 
     <#--编辑按钮-->
     <a type="button" style="margin-top: -2px;" class="btn btn-link btn-xs px-0"
-       href="javascript:void(0);" onclick="deleteFunc('localDraft','${blogName!}')">删除草稿</a>
+       href="javascript:void(0);" onclick="deleteFunc('localDraft','${blogId!}')">删除草稿</a>
     <a type="button" style="margin-top: -2px;" class="btn btn-link btn-xs px-0"
-       href="/editLocalDraftDesc?blogId=${blogName!}">编辑描述</a>
+       href="/editLocalDraftDesc?blogId=${blogId!}">编辑描述</a>
     <a type="button" style="margin-top: -2px;" class="btn btn-link btn-xs px-0"
-       href="/editLocalDraft?blogId=${blogName!}">编辑草稿</a>
+       href="/editLocalDraft?blogId=${blogId!}">编辑草稿</a>
 
 </#if>
 

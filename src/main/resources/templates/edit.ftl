@@ -80,7 +80,7 @@
                             <#if editFlag=="edit" || editFlag=="editLocalDraft">
                                 <#if editFlag=="editLocalDraft">
                                     <a class="dropdown-item" href="javascript:void(0);" data-toggle="tooltip" data-placement="top"
-                                       <#if isLogin==true>onclick="openModalFunc('saveBlog')" title="将本地草稿转存为线上博客"<#else >title="请先登入"</#if> >转存为博客</a>
+                                       <#if isLogin==true>onclick="openModalFunc('saveLocalDraftToBlog')" title="将本地草稿转存为线上博客"<#else >title="请先登入"</#if> >转存为博客</a>
                                 </#if>
 
                                 <a class="dropdown-item" href="javascript:void(0);" data-toggle="tooltip" data-placement="top"
@@ -144,7 +144,7 @@
                         <label for="blogName" class="col col-form-label">名称</label>
                         <div class="col">
                             <input class="form-control" id="blogName" placeholder=""
-                                   value="<#if editFlag=="editBlog">${blog.name!}<#elseif editFlag=="editLocalDraft">${blogName!}</#if>">
+                                   value="<#if editFlag=="editBlog">${blog.name!}</#if>">
                         </div>
                     </div>
                     <div class="form-group">
@@ -208,9 +208,11 @@
 
         //如果编辑本地草稿,则先读取
         <#if editFlag=="editLocalDraft" || editFlag=="editLocalDraftDesc">
-            selectDraftByName("${blogName!}",function (data) {
+            selectDraftByRowId(${blogId!},function(data){
                 localDraft=data[0];
+                $("#blogName").val(localDraft.id);
             })
+
         </#if>
 
         //开启提示工具
@@ -304,12 +306,27 @@
                 $("#headerName").text("保存博客");
                 $("#saveBtn").text("保存博客");
                 $("#saveBtn").attr("flag","saveBlog");
+                //清除tag
+                tokenfield.emptyItems();
                 break;
             case "saveLocalDraft":
                 $("#headerName").text("保存本地草稿");
                 $("#saveBtn").text("保存本地草稿");
                 $("#saveBtn").attr("flag","saveLocalDraft");
                 tokenfield.setItems({id:"本地草稿",name:"本地草稿"});
+                break;
+            case "saveLocalDraftToBlog":
+                //将本地草稿转存到线上博客
+                //如果未登入
+                if(!isLogin){
+                    pop.prompt("请先登入", 1500);
+                    return;
+                }
+                $("#headerName").text("将本地草稿转存为博客");
+                $("#saveBtn").text("转存为博客");
+                $("#saveBtn").attr("flag","saveLocalDraftToBlog");
+                //清除tag
+                tokenfield.emptyItems();
                 break;
         }
         //显示modal
@@ -325,6 +342,9 @@
                 break;
             case "saveLocalDraft":
                 saveLocalDraft();
+                break;
+            case "saveLocalDraftToBlog":
+                saveLocalDraftToBlog();
                 break;
         }
     })
@@ -346,9 +366,28 @@
         })
     }
 
+    //将本地草稿转存为blog
+    function saveLocalDraftToBlog() {
+        $.post("/saveBlog",{
+            id:blogId,
+            name:$("#blogName").val(),
+            desc:localDraft.desc,
+            descHtml:localDraft.descHtml,
+            md:editor.getMarkdown(),
+            mdHtml: getHtml(),
+            tocHtml:buildTocHtml(),//生成toc内容
+            tagNames:getTags(),
+        },function (data,status) {
+            //成功提示
+            pop.prompt(data.data, 1500);
+            resetSaveModal();
+            goHome();
+        })
+    }
+
     //保存本地草稿
     function saveLocalDraft() {
-        var date=new Date().Format("yyyy-MM-dd");
+        var date=new Date().Format("yyyy-MM-dd hh:mm:ss");
         if(localDraft==undefined){
             //不存在
             insertDraft({
@@ -364,7 +403,7 @@
             })
         }else{
             //先删除,修改后插入数据
-            deleteDraftByName(localDraft.id);
+            deleteDraftByRowId(localDraft.rowid);
             localDraft.md=editor.getMarkdown();
             localDraft.mdHtml=getHtml();
             localDraft.tocHtml=buildTocHtml();
@@ -381,10 +420,10 @@
     //保存本地草稿描述
     function saveLocalDesc() {
         pop.confirm("确定保存本地草稿描述吗?",function () {
-            var date=new Date().Format("yyyy-MM-dd");
+            var date=new Date().Format("yyyy-MM-dd hh:mm:ss");
 
             //先删除,修改后插入数据
-            deleteDraftByName(localDraft.id);
+            deleteDraftByRowId(localDraft.rowid);
             localDraft.desc=editor.getMarkdown();
             localDraft.descHtml=getHtml();
             localDraft.updateTime=date;

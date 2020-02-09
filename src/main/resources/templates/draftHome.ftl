@@ -100,7 +100,7 @@
             }
             else if(type=="localDraft"){
                 //删除本地的草稿
-                deleteDraftByName(id);
+                deleteDraftByRowId(id);
                 //刷新页面
                 pop.prompt("删除成功");
                 setTimeout(function () {

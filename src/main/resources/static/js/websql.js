@@ -17,11 +17,21 @@ function _selectDraft(sql,dataFunc){
         }, null);
     });
 }
-function selectDraftByName(blogName,dataFunc){
-    var sql="select * from draft where id=?";
+// function selectDraftByName(blogName,dataFunc){
+//     var sql="select * from draft where id=?";
+//     if(isLog) console.log(sql);
+//     db.transaction(function (tx) {
+//         tx.executeSql(sql, [blogName], function (tx, results) {
+//             dataFunc(results.rows);
+//         }, null);
+//     });
+// }
+//根据rowid进行查询
+function selectDraftByRowId(rowId,dataFunc){
+    var sql="select rowid,* from draft where rowid=?";
     if(isLog) console.log(sql);
     db.transaction(function (tx) {
-        tx.executeSql(sql, [blogName], function (tx, results) {
+        tx.executeSql(sql, [rowId], function (tx, results) {
             dataFunc(results.rows);
         }, null);
     });
@@ -33,13 +43,13 @@ function _updateDraft(sql){
         tx.executeSql(sql);
     });
 }
-function updateDraftByName(sql,params,blogName){
-    var sql=sql+" where id='"+blogName+"'";
-    if(isLog) console.log(sql,params);
-    db.transaction(function(tx) {
-        tx.executeSql(sql,params);
-    });
-}
+// function updateDraftByName(sql,params,blogName){
+//     var sql=sql+" where id='"+blogName+"'";
+//     if(isLog) console.log(sql,params);
+//     db.transaction(function(tx) {
+//         tx.executeSql(sql,params);
+//     });
+// }
 
 //删除数据
 function _deleteDraft(sql){
@@ -47,12 +57,20 @@ function _deleteDraft(sql){
         tx.executeSql(sql);
     });
 }
-function deleteDraftByName(blogName){
-    var sql="delete from draft where id=?";
-    if(isLog) console.log(sql,blogName);
+// function deleteDraftByName(blogName){
+//     var sql="delete from draft where id=?";
+//     if(isLog) console.log(sql,blogName);
+//
+//     db.transaction(function(tx) {
+//         tx.executeSql(sql,[blogName]);
+//     });
+// }
+function deleteDraftByRowId(rowId){
+    var sql="delete from draft where rowid=?";
+    if(isLog) console.log(sql,rowId);
 
     db.transaction(function(tx) {
-        tx.executeSql(sql,[blogName]);
+        tx.executeSql(sql,[rowId]);
     });
 }
 
@@ -81,6 +99,10 @@ function deleteDraftByName(blogName){
 // selectDraftByName("ceshi",function(data){
 //     console.log(data);
 // })
+// selectDraftByRowId(1,function(data){
+//     console.log(data);
+// })
+
 
 //删除
 // deleteDraftByName("ceshi")

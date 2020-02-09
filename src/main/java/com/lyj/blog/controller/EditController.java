@@ -60,7 +60,11 @@ public class EditController {
     public ModelAndView editLocalDraft(String blogId){
         ModelAndView edit = new ModelAndView("edit");
         edit.addObject("editFlag","editLocalDraft");
-        edit.addObject("blogName",blogId);
+        edit.addObject("blogId",blogId);
+
+        //获取提示的tag
+        String tipTags = tagService.getAllTags();
+        edit.addObject("tipTags",tipTags);
         return edit;
     }
 
@@ -69,7 +73,8 @@ public class EditController {
     public ModelAndView editLocalDraftDesc(String blogId){
         ModelAndView edit = new ModelAndView("edit");
         edit.addObject("editFlag","editLocalDraftDesc");
-        edit.addObject("blogName",blogId);
+        edit.addObject("blogId",blogId);
+
         return edit;
     }
 

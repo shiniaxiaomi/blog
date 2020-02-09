@@ -1,8 +1,10 @@
 
 function buildLoaclDraftHtml(page) {
 
-    console.log("select id,descHtml,tagNames,createTime,updateTime from draft limit "+(page-1)*10+",10")
-    _selectDraft("select id,descHtml,tagNames,createTime,updateTime from draft limit "+(page-1)*10+",10",function (data) {
+    console.log("select rowid,* from draft order by updateTime desc limit "+(page-1)*10+",10")
+    _selectDraft("select rowid,* from draft order by updateTime desc limit "+(page-1)*10+",10",function (data) {
+        console.log(data)
+
         let localDraft = $("#localDraft");
         for(var i=0;i<data.length;i++){
             var draft=data[i];
@@ -17,7 +19,7 @@ function buildLoaclDraftHtml(page) {
                     <!--分界线-->
                     <hr>
                     <!--标题-->
-                    <h3 class="blue"><a href="/localDraft?id=`+draft.id+`">`+draft.id+`</a></h3>
+                    <h3 class="blue"><a href="/localDraft?id=`+draft.rowid+`">`+draft.id+`</a></h3>
         
                     <!--参数-->
                     <p class="text-muted" style="margin-bottom: 0px">
@@ -36,11 +38,11 @@ function buildLoaclDraftHtml(page) {
                         </span>
                         <!--编辑按钮-->
                         <a type="button" style="margin-top: -2px;" class="btn btn-link btn-xs px-0"
-                           href="javascript:void(0);" onclick="deleteFunc('localDraft','`+draft.id+`')">删除草稿</a>
+                           href="javascript:void(0);" onclick="deleteFunc('localDraft','`+draft.rowid+`')">删除草稿</a>
                         <a type="button" style="margin-top: -2px;" class="btn btn-link btn-xs px-0"
-                           href="/editLocalDraftDesc?blogId=`+draft.id+`">编辑描述</a>
+                           href="/editLocalDraftDesc?blogId=`+draft.rowid+`">编辑描述</a>
                         <a type="button" style="margin-top: -2px;" class="btn btn-link btn-xs px-0"
-                           href="/editLocalDraft?blogId=`+draft.id+`">编辑草稿</a>
+                           href="/editLocalDraft?blogId=`+draft.rowid+`">编辑草稿</a>
                     </p>
                     <!--标签-->
                     <div style="margin-bottom: 10px">

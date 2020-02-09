@@ -302,7 +302,7 @@ public class PageController {
             return draft;
         }
 
-        draft.addObject("blogName",id);
+        draft.addObject("blogId",id);
         draft.addObject("blogType","localDraft");//标记为本地草稿
 
         //提供介绍数据

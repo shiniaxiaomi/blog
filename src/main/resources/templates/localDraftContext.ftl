@@ -56,21 +56,19 @@
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="/">首页</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">
-                            <#if blogName??>${blogName!}</#if>
-                        </li>
+                        <li class="breadcrumb-item active localDraft" aria-current="page"></li>
                     </ol>
                 </nav>
 
                 <#--博客相关信息-->
                 <div class="center">
-                    <h1><#if blogName??>${blogName!}</#if></h1>
+                    <h1 class="localDraft"></h1>
                     <#include "ftlTemplate/blogParamsTemplate.ftl">
                 </div>
 
                 <!--内容主体-->
                 <div data-spy="scroll" data-target="#navbar-example3" data-offset="0">
-                    <#if blogName??><div id="localDraftContent"></div></#if>
+                    <div id="localDraftContent"></div>
                 </div>
 
             </div>
@@ -84,11 +82,9 @@
             <@introduce/>
 
             <#--toc目录-->
-            <#if blogName??>
-                <div id="localDraftToc" class="whiteBlock sticky-top scrollspy-example vh-100 overflow-auto">
-                    <a class="nav-link" href="#">回到顶部</a>
-                </div>
-            </#if>
+            <div id="localDraftToc" class="whiteBlock sticky-top scrollspy-example vh-100 overflow-auto">
+                <a class="nav-link" href="#">回到顶部</a>
+            </div>
         </div>
     </div>
 </div>
@@ -115,15 +111,18 @@
     $(function () {
 
         //如果编辑本地草稿,则先读取
-        <#if blogName??>
-        selectDraftByName("${blogName!}",function (data) {
+        selectDraftByRowId("${blogId!}",function (data) {
             localDraft=data[0];
             $("#localDraftContent").append(localDraft.mdHtml);
             $("#localDraftToc").append(localDraft.tocHtml);
             $("#createTime").append(localDraft.createTime);
             $("#updateTime").append(localDraft.updateTime);
+
+            var buff=$(".localDraft");
+            for(var i=0;i<buff.length;i++){
+                buff[i].innerHTML=localDraft.id;
+            }
         })
-        </#if>
 
         //开启提示工具
         $('[data-toggle="tooltip"]').tooltip();
@@ -140,7 +139,7 @@
         pop.confirm("是否要删除",function () {
             if(type=="localDraft"){
                 //删除本地的草稿
-                deleteDraftByName(id);
+                deleteDraftByRowId(id);
                 //返回草稿页
                 pop.prompt("删除成功");
                 setTimeout(function () {
