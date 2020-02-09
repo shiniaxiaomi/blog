@@ -71,20 +71,18 @@
                         <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
                             <#if editFlag=="edit" || editFlag=="editBlog">
                                 <a class="dropdown-item" href="javascript:void(0);" data-toggle="tooltip" data-placement="top"
-                                   onclick="openModalFunc('saveBlog')"
-                                   <#if isLogin==true>title="将博客保存到线上"<#else>title="请先登入"</#if> >保存博客</a>
+                               <#if isLogin==true>onclick="openModalFunc('saveBlog')" title="将博客保存到线上"<#else>title="请先登入"</#if> >保存博客</a>
                             </#if>
                             <#if editFlag=="editDesc">
                                 <a class="dropdown-item" href="javascript:void(0);" data-toggle="tooltip" data-placement="top"
-                                   onclick="saveDesc()"
-                               <#if isLogin==true>title="将博客描述保存到线上"<#else >title="请先登入"</#if> >保存博客描述</a>
+                               <#if isLogin==true>onclick="saveDesc()" title="将博客描述保存到线上"<#else >title="请先登入"</#if> >保存博客描述</a>
                             </#if>
                             <#if editFlag=="edit" || editFlag=="editLocalDraft">
-                                <#if isLogin==true>
+                                <#if editFlag=="editLocalDraft">
                                     <a class="dropdown-item" href="javascript:void(0);" data-toggle="tooltip" data-placement="top"
-                                       onclick="openModalFunc('saveBlog')"
-                                       title="将本地草稿转存为线上博客">转存为博客</a>
+                                       <#if isLogin==true>onclick="openModalFunc('saveBlog')" title="将本地草稿转存为线上博客"<#else >title="请先登入"</#if> >转存为博客</a>
                                 </#if>
+
                                 <a class="dropdown-item" href="javascript:void(0);" data-toggle="tooltip" data-placement="top"
                                    onclick="openModalFunc('saveLocalDraft')"
                                    title="无需登入,直接保存在本地">保存到本地草稿</a>
