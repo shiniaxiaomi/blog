@@ -129,8 +129,8 @@ public class TagService {
         return pageInfo.getList();
     }
 
-    //查询所有的tags
-    @Cacheable(value = "cache",key = "'tipTags'",unless = "#result==null")
+    //查询所有的tags(当返回的结果为空数组或者为null时不缓存结果,因为可以是mybatis有缓存,需要再查询一次)
+    @Cacheable(value = "cache",key = "'tipTags'",unless = "#result==null || '[]'.equals(#result)")
     public String getAllTags() {
         List<Tag> tags = tagDao.selectByExample(new TagExample());
         return buildTagNamesUtil(tags);

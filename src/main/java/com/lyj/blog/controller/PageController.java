@@ -11,6 +11,7 @@ import com.lyj.blog.util.MyUtil;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -50,6 +51,9 @@ public class PageController {
 
     @Autowired
     PageDataService pageDataService;
+
+    @Autowired
+    RedisTemplate redisTemplate;
 
     @RequestMapping("/")
     public ModelAndView index() throws Exception {
@@ -153,10 +157,25 @@ public class PageController {
         }
 
         //查询对应的blog
-        Blog blog = blogService.selectBlogById(id);
-        Integer visitCount = blogService.selectAndIncrVisitCount(id);//查询对应博客的访问次数并递增
-        blog.setHot(visitCount);
-        modelAndView.addObject("blog",blog);
+        Blog blog = blogService.selectBlogById(id);//因为mybatis有缓存的问题,返回的结果可能为null
+        if(blog!=null){
+            Integer visitCount = blogService.selectAndIncrVisitCount(id);//查询对应博客的访问次数并递增
+            blog.setHot(visitCount);
+            modelAndView.addObject("blog",blog);
+        }else{
+            //记录次数,如果次数超过5次,则返回首页
+            Long increment = redisTemplate.opsForValue().increment("refreshTimesByBlogId:" + id);
+            if(increment>5){
+                //返回首页,并清除次数
+                redisTemplate.delete("refreshTimesByBlogId:" + id);
+                modelAndView.setViewName("forward:/");
+                return modelAndView;
+            }else{
+                //如果blog为null,则再次重定向到该链接,重新进行加载数据
+                modelAndView.setViewName("redirect:/blog?id="+id);
+                return modelAndView;
+            }
+        }
 
         //提供介绍数据
         pageDataService.provideIntroduceData(modelAndView,true);
