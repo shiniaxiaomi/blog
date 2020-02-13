@@ -66,10 +66,10 @@ public class TagService {
                 continue;
             }
 
-            Tag tag = this.selectTagByTagName(tagName);
+            Tag tag = tagService.selectTagByTagName(tagName);
             if(tag==null){
                 //数据库不存在,则创建
-                tagId = this.createTag(tagName);
+                tagId = tagService.createTag(tagName);
             }else{
                 //缓存中已存在,则不操作
                 tagId=tag.getId();
