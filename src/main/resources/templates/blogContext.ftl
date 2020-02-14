@@ -132,7 +132,7 @@
         if(type=="blog"){
             pop.confirm("是否要删除",function () {
                 $.post("/deleteBlog?blogId="+id,function (data, status) {
-                    pop.prompt(data.data);
+                    pop.prompt(data.msg);
                     if(data.code==200){
                         setTimeout(function () {
                             window.location.reload();//刷新页面

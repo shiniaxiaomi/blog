@@ -316,7 +316,7 @@ public class PageController {
     @ResponseBody
     public Message moreTags(){
         List<Tag> tags = tagService.selectAllTags();
-        return Message.success(tags);
+        return Message.success(null,tags);
     }
 
     /**

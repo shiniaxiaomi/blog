@@ -363,7 +363,7 @@
             mdHtml: getHtml(),
         },function (data,status) {
             //成功提示
-            pop.prompt(data.data, 1500);
+            pop.prompt(data.msg, 1500);
             resetSaveModal();
             goHome();
         })
@@ -382,11 +382,11 @@
             tagNames:getTags(),
         },function (data,status) {
             //成功提示
-            pop.prompt(data.data, 1500);
+            pop.prompt(data.msg, 1500);
             resetSaveModal();
             goHome();
         })
-    }
+    }ƒ
 
     //保存本地草稿
     function saveLocalDraft() {
@@ -448,7 +448,7 @@
                 descHtml:getHtml()
             },function (data,status) {
                 //成功提示
-                pop.prompt(data.data,1000);
+                pop.prompt(data.msg,1000);
                 goHome();
             })
         })

@@ -39,7 +39,7 @@
                 userName:$("#userName").val(),
                 password:$("#password").val(),
             },function (data,status) {
-                // pop.prompt(data.data, 1500);//成功提示
+                // pop.prompt(data.msg, 1500);//成功提示
                 $('#loginModal').modal('hide');//隐藏登入弹窗
 
                 //登入成功
@@ -49,13 +49,13 @@
                     if(path=="/edit" || path=="editDesc" || path=="editBlog"){
                         pop.confirm("登入成功!检测到当前为编辑页面,请保存编辑数据后,再手动刷新!");
                     }else{
-                        pop.prompt(data.data);
+                        pop.prompt(data.msg);
                         setTimeout(function () {
                             window.location.reload();//自动刷新
                         },500)
                     }
                 }else{
-                    pop.prompt(data.data);
+                    pop.prompt(data.msg);
                 }
             })
         })
