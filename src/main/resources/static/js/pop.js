@@ -42,9 +42,10 @@ var pop = {
             fun && setTimeout(fun, 300);
         });
     },
-    clickCancelBtn: function (target) { // 点击取消按钮
+    clickCancelBtn: function (target,cancleFunc) { // 点击取消按钮
         $('.cancel_btn').click(function () {
             pop.targetGoHide(target);
+            cancleFunc && setTimeout(cancleFunc, 300);
         });
     },
     targetGoHide: function (target) { // dialog执行隐藏函数
@@ -175,7 +176,7 @@ var pop = {
             }
         }, 1000);
     },
-    confirm: function (msg, fun) { // confirm弹窗
+    confirm: function (msg, sureFunc,cancleFunc) { // confirm弹窗
         pop.appendDialog();
         $('.dialog_overlay').before(
             '<div class="dialog_content">' +
@@ -196,8 +197,8 @@ var pop = {
         pop.confirmDialogAnimate('show');
         pop.clickDialogOverlay('confirm');
         pop.clickCloseBtn('confirm');
-        pop.clickCancelBtn('confirm');
-        pop.clickSureBtn('confirm', fun);
+        pop.clickCancelBtn('confirm',cancleFunc);
+        pop.clickSureBtn('confirm', sureFunc);
     },
     open: function (msg, type, fun) { // open弹窗
         pop.appendDialog();

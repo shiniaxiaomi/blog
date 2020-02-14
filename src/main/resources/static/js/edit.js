@@ -84,21 +84,37 @@ Date.prototype.Format = function(fmt) {
 }
 
 //返回首页
-function goHome() {
-    setTimeout(function () {
-        pop.confirm("是否前往首页?",function () {
+function goHome(blogId) {
+    if(blogId==undefined){
+        setTimeout(function () {
             window.location.href="/";
-        })
-    },500)
+        },500)
+    }else {
+        goBlogDesc(blogId);
+    }
 }
 
 //返回草稿页
 function goDraft() {
     setTimeout(function () {
-        pop.confirm("是否前往草稿页?",function () {
-            window.location.href="/draftHome";
-        })
+        window.location.href="/draftHome";
     },500)
+
+    // pop.confirm("是否前往草稿页?",function () {
+    // })
+}
+
+//去往编辑页编辑blog的描述
+function goBlogDesc(blogId) {
+    pop.confirm("是否前往博客描述编辑页?",function () {
+        setTimeout(function () {
+            window.location.href="/editDesc?blogId="+blogId;
+        },500)
+    },function () {
+        setTimeout(function () {
+            window.location.href="/";//去往首页
+        },500)
+    })
 }
 
 

@@ -365,7 +365,7 @@
             //成功提示
             pop.prompt(data.msg, 1500);
             resetSaveModal();
-            goHome();
+            goHome(data.data);
         })
     }
 
@@ -384,9 +384,9 @@
             //成功提示
             pop.prompt(data.msg, 1500);
             resetSaveModal();
-            goHome();
+            goHome(data.data);
         })
-    }ƒ
+    }
 
     //保存本地草稿
     function saveLocalDraft() {
@@ -422,35 +422,31 @@
 
     //保存本地草稿描述
     function saveLocalDesc() {
-        pop.confirm("确定保存本地草稿描述吗?",function () {
-            var date=new Date().Format("yyyy-MM-dd hh:mm:ss");
+        var date=new Date().Format("yyyy-MM-dd hh:mm:ss");
 
-            //先删除,修改后插入数据
-            deleteDraftByRowId(localDraft.rowid);
-            localDraft.desc=editor.getMarkdown();
-            localDraft.descHtml=getHtml();
-            localDraft.updateTime=date;
-            insertDraft(localDraft);
+        //先删除,修改后插入数据
+        deleteDraftByRowId(localDraft.rowid);
+        localDraft.desc=editor.getMarkdown();
+        localDraft.descHtml=getHtml();
+        localDraft.updateTime=date;
+        insertDraft(localDraft);
 
-            resetSaveModal();
-            pop.prompt("保存成功");
-            goDraft();
-        })
+        resetSaveModal();
+        pop.prompt("保存成功");
+        goDraft();
 
     }
 
     //保存博客描述
     function saveDesc() {
-        pop.confirm("确定保存博客描述吗?",function () {
-            $.post("/saveDesc",{
-                id:blogId,
-                desc:editor.getMarkdown(),
-                descHtml:getHtml()
-            },function (data,status) {
-                //成功提示
-                pop.prompt(data.msg,1000);
-                goHome();
-            })
+        $.post("/saveDesc",{
+            id:blogId,
+            desc:editor.getMarkdown(),
+            descHtml:getHtml()
+        },function (data,status) {
+            //成功提示
+            pop.prompt(data.msg,1000);
+            goHome();
         })
     }
 

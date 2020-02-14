@@ -40,7 +40,9 @@ public class SaveController {
         }else{
             blogService.save(blog);//更新博客
         }
-        return Message.success("保存成功");
+
+        //发送保存成功的消息,并将保存后生成的blogId返回给前端,用于在编辑博客描述时定位博客
+        return Message.success("保存成功",blog.getId());
     }
 
     /**

@@ -96,8 +96,8 @@ public class TagService {
         }
     }
 
-    //根据tagName查询对应的blog,并缓存
-    @Cacheable(value = "cache",key = "'tagNameToBlogsByPage:tagName:'+#tagName+'-'+#page")
+    //根据tagName查询对应的blog,并缓存(当结果的个数为0时不进行缓存)
+    @Cacheable(value = "cache",key = "'tagNameToBlogsByPage:tagName:'+#tagName+'-'+#page",unless = "#result.size()==0")
     public List<Blog> getBlogsByTagName(String tagName, Integer page) {
 
         Tag tag = tagService.selectTagByTagName(tagName);
