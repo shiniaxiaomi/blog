@@ -202,6 +202,8 @@
     var tokenfield =undefined;
     var editor=undefined;
 
+    var tokenfieldItem = <#if blog??>${blog.tagNames!"[]"}<#else>[]</#if> //保存原始的tag
+
     //如果编辑本地草稿,则先查询出对应的内容
     var localDraft=undefined;
     $(function() {
@@ -223,6 +225,7 @@
             items: ${tipTags!"[]"},
             setItems: <#if blog??>${blog.tagNames!"[]"}<#else>[]</#if>,
         });
+
         //编辑器
         editor = editormd("test-editor", {
             width               : "100%",
@@ -306,8 +309,8 @@
                 $("#headerName").text("保存博客");
                 $("#saveBtn").text("保存博客");
                 $("#saveBtn").attr("flag","saveBlog");
-                //清除tag
-                tokenfield.emptyItems();
+                //恢复原始的标签
+                tokenfield.setItems(tokenfieldItem);
                 break;
             case "saveLocalDraft":
                 $("#headerName").text("保存本地草稿");
