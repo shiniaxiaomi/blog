@@ -46,18 +46,6 @@
             </exclusions>
         </dependency>
 
-        <!--添加markdown解析工具-->
-        <dependency>
-            <groupId>com.atlassian.commonmark</groupId>
-            <artifactId>commonmark</artifactId>
-            <version>0.13.1</version>
-        </dependency>
-        <!--添加markdown的table解析插件-->
-        <dependency>
-            <groupId>com.atlassian.commonmark</groupId>
-            <artifactId>commonmark-ext-gfm-tables</artifactId>
-            <version>0.13.1</version>
-        </dependency>
 
         <!-- 添加elasticsearch启动器 -->
         <dependency>
