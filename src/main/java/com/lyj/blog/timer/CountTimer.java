@@ -1,6 +1,7 @@
 package com.lyj.blog.timer;
 
 
+import com.lyj.blog.exception.MessageException;
 import com.lyj.blog.service.BlogService;
 import com.lyj.blog.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -20,22 +21,14 @@ public class CountTimer {
 
     //定时更新blog的访问数据
     @Scheduled(cron = "0 0 2 * * *")
-    public void updateVisitCount(){
-        try {
-            blogService.updateVisitCountToDataBase();
-        } catch (Exception e) {
-            log.error(String.valueOf(e.getCause()));
-        }
+    public void updateVisitCount() throws MessageException {
+        blogService.updateVisitCountToDataBase();
     }
 
     //定时更新首页的访问数据
     @Scheduled(cron = "0 0 2 * * *")
-    public void updateHomePageVisitCount(){
-        try {
-            userService.updateHomePageVisitCountToDataBase();
-        } catch (Exception e) {
-            log.error(String.valueOf(e.getCause()));
-        }
+    public void updateHomePageVisitCount() throws MessageException {
+        userService.updateHomePageVisitCountToDataBase();
     }
 
 

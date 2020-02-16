@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.lyj.blog.dao.TagDao;
+import com.lyj.blog.exception.MessageException;
 import com.lyj.blog.model.Blog;
 import com.lyj.blog.model.Tag;
 import com.lyj.blog.model.TagExample;
@@ -36,23 +37,24 @@ public class TagService {
 
     //==================增加,删除,保存操作==================
     //根据tagName进行缓存
+    @Transactional
     @CachePut(value = "cache",key = "'tagNameToTagId:'+#tagName")
-    public Integer createTag(String tagName) throws Exception {
+    public Integer createTag(String tagName) throws MessageException {
         Tag tag = new Tag();
         tag.setName(tagName);
         tag.setCount(0);//被创建就是因为有一个blog进行关联
         int insert = tagDao.insert(tag);
         if(insert==0){
-            throw new Exception("tag创建失败");
+            throw new MessageException("tag创建失败");
         }
         return tag.getId();
     }
 
     //保存多个tag,并返回创建的id
-    public List<Integer> save(String tagNames) throws Exception {
+    public List<Integer> save(String tagNames) throws MessageException {
 
         if(tagNames==null){
-            throw new Exception("tagNames不能为null");
+            throw new MessageException("tagNames不能为null");
         }
 
         String[] names = tagNames.split(",");
@@ -181,7 +183,7 @@ public class TagService {
 
     //该操作需要定时的检查是否存在没有用的tag,定时的进行删除
     @CacheEvict(value = "cache",allEntries = true)
-    public void deleteNoUseTags() throws Exception {
+    public void deleteNoUseTags() throws MessageException {
         List<Tag> tags = tagService.selectAllTags();
         for(Tag tag:tags){
             //需要删除的tag
@@ -192,11 +194,11 @@ public class TagService {
     }
 
     //根据tagId删除tag.并且维护好了blogAndTag中间表的关系
-    @Transactional(rollbackFor = Exception.class)
-    public void deleteTag(Integer id) throws Exception {
+    @Transactional
+    public void deleteTag(Integer id) throws MessageException {
         int i = tagDao.deleteByPrimaryKey(id);
         if(i==0){
-            throw new Exception("tag删除失败");
+            throw new MessageException("tag删除失败");
         }
 
         //维护blogAndTag数据(按照tagId进行删除)

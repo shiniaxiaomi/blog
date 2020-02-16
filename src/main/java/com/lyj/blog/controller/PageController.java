@@ -3,6 +3,7 @@ package com.lyj.blog.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.lyj.blog.annotation.NeedLogin;
+import com.lyj.blog.exception.MessageException;
 import com.lyj.blog.model.Blog;
 import com.lyj.blog.model.Message;
 import com.lyj.blog.model.Tag;
@@ -56,7 +57,7 @@ public class PageController {
     RedisTemplate redisTemplate;
 
     @RequestMapping("/")
-    public ModelAndView index() throws Exception {
+    public ModelAndView index() throws MessageException {
 
         ModelAndView index = new ModelAndView("home");
 
@@ -76,7 +77,7 @@ public class PageController {
 
     //分页查看所有的blog(每页10条)
     @RequestMapping("moreBlog")
-    public ModelAndView moreBlog(String page) throws Exception {
+    public ModelAndView moreBlog(String page) throws MessageException {
 
         ModelAndView modelAndView = new ModelAndView("moreBlog");
 
@@ -184,14 +185,14 @@ public class PageController {
     }
 
     @RequestMapping("aboutMe")
-    public ModelAndView aboutMe() throws Exception {
+    public ModelAndView aboutMe() throws MessageException {
         Tag tag = tagService.selectTagByTagName("介绍");
         if(tag==null) return new ModelAndView("forward:/");//转发的首页
 
         List<Blog> blogs = blogAndTagService.selectBlogsByTagId(tag.getId(),1,10);
         //因为介绍只有一篇
         if(blogs.size()==0){
-            throw new Exception("还没有介绍");
+            throw new MessageException("还没有介绍");
         }else{
             //转发到blog展示页面,展示介绍博客
             return new ModelAndView("forward:/blog?id="+blogs.get(0).getId());

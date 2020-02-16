@@ -1,6 +1,7 @@
 package com.lyj.blog.service;
 
 import com.lyj.blog.dao.UserDao;
+import com.lyj.blog.exception.MessageException;
 import com.lyj.blog.model.User;
 import com.lyj.blog.model.UserExample;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +60,7 @@ public class UserService {
         return homePageCount;
     }
     //定时更新admin用户的首页访问次数(数据库)
-    public void updateHomePageVisitCountToDataBase() throws Exception {
+    public void updateHomePageVisitCountToDataBase() throws MessageException {
         Integer homePageVisitCount = (Integer) redisTemplate.opsForValue().get("user::homePageVisitCount:admin");
 
         //将数据保存到数据库中
@@ -70,17 +71,17 @@ public class UserService {
         userExample.createCriteria().andUserNameEqualTo("admin");//更新admin用户
         int i = userDao.updateByExampleSelective(user, userExample);
         if(i==0){
-            throw new Exception("首页访问次数更新失败");
+            throw new MessageException("首页访问次数更新失败");
         }
     }
 
     //用户登入
-    public User login(User user) throws Exception {
+    public User login(User user) throws MessageException {
         User userByName = userService.getUserByName(user.getUserName());
         if(userByName!=null && user.getPassword().equals(userByName.getPassword())){
             return userByName;
         }else{
-            throw new Exception("用户名或密码错误");
+            throw new MessageException("用户名或密码错误");
         }
     }
 }

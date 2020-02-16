@@ -2,6 +2,7 @@ package com.lyj.blog.controller;
 
 
 import com.lyj.blog.annotation.NeedLogin;
+import com.lyj.blog.exception.MessageException;
 import com.lyj.blog.model.Blog;
 import com.lyj.blog.model.Message;
 import com.lyj.blog.service.BlogAndTagService;
@@ -27,12 +28,12 @@ public class SaveController {
      * 缓存主要的删除点就在blog的创建和保存
      * @param blog
      * @return
-     * @throws Exception
+     * @throws MessageException
      */
     @NeedLogin
     @RequestMapping("saveBlog")
     @ResponseBody
-    public Message saveBlog(Blog blog) throws Exception {
+    public Message saveBlog(Blog blog) throws MessageException {
         Integer blogId = blog.getId();
 
         if(blogId==null){
@@ -49,12 +50,12 @@ public class SaveController {
      * 缓存主要的删除点就在blog的创建和保存
      * @param blog
      * @return
-     * @throws Exception
+     * @throws MessageException
      */
     @NeedLogin
     @RequestMapping("saveDesc")
     @ResponseBody
-    public Message saveDesc(Blog blog) throws Exception {
+    public Message saveDesc(Blog blog) throws MessageException {
         Integer blogId = blog.getId();
 
         if(blogId==null){

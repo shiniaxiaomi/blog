@@ -4,6 +4,7 @@ package com.lyj.blog.service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.lyj.blog.dao.BlogDao;
+import com.lyj.blog.exception.MessageException;
 import com.lyj.blog.model.Blog;
 import com.lyj.blog.model.BlogAndTag;
 import com.lyj.blog.model.BlogExample;
@@ -46,11 +47,11 @@ public class BlogService {
      * 又因为缓存实在方法之后执行的,所以把key设置成blog.id是没有问题的
      * @param blog
      * @return
-     * @throws Exception
+     * @throws MessageException
      */
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     @CacheEvict(value = "cache",allEntries = true)
-    public void create(Blog blog) throws Exception {
+    public void create(Blog blog) throws MessageException {
         //插入数据
         this.insertBlog(blog);
 
@@ -67,11 +68,11 @@ public class BlogService {
      * blog相关的注入口,需要在全部操作完成后,清空缓存
      * 有选择性的进行更新
      * @param blog
-     * @throws Exception
+     * @throws MessageException
      */
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     @CacheEvict(value = "cache",allEntries = true)
-    public void save(Blog blog) throws Exception {
+    public void save(Blog blog) throws MessageException {
         blog.setUpdateTime(new Date());// 更新修改日期
 
         //如果tagName为null,则说明是更新描述
@@ -91,7 +92,7 @@ public class BlogService {
 
     //创建blog并缓存
     @CachePut(value = "cache",key = "'blogIdToBlog:'+#blog.id")
-    public Blog insertBlog(Blog blog) throws Exception {
+    public Blog insertBlog(Blog blog) throws MessageException {
         //设置blog一些初始值
         Date date = new Date();
         blog.setCreateTime(date);
@@ -101,17 +102,17 @@ public class BlogService {
         //插入blog数据
         int insert = blogDao.insert(blog);
         if(insert==0){
-            throw new Exception("添加失败");
+            throw new MessageException("添加失败");
         }
 
         return blog;
     }
 
     //更新blog
-    public void updateBlog(Blog blog) throws Exception {
+    public void updateBlog(Blog blog) throws MessageException {
         int i = blogDao.updateByPrimaryKeySelective(blog);
         if(i==0){
-            throw new Exception("更新失败");
+            throw new MessageException("更新失败");
         }
     }
 
@@ -217,7 +218,7 @@ public class BlogService {
     }
 
     //真正的将blog的访问次数更新到数据库中(每天凌晨4点更新)
-    public void updateVisitCountToDataBase() throws Exception {
+    public void updateVisitCountToDataBase() throws MessageException {
 
         Set keys = redisTemplate.keys("visitCount*");
 
@@ -229,18 +230,26 @@ public class BlogService {
             String next = (String) iterator.next();
             Integer visitCount = (Integer) valueOperations.get(next);
             Integer id = Integer.valueOf(next.substring(length));
-            this.updateVisitCountDao(id,visitCount);//更新数据库
+            boolean isNeedClean = this.updateVisitCountDao(id, visitCount);//更新数据库
+            if(isNeedClean){
+                //清除key对应的缓存
+                redisTemplate.delete(next);
+            }
         }
     }
 
     //更新blog的访问次数的数据操作
-    public void updateVisitCountDao(Integer id,Integer visitCount) throws Exception {
+    public boolean updateVisitCountDao(Integer id,Integer visitCount) throws MessageException {
         Blog blog = new Blog();
         blog.setId(id);
         blog.setHot(visitCount);
         int i = blogDao.updateByPrimaryKeySelective(blog);
+
+        //如果更新数为0,则表明该blog已经被删除,那么,我们就要清空缓存中对应的key
         if(i==0){
-            throw new Exception("更新blog访问次数失败");
+            return true;//表示需要清除缓存中对应的key
+        }else{
+            return false;//表示成功,不需要清除缓存
         }
     }
 
@@ -305,13 +314,12 @@ public class BlogService {
 
     //根据blogId进行删除blog,同时清空所有的缓存
     //需要维护tag中的blog的数量,blogAndTag中间表中的数据
-    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = "cache",allEntries = true)
-    public void deleteBlogById(Integer blogId) throws Exception {
+    public void deleteBlogById(Integer blogId) throws MessageException {
         //删除对应的blog
         int i = blogDao.deleteByPrimaryKey(blogId);
         if(i==0){
-            throw new Exception("删除blog失败");
+            throw new MessageException("删除blog失败");
         }
 
 

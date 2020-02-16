@@ -34,14 +34,10 @@ public class ReloadTimer {
     //定时更新blog的缓存数据(先清除,在加载)
     @Scheduled(cron = "0 0 4 * * *")
     public void reloadBlogCache(){
-        try {
-            //清除redis中blog相关的所有缓存
-            blogService.cleanBlogCache();
-            //加载所有数据到缓存
-            this.preReloadData();
-        } catch (Exception e) {
-            log.error(String.valueOf(e.getCause()));
-        }
+        //清除redis中blog相关的所有缓存
+        blogService.cleanBlogCache();
+        //加载所有数据到缓存
+        this.preReloadData();
     }
 
     //预热数据

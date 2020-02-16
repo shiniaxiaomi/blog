@@ -1,6 +1,7 @@
 package com.lyj.blog.controller;
 
 
+import com.lyj.blog.exception.MessageException;
 import com.lyj.blog.model.Message;
 import com.lyj.blog.service.BlogService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,7 @@ public class DeleteController {
     //根据blogId删除对应的blog
     @RequestMapping("deleteBlog")
     @ResponseBody
-    public Message deleteBlog(Integer blogId) throws Exception {
+    public Message deleteBlog(Integer blogId) throws MessageException {
         blogService.deleteBlogById(blogId);
         return Message.success("删除成功");
     }

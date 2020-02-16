@@ -1,5 +1,6 @@
 package com.lyj.blog.aop;
 
+import com.lyj.blog.exception.MessageException;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -32,10 +33,10 @@ public class LoginAOP {
 
     //登入校验
     @Before(value = "needLoginPointcut()")
-    public void needLogin() throws Exception {
+    public void needLogin() throws MessageException {
         Object user = session.getAttribute("user");
         if(user==null){
-            throw new Exception("请先登入");
+            throw new MessageException("请先登入");
         }
     }
 

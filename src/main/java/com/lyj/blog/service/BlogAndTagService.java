@@ -4,6 +4,7 @@ package com.lyj.blog.service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.lyj.blog.dao.BlogAndTagDao;
+import com.lyj.blog.exception.MessageException;
 import com.lyj.blog.model.Blog;
 import com.lyj.blog.model.BlogAndTag;
 import com.lyj.blog.model.BlogAndTagExample;
@@ -35,7 +36,7 @@ public class BlogAndTagService {
     //===========================增加,删除,更改操作============================
     //缓存中间表
     @CachePut(value = "cache",key = "'blogAndTag:'+#blogId+'-'+#tagId")
-    public void insertBlogAndTag(Integer blogId,Integer tagId) throws Exception {
+    public void insertBlogAndTag(Integer blogId,Integer tagId) throws MessageException {
         //往数据库中插入数据
         BlogAndTag blogAndTag = new BlogAndTag();
         blogAndTag.setBlogId(blogId);
@@ -43,7 +44,7 @@ public class BlogAndTagService {
 
         int insert = blogAndTagDao.insert(blogAndTag);
         if(insert==0){
-            throw new Exception("BlogAndTag中间表数据插入失败");
+            throw new MessageException("BlogAndTag中间表数据插入失败");
         }
     }
 
@@ -56,12 +57,12 @@ public class BlogAndTagService {
      *      如果传入不存在,数据库存在,则删除数据库数据
      * @param blogId
      * @param tagIds
-     * @throws Exception
+     * @throws MessageException
      */
-    public void save(Integer blogId, List<Integer> tagIds) throws Exception {
+    public void save(Integer blogId, List<Integer> tagIds) throws MessageException {
 
         if(blogId==null){
-            throw new Exception("blogId不能为null");
+            throw new MessageException("blogId不能为null");
         }
 
         //遍历tagId,不存在则创建
@@ -92,14 +93,14 @@ public class BlogAndTagService {
     }
 
     //删除对应的中间表数据
-    public void deleteBlogAndTag(Integer blogId,Integer tagId) throws Exception {
+    public void deleteBlogAndTag(Integer blogId,Integer tagId) throws MessageException {
         //往数据库中删除数据
         BlogAndTagExample blogAndTagExample = new BlogAndTagExample();
         blogAndTagExample.createCriteria().andBlogIdEqualTo(blogId).andTagIdEqualTo(tagId);
 
         int delete = blogAndTagDao.deleteByExample(blogAndTagExample);
         if(delete==0){
-            throw new Exception("BlogAndTag中间表数据删除失败!");
+            throw new MessageException("BlogAndTag中间表数据删除失败!");
         }
     }
 

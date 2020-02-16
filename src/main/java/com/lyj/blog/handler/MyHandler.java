@@ -1,5 +1,6 @@
 package com.lyj.blog.handler;
 
+import com.lyj.blog.exception.MessageException;
 import com.lyj.blog.model.Message;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.UndeclaredThrowableException;
 
 /**
  * 异常统一处理类
@@ -20,9 +22,18 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 public class MyHandler {
 
-    @ExceptionHandler(Exception.class)
+    //统一的Exception异常处理
+//    @ExceptionHandler(Exception.class)
+//    @ResponseBody   //设置返回字符串,而非对应的错误页面
+//    public Message exceptionHandler(HttpServletRequest request, HttpServletResponse response, Exception e){
+//        log.error("\n异常请求:{}\n{}",request.getServletPath(),"异常信息:"+e.getClass().getName()+":\""+e.getMessage()+"\"\n堆栈信息:"+e.getStackTrace()[0]);
+//        return Message.error(e.getMessage());
+//    }
+
+    //处理自定义的消息异常
+    @ExceptionHandler(MessageException.class)
     @ResponseBody   //设置返回字符串,而非对应的错误页面
-    public Message handler(HttpServletRequest request, HttpServletResponse response, Exception e){
+    public Message messageExceptionHandler(HttpServletRequest request, HttpServletResponse response, MessageException e){
         log.error("\n异常请求:{}\n{}",request.getServletPath(),"异常信息:"+e.getClass().getName()+":\""+e.getMessage()+"\"\n堆栈信息:"+e.getStackTrace()[0]);
         return Message.error(e.getMessage());
     }

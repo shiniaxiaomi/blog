@@ -1,6 +1,7 @@
 package com.lyj.blog.controller;
 
 
+import com.lyj.blog.exception.MessageException;
 import com.lyj.blog.model.Message;
 import com.lyj.blog.model.User;
 import com.lyj.blog.service.UserService;
@@ -19,7 +20,7 @@ public class UserController {
 
     @RequestMapping("userLogin")
     @ResponseBody
-    public Message userLogin(User user, HttpSession session) throws Exception {
+    public Message userLogin(User user, HttpSession session) throws MessageException {
         if(session.getAttribute("user")!=null){
             return Message.success("登入成功");
         }
