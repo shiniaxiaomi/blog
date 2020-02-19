@@ -76,3 +76,10 @@ a,.btn-link{
 /*.ui-front{*/
 /*    z-index: 100000;*/
 /*}*/
+
+
+/*设置右侧导航栏字体的padding*/
+.nav-link {
+    display: block;
+    padding: 0.2rem .5rem;
+}
