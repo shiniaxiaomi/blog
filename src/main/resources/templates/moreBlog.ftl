@@ -44,7 +44,7 @@
         </div>
 
         <#--右侧-->
-        <div class="col-lg-3 d-none d-lg-block" style="max-width: 300px;">
+        <div class="col-lg-3 d-none d-lg-block" >
             <div class="sticky-top">
                 <#--介绍信息-->
                 <#include "ftlTemplate/introduceTemplate.ftl" >
