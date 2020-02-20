@@ -139,8 +139,6 @@ public class BlogService {
      */
     @Cacheable(value = "cache",key = "'blogSort:'+#page+'-'+#size")
     public List<Blog> getBlogs(int page, int size) {
-        PageHelper.startPage(page, size);
-
         //排除置顶blog
         BlogExample blogExample = new BlogExample();
         BlogExample.Criteria criteria = blogExample.createCriteria();
@@ -148,9 +146,11 @@ public class BlogService {
         for(Integer id:excludeBlogIds){
             criteria.andIdNotEqualTo(id);
         }
-
         //查询所有不是置顶的blog和不是草稿的blog
         blogExample.setOrderByClause("updateTime desc");//按照更新时间降序排列
+
+        //分页查询
+        PageHelper.startPage(page, size);
         List<Blog> blogs = blogDao.selectByExample(blogExample);
         PageInfo<Blog> pageInfo = new PageInfo<>(blogs);
 
