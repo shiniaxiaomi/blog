@@ -44,6 +44,11 @@
                     <p class="text-muted d-inline" style="font-size: 20px;">最新博客</p>
                     <a class="text-muted" style="float: right" href="/moreBlog?page=1">更多</a>
                 </@blogList>
+
+                <hr>
+                <div style="text-align: right;margin-top:10px">
+                    <a class="text-muted" style="margin-right: 30px" href="/moreBlog?page=1">更多</a>
+                </div>
             </div>
         </div>
 
