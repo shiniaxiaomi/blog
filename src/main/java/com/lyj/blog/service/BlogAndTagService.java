@@ -123,7 +123,7 @@ public class BlogAndTagService {
     }
 
     //从缓存中查询blogId对应的所有tags
-    @Cacheable(value = "cache",key = "'blogIdToTags:'+#blogId")
+    @Cacheable(value = "cache",key = "'blogIdToTags:'+#blogId",unless = "#result.size()==0")
     public List<Tag> selectTagsByBlogId(Integer blogId){
         List<BlogAndTag> blogAndTags = this.selectBlogAndTagByBlogId(blogId);
         List<Tag> tags=new ArrayList<>();
@@ -144,7 +144,7 @@ public class BlogAndTagService {
     }
 
     //根据tagId查询所有的blogs的id
-    @Cacheable(value = "cache",key = "'tagIdToBlogsId:tagId:'+#tagId")
+    @Cacheable(value = "cache",key = "'tagIdToBlogsId:tagId:'+#tagId",unless = "#result.size()==0")
     public List<BlogAndTag> selectBlogAndTagByTagId(Integer tagId){
         BlogAndTagExample blogAndTagExample = new BlogAndTagExample();
         blogAndTagExample.createCriteria().andTagIdEqualTo(tagId);
@@ -152,7 +152,8 @@ public class BlogAndTagService {
         return blogAndTags;
     }
 
-    @Cacheable(value = "cache",key = "'tagIdToBlogs:tagId:'+#tagId+'-'+#page+'-'+#size")
+    //如果返回的结果个数为0,则不缓存
+    @Cacheable(value = "cache",key = "'tagIdToBlogs:tagId:'+#tagId+'-'+#page+'-'+#size",unless = "#result.size()==0")
     public List<Blog> selectBlogsByTagId(Integer tagId, Integer page, Integer size) {
         PageHelper.startPage(page, size);
         List<BlogAndTag> blogAndTags = blogAndTagService.selectBlogAndTagByTagId(tagId);

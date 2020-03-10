@@ -119,7 +119,7 @@ public class TagService {
     }
 
     //获取博客数量最多的tag
-    @Cacheable(value ="cache",key = "'tagSort:'+#size")
+    @Cacheable(value ="cache",key = "'tagSort:'+#size",unless = "#result.size()==0")
     public List<Tag> getMaxCountBySize(int size) {
         TagExample tagExample = new TagExample();
 
@@ -171,7 +171,7 @@ public class TagService {
     }
 
     //获取到所有的tags
-    @Cacheable(value = "cache",key = "'allTags'")
+    @Cacheable(value = "cache",key = "'allTags'",unless = "#result.size()==0")
     public List<Tag> selectAllTags() {
 
         TagExample tagExample = new TagExample();

@@ -137,7 +137,7 @@ public class BlogService {
      * @param size
      * @return
      */
-    @Cacheable(value = "cache",key = "'blogSort:'+#page+'-'+#size")
+    @Cacheable(value = "cache",key = "'blogSort:'+#page+'-'+#size",unless = "#result.size()==0")
     public List<Blog> getBlogs(int page, int size) {
         //排除置顶blog
         BlogExample blogExample = new BlogExample();
@@ -168,7 +168,7 @@ public class BlogService {
     }
 
     //根据tagName分页的查询blog
-    @Cacheable(value = "cache",key = "'blogSortByTagName:tagName:'+#tagName+':'+#page+'-'+#size")
+    @Cacheable(value = "cache",key = "'blogSortByTagName:tagName:'+#tagName+':'+#page+'-'+#size",unless = "#result.size()==0")
     public List<Blog> getBlogsByTagName(String tagName, int page, int size) {
         Tag tag = tagService.selectTagByTagName(tagName);
         if(tag ==null) return new ArrayList<>();
@@ -243,6 +243,7 @@ public class BlogService {
         Blog blog = new Blog();
         blog.setId(id);
         blog.setHot(visitCount);
+        blog.setUpdateTime(new Date());//顺带更新日期
         int i = blogDao.updateByPrimaryKeySelective(blog);
 
         //如果更新数为0,则表明该blog已经被删除,那么,我们就要清空缓存中对应的key
@@ -255,7 +256,7 @@ public class BlogService {
 
     //==================草稿相关===================
     //获取所有的线上草稿
-    @Cacheable(value = "cache",key = "'draftByPage:'+#page")
+    @Cacheable(value = "cache",key = "'draftByPage:'+#page",unless = "#result.size()==0")
     public List<Blog> selectDraft(Integer page){
         Tag tag = tagService.selectTagByTagName("草稿");
         if(tag ==null) return new ArrayList<>();
@@ -265,7 +266,7 @@ public class BlogService {
 
 
     //根据年份查询blog的数量
-    @Cacheable(value = "cache",key = "'blogCountByYear'")
+    @Cacheable(value = "cache",key = "'blogCountByYear'",unless = "#result.size()==0")
     public List<Map> selectBlogCountByYear(){
         List<Map> list = new ArrayList();
         Map map=null;
@@ -288,7 +289,7 @@ public class BlogService {
     }
 
     //按照year进行分页查询
-    @Cacheable(value = "cache",key = "'selectBlogByYear:year:'+#year+'-'+#page+'-'+#size")
+    @Cacheable(value = "cache",key = "'selectBlogByYear:year:'+#year+'-'+#page+'-'+#size",unless = "#result.size()==0")
     public List<Blog> selectBlogByYear(Integer year, Integer page, Integer size) throws ParseException {
         PageHelper.startPage(page, size);
 
@@ -336,7 +337,7 @@ public class BlogService {
     }
 
     //查询所有的blogNames
-    @Cacheable(value = "cache",key = "'allBlogNames'")
+    @Cacheable(value = "cache",key = "'allBlogNames'",unless = "#result.size()==0")
     public List<Map> selectAllBlogNames() {
         List<Map> blogNames = blogDao.selectAllBlogNames();
         return blogNames;
