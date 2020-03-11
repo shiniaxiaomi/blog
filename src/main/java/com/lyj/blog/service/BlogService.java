@@ -243,7 +243,6 @@ public class BlogService {
         Blog blog = new Blog();
         blog.setId(id);
         blog.setHot(visitCount);
-        blog.setUpdateTime(new Date());//顺带更新日期
         int i = blogDao.updateByPrimaryKeySelective(blog);
 
         //如果更新数为0,则表明该blog已经被删除,那么,我们就要清空缓存中对应的key
