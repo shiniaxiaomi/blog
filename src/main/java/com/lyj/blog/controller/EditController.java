@@ -8,6 +8,7 @@ import com.lyj.blog.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 
@@ -54,6 +55,15 @@ public class EditController {
 
         return edit;
     }
+
+    /**
+     * 维持心跳
+     */
+    @NeedLogin
+    @ResponseBody
+    @RequestMapping("/holdHeartbeat")
+    public void holdHeartbeat(){}
+
 
     //编辑本地草稿
     @RequestMapping("/editLocalDraft")

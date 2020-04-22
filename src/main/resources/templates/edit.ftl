@@ -217,6 +217,14 @@
 
         </#if>
 
+        //每5分钟维持一下心跳
+        setInterval(function () {
+            $.post("/holdHeartbeat",{},function (data,status) {
+                //成功提示
+                console.log("心跳维持成功");
+            })
+        },1000*60*5);
+
         //开启提示工具
         $('[data-toggle="tooltip"]').tooltip();
         //开启标签
