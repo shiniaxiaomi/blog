@@ -43,6 +43,7 @@ public class UserService {
     @Cacheable(value = "user",key = "'homePageVisitCount:admin'",unless = "#result==null")
     public Integer selectHomePageVisitCount(){
         User admin = userService.getUserByName("admin");
+        if(admin==null) return 0;
         return admin.getVisitCount();
     }
     //更新admin用户的首页访问次数(redis)
