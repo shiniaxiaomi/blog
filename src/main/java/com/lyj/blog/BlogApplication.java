@@ -9,11 +9,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication
-@EnableScheduling   //开启定时任务
-@MapperScan("com.lyj.blog.dao") //开启mapper扫描
-@EnableCaching //开启缓存注解,默认使用concurrentHashMap
-@EnableAspectJAutoProxy //开启aop
-@EnableTransactionManagement //开启事务
+//@EnableScheduling   //开启定时任务
+@MapperScan("com.lyj.blog.mapper") //开启mapper扫描
+//@EnableCaching //开启缓存注解,默认使用concurrentHashMap
+//@EnableAspectJAutoProxy //开启aop
+//@EnableTransactionManagement //开启事务
 public class BlogApplication {
 
     public static void main(String[] args) {
