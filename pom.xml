@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.lyj</groupId>
     <artifactId>blog</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>5.0.0-SNAPSHOT</version>
     <name>blog</name>
     <description>Demo project for Spring Boot</description>
 
@@ -74,19 +74,24 @@
             <version>8.0.15</version>
         </dependency>
 
-        <!--mybatis-starter-->
-        <dependency>
-            <groupId>org.mybatis.spring.boot</groupId>
-            <artifactId>mybatis-spring-boot-starter</artifactId>
-            <version>2.1.1</version>
-        </dependency>
-
-
+        <!--mybatis-starter（因为导入了mybatis-plus，里面已经包含了mybatis相关的内容）-->
+<!--        <dependency>-->
+<!--            <groupId>org.mybatis.spring.boot</groupId>-->
+<!--            <artifactId>mybatis-spring-boot-starter</artifactId>-->
+<!--            <version>2.1.1</version>-->
+<!--        </dependency>-->
         <!-- 引入mybatis的 pagehelper 分页插件 -->
+<!--        <dependency>-->
+<!--            <groupId>com.github.pagehelper</groupId>-->
+<!--            <artifactId>pagehelper-spring-boot-starter</artifactId>-->
+<!--            <version>1.2.3</version>-->
+<!--        </dependency>-->
+
+        <!-- mybatis-plus-boot-starter -->
         <dependency>
-            <groupId>com.github.pagehelper</groupId>
-            <artifactId>pagehelper-spring-boot-starter</artifactId>
-            <version>1.2.3</version>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>3.3.2</version>
         </dependency>
 
         <!--redis-starter-->
