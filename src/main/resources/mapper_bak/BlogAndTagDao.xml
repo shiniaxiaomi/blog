@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.lyj.blog.bak.dao.BlogAndTagDao">
-  <resultMap id="BaseResultMap" type="com.lyj.blog.bak.model.BlogAndTag">
+<mapper namespace="bak.dao.BlogAndTagDao">
+  <resultMap id="BaseResultMap" type="bak.model.BlogAndTag">
     <result column="blogId" jdbcType="INTEGER" property="blogId" />
     <result column="tagId" jdbcType="INTEGER" property="tagId" />
   </resultMap>
@@ -66,7 +66,7 @@
   <sql id="Base_Column_List">
     blogId, tagId
   </sql>
-  <select id="selectByExample" parameterType="com.lyj.blog.bak.model.BlogAndTagExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="bak.model.BlogAndTagExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
@@ -80,17 +80,17 @@
       order by ${orderByClause}
     </if>
   </select>
-  <delete id="deleteByExample" parameterType="com.lyj.blog.bak.model.BlogAndTagExample">
+  <delete id="deleteByExample" parameterType="bak.model.BlogAndTagExample">
     delete from blogandtag
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.lyj.blog.bak.model.BlogAndTag">
+  <insert id="insert" parameterType="bak.model.BlogAndTag">
     insert into blogandtag (blogId, tagId)
     values (#{blogId,jdbcType=INTEGER}, #{tagId,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.lyj.blog.bak.model.BlogAndTag">
+  <insert id="insertSelective" parameterType="bak.model.BlogAndTag">
     insert into blogandtag
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="blogId != null">
@@ -109,7 +109,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.lyj.blog.bak.model.BlogAndTagExample" resultType="java.lang.Long">
+  <select id="countByExample" parameterType="bak.model.BlogAndTagExample" resultType="java.lang.Long">
     select count(*) from blogandtag
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
