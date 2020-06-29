@@ -11,7 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.List;
 
 @Controller
-public class TestController {
+public class IndexController {
 
     @Autowired
     BlogMapper blogMapper;
@@ -20,17 +20,11 @@ public class TestController {
     public ModelAndView test(){
         ModelAndView modelAndView = new ModelAndView("index");
 
-
         blogMapper.selectList(new QueryWrapper<Blog>().select("id","name","`desc`","create_time","update_time")); //直接指定字段
         List<Blog> blogs = blogMapper.selectList(new QueryWrapper<>());
         modelAndView.addObject("blogs",blogs);
 
         return modelAndView;
-    }
-
-    @RequestMapping("test")
-    public String test1(){
-        return "test";
     }
 
     //草稿页面

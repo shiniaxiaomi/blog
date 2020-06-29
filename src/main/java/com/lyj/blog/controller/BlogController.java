@@ -1,5 +1,6 @@
 package com.lyj.blog.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.lyj.blog.mapper.BlogMapper;
 import com.lyj.blog.model.Blog;
 import com.lyj.blog.other.Message;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Date;
+import java.util.List;
 
 @Controller
 public class BlogController {
@@ -28,12 +30,23 @@ public class BlogController {
         return modelAndView;
     }
 
+    //请求pid下的所有blog
+    @RequestMapping("blogs")
+    public ModelAndView blogs(int pid){
+        ModelAndView modelAndView = new ModelAndView("index");
+
+        List<Blog> blogs = blogMapper.selectList(new QueryWrapper<Blog>().select("id", "name", "`desc`", "create_time", "update_time").eq("pid", pid));//直接指定字段
+        modelAndView.addObject("blogs",blogs);
+
+        return modelAndView;
+    }
+
     @ResponseBody
     @RequestMapping("blog/create")
-    public Message create(String name){
+    public Message create(String name,int pid){
 
         Date date = new Date();
-        Blog blog = new Blog().setName(name).setCreateTime(date).setUpdateTime(date);
+        Blog blog = new Blog().setName(name).setCreateTime(date).setUpdateTime(date).setPid(pid);
         blogMapper.insert(blog);
 
         return new Message().setData(blog.getId());//返回新生成blog的id
@@ -56,5 +69,13 @@ public class BlogController {
         blog.setUpdateTime(new Date());
         blogMapper.updateById(blog);
     }
+
+    @ResponseBody
+    @RequestMapping("blog/delete")
+    public void delete(int id){
+
+        blogMapper.deleteById(id);
+    }
+
 
 }
