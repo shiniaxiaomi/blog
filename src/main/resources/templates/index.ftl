@@ -59,10 +59,10 @@
         <div class="col-md-2 d-none d-md-block" style="max-width: 120px"><!--先设置为全部尺寸隐藏，然后再设置大于sm时显示-->
             <div class=" sticky-top whiteBlock shadow-lg mb-5 bg-white rounded" style="top: 95px;padding: 10px 11px 3px 11px">
                 <ul class="list-group list-group-flush" style="text-align: center">
-                    <a class="list-group-item" style="font-size: 80%" href="#">计算机基础</a>
-                    <a class="list-group-item" style="font-size: 80%" href="#">mybatis</a>
-                    <a class="list-group-item" style="font-size: 80%" href="#">待整理</a>
-                    <a class="list-group-item" style="font-size: 80%" href="#">测试</a>
+                    <a class="list-group-item" style="font-size: 80%" href="/blogs?pid=111">计算机基础</a>
+                    <a class="list-group-item" style="font-size: 80%" href="/blogs?pid=111">mybatis</a>
+                    <a class="list-group-item" style="font-size: 80%" href="/blogs?pid=111">待整理</a>
+                    <a class="list-group-item" style="font-size: 80%" href="/blogs?pid=111">测试</a>
                 </ul>
             </div>
         </div>

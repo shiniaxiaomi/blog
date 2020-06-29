@@ -11,8 +11,9 @@
                 <span style="margin-right: 10px"><i class="iconfont icon-chakan4"></i> 0</span>
                 <span style="margin-right: 10px"><i class="iconfont icon-pinglun3"></i> 0</span>
 
-                <a href="/moreBlogByTag?id=1212" class="badge badge-secondary"<#-- style="color: #29292bd9"-->>java</a>
-                <a href="/moreBlogByTag?id=1212" class="badge badge-secondary">mybatis</a>
+<#--                <a href="/moreBlogByTag?id=1212" class="badge badge-secondary">java</a>-->
+<#--                <a href="/moreBlogByTag?id=1212" class="badge badge-secondary">mybatis</a>-->
+                这里不显示徽章了，而是显示blog所在层级路径，并且每个路径都可以直接点击
             </div>
             <#--概述-->
             <div class="text-muted" style="padding: 7px 0 2px 2px">${blog.desc!}</div>
