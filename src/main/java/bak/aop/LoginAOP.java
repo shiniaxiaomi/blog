@@ -1,6 +1,5 @@
 package bak.aop;
 
-import bak.exception.MessageException;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -32,13 +31,13 @@ public class LoginAOP {
 
 
     //登入校验
-    @Before(value = "needLoginPointcut()")
-    public void needLogin() throws MessageException {
-        Object user = session.getAttribute("user");
-        if(user==null){
-            throw new MessageException("请先登入");
-        }
-    }
+//    @Before(value = "needLoginPointcut()")
+//    public void needLogin() throws MessageException {
+//        Object user = session.getAttribute("user");
+//        if(user==null){
+//            throw new MessageException("请先登入");
+//        }
+//    }
 
 
     //切所有的控制器,然后根据返回值为ModelAndView来添加是否登入的信息

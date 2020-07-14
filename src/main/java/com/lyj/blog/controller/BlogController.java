@@ -1,81 +1,93 @@
 package com.lyj.blog.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.lyj.blog.mapper.BlogMapper;
 import com.lyj.blog.model.Blog;
-import com.lyj.blog.other.Message;
+import com.lyj.blog.handler.Message;
+import com.lyj.blog.service.BlogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.Date;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Controller
+@RequestMapping("blog")
 public class BlogController {
 
     @Autowired
-    BlogMapper blogMapper;
+    BlogService blogService;
 
-    @RequestMapping("blog")
-    public ModelAndView blog(int id){
+    //根据id查询blog
+    @GetMapping
+    public ModelAndView blog(@NotNull Integer id){
         ModelAndView modelAndView = new ModelAndView("blog");
 
-        Blog blog = blogMapper.selectById(id);
+        Blog blog = blogService.selectById(id);
         modelAndView.addObject("mdHtml",blog.getMdHtml());//拿到mdHtml信息
         modelAndView.addObject("id",id);
 
         return modelAndView;
     }
 
-    //请求pid下的所有blog
-    @RequestMapping("blogs")
-    public ModelAndView blogs(int pid){
+    //请求pid下的所有blog(平级结构)
+    @GetMapping("list")
+    public ModelAndView blogs(@NotNull Integer pid){
         ModelAndView modelAndView = new ModelAndView("index");
-
-        List<Blog> blogs = blogMapper.selectList(new QueryWrapper<Blog>().select("id", "name", "`desc`", "create_time", "update_time").eq("pid", pid));//直接指定字段
+        List<Blog> blogs = blogService.selectList(pid);
         modelAndView.addObject("blogs",blogs);
-
         return modelAndView;
     }
 
+    //分页查询blogs
+    @GetMapping("page")
     @ResponseBody
-    @RequestMapping("blog/create")
-    public Message create(String name,int pid){
-
-        Date date = new Date();
-        Blog blog = new Blog().setName(name).setCreateTime(date).setUpdateTime(date).setPid(pid);
-        blogMapper.insert(blog);
-
-        return new Message().setData(blog.getId());//返回新生成blog的id
+    public Message blogByPage(@NotNull Integer index){
+        return Message.success(blogService.blogByPage(index).getRecords());
     }
 
-    @RequestMapping("blog/edit")
-    public ModelAndView edit(int id){
+
+    //创建blog
+    @ResponseBody
+    @PostMapping("create")
+    public Message create(@NotNull String name,@NotNull Integer pid){
+        Blog blog = blogService.insert(name, pid);
+        return Message.success(blog.getId(),"博客创建成功");//返回新生成blog的id
+    }
+
+    //编辑blog
+    @GetMapping("edit")
+    public ModelAndView edit(@NotNull Integer id){
         ModelAndView modelAndView = new ModelAndView("edit");
         modelAndView.addObject("blogId",id);//设置本地浏览器缓存的id号
 
-        Blog blog = blogMapper.selectById(id);
+        Blog blog = blogService.selectById(id);
         modelAndView.addObject("md",blog.getMd());//拿到md信息
 
         return modelAndView;
     }
 
     @ResponseBody
-    @RequestMapping("blog/update")
-    public void update(Blog blog){
-        blog.setUpdateTime(new Date());
-        blogMapper.updateById(blog);
+    @PostMapping("update")
+    public Message update(Blog blog){
+        blogService.updateById(blog);
+        return Message.success("博客更新成功");
     }
 
     @ResponseBody
-    @RequestMapping("blog/delete")
-    public void delete(int id){
-
-        blogMapper.deleteById(id);
+    @PostMapping("delete")
+    public Message delete(int id){
+        blogService.delete(id);
+        return Message.success("博客删除成功");
     }
 
+    @ResponseBody
+    @GetMapping("getTreeData")
+    public String getTreeData(){
+        return blogService.getTreeData();
+    }
 
 }

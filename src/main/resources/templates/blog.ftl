@@ -5,21 +5,21 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
-
-    <!-- ⚠️生产环境请指定版本号，如 https://cdn.jsdelivr.net/npm/vditor@x.x.x/dist... -->
-    <link rel="stylesheet" href="/vditor/index.css" />
-    <#--    <script src="/vditor/index.min.js" defer></script>-->
-    <script src="/vditor/js/method.min.js"></script>
-
     <link rel="stylesheet" href="/css/blog.css">
+
+    <#include "common/headerCommon.ftl">
+    <@header/>
 
     <style>
         /*保证toc左右能够显示全*/
         /*.vditor-outline__item{*/
         /*    overflow: inherit;*/
         /*}*/
+
+        /*面包屑背景颜色*/
+        .breadcrumb {
+            background-color: #f8f9fa;
+        }
 
         .vditor-outline__item{
             font-size: 80%;
@@ -39,16 +39,30 @@
     <@nav/>
 
     <div class="container-fluid" style="margin-top:85px;">
+
         <div class="row justify-content-center">
             <!--左（目录）-->
             <div class="col-md-3 d-none d-md-block" style="max-width: 250px;">
                 <div id="tocContainer" class="sticky-top overflow-auto shadow-lg p-3 rounded" style="top: 95px;margin-left:10px;max-height: 590px">
-                    目录<hr style="margin: 10px 0">
+<#--                    目录<hr style="margin: 10px 0">-->
                     <div id="toc" style="margin-left: -30px;"></div>
                 </div>
             </div>
+
             <!--右（blog）-->
-            <div class="col col-md-8" style="padding: 0 40px"><!--全部尺寸都设置为自动-->
+            <div class="col col-md-8" style="padding: 0 30px 0 60px"><!--全部尺寸都设置为自动-->
+                <!--面包屑导航-->
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="javascript:void(0)" onclick="window.history.back()">返回</a>|<a href="/blog/edit?id=${id!}">编辑</a>|<a href="/">首页</a>
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page">
+                            jdsfjdksfjds
+                        </li>
+                    </ol>
+
+                </nav>
                 <div id="vditor" class="vditor-reset">${mdHtml!""}</div>
             </div>
 
@@ -63,13 +77,6 @@
 
 
 </html>
-
-<!-- Optional JavaScript -->
-<!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<script src="/js/jquery.min.js"></script>
-<script src="/js/bootstrap.min.js"></script>
-<script src="/layer/layer.js"></script>
-
 
 <script>
 
@@ -94,17 +101,21 @@
     }
 
     $(function () {
-
         var buf=document.getElementById("vditor");
         Vditor.highlightRender({},buf);//渲染代码高亮
         Vditor.codeRender(buf);//渲染代码复制
         Vditor.outlineRender(buf,document.getElementById("toc"));//渲染大纲到指定dom
+        if($("#toc").html()===""){
+            $("#toc").html("没有目录");
+            $("#toc").css("margin-left",0);
+        }
+
 
 
         //查找h1-h6
-        $(":header").each(function(){
-            let str="<a href='/blog/edit?id=${id!}#wysiwyg-"+$(this).attr("id")+"' style='font-size: 16px'>编辑</a>";
-            $(this).append(str);
+        $("#vditor :header").each(function(){
+            let str="<a href='/blog/edit?id=${id!}#wysiwyg-"+$(this).attr("id")+"'>"+$(this).html()+"</a>";
+            $(this).html(str);
         });
     })
 

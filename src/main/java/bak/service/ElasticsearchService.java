@@ -1,6 +1,5 @@
 package bak.service;
 
-//import com.lyj.blog.util.VarUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;

@@ -59,7 +59,7 @@
                     saveBlog();
                 },
             },
-            "|", 'headings', 'bold', 'italic', 'strike', 'link', '|',
+            "|", "insert-before","insert-after",'headings', 'bold', 'italic', 'strike', 'link', '|',
             'list', 'ordered-list', 'check', 'outdent', 'indent', '|',
             'quote', 'line', 'code', 'inline-code', '|',
             'upload', 'record', 'table', '|',
@@ -76,6 +76,7 @@
         ];
         if (window.innerWidth < 768) {
             toolbar = [
+                "insert-before","insert-after",
                 'headings', 'bold', 'link', '|',
                 'list', 'ordered-list', 'check', '|',
                 'quote', 'line', 'code', 'inline-code', '|',
@@ -163,17 +164,18 @@
     function saveBlog() {
         //生成desc
         let desc="";
-        let descLength=80;//定义长度
+        let descLength=200;//定义长度
         let arrs=$("#vditor p");
         for(let i=0;i<arrs.length;i++){
-            if($(arrs[i]).children().length!=0){
+            var html=$(arrs[i]).html();
+            if(html.indexOf("<img")!=-1){
                 continue;
             }
-            let text=$(arrs[i]).text();
+            let text=html;
             if(desc.length+text.length<descLength){
                 desc+=text+"。";
             }else{
-                desc+=text.slice(0,descLength-desc.length);
+                desc+=text.slice(0,descLength-desc.length)+"...";
                 break;
             }
         }

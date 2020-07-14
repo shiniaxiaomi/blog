@@ -27,7 +27,7 @@
 <#include "common/navCommon.ftl">
 <@nav/>
 
-<div class="container" style="margin-top:95px;max-width: 1300px">
+<div id="container" class="container" style="margin-top:95px;max-width: 1350px">
     <div id="test" class="row justify-content-center">
 
         <!--左（简介）-->
@@ -40,30 +40,39 @@
         </div>
 
         <!--中（blog）-->
-        <div class="col-sm-10 col-lg-7"><!--全部尺寸都设置为自动-->
-            <div class="whiteBlock shadow-lg p-3 mb-5 bg-white rounded">
+        <div class="col-sm-12 col-md-10 col-lg-7"><!--全部尺寸都设置为自动-->
+            <div class="whiteBlock shadow-lg p-3 mb-3 bg-white rounded">
+                <#include "common/blogItem.ftl" />
+                <div class="text-muted d-inline" style="font-size: 20px;">置顶博客</div>
+                <hr>
+                <div>
+                    <!--每篇置顶博客-->
+                    <#if stickBlogs??>
+                        <#list stickBlogs as blog>
+                            <@blogItem blog=blog/>
+                        </#list>
+                    </#if>
+                </div>
+            </div>
+
+            <div id="newestBlogContainer" class="whiteBlock shadow-lg p-3 mb-5 bg-white rounded">
                 <div class="text-muted d-inline" style="font-size: 20px;">最新博客</div>
                 <hr>
-
-                <#include "common/blogItem.ftl" />
-                <!--每篇置顶博客-->
-                <#if blogs??>
-                    <#list blogs as blog>
-                        <@blogItem blog=blog/>
-                    </#list>
-                </#if>
+                <div id="newestBlogDiv">
+                    <!--每篇置顶博客-->
+                    <#if newestBlogs??>
+                        <#list newestBlogs as blog>
+                            <@blogItem blog=blog/>
+                        </#list>
+                    </#if>
+                </div>
             </div>
         </div>
 
         <!--右（目录）-->
-        <div class="col-md-2 d-none d-md-block" style="max-width: 120px"><!--先设置为全部尺寸隐藏，然后再设置大于sm时显示-->
-            <div class=" sticky-top whiteBlock shadow-lg mb-5 bg-white rounded" style="top: 95px;padding: 10px 11px 3px 11px">
-                <ul class="list-group list-group-flush" style="text-align: center">
-                    <a class="list-group-item" style="font-size: 80%" href="/blogs?pid=111">计算机基础</a>
-                    <a class="list-group-item" style="font-size: 80%" href="/blogs?pid=111">mybatis</a>
-                    <a class="list-group-item" style="font-size: 80%" href="/blogs?pid=111">待整理</a>
-                    <a class="list-group-item" style="font-size: 80%" href="/blogs?pid=111">测试</a>
-                </ul>
+        <div class=" col-md-1 d-none d-md-block" style="max-width: 120px;"><!--先设置为全部尺寸隐藏，然后再设置大于sm时显示-->
+            <div class="sticky-top tagPadding shadow-lg mb-5 bg-white rounded" style="top: 95px;">
+                <ul id="tags" class="list-group list-group-flush" style="text-align: center"></ul>
             </div>
         </div>
 
@@ -81,34 +90,116 @@
 
 
 <script>
+
+    let page=2; // 当前页数
+    let isIncr=false; // 是否新增
+
     $(function () {
         //开启提示工具
         $('[data-toggle="tooltip"]').tooltip();
 
-        console.log("!1111")
+        // 定时200毫秒修改一次状态
+        setInterval(function () {
+            if(isIncr===false){
+                isIncr=true;
+            }
+        },200);
+
+        // 滚动分页实现
+        $(document).scroll(function () {
+            // 限流
+            if(isIncr===false){
+                return;
+            }
+
+            //滚动与顶部的距离
+            var scrollTop = Math.ceil($("html").eq(0).scrollTop());
+            //jq转js
+            var j = $("html").eq(0)[0];
+            //滚动条高度
+            var scrollHeight = j.scrollHeight;
+            //滚动条高度
+            var zj = j.clientHeight;
+            // console.log("整体高：" + scrollHeight + " >> 组件高：" + zj + "距离顶部高：" + scrollTop)
+
+            //获取滚动条与底部的距离，如果等于0 证明已下拉到最底部
+            if (scrollHeight - scrollTop - zj === 0) {
+                isIncr=false; //恢复标志位
+
+                //你自己的分页逻辑
+                if(page===-1){
+                    return; //如果
+                }
+                $.get("/blog/page?index="+page,function (data,status) {
+                    if(data.code){
+                        if(data.data.length===0){
+                            page=-1;
+                            $("#newestBlogContainer").append("<div class='text-muted text-center' style='padding: 7px 0 2px 2px'>已经到底了</div>");
+                            return;
+                        }
+                        // 将数据动态的插入到尾部
+                        let div=$("#newestBlogDiv");
+                        for(var i=0;i<data.data.length;i++){
+                            var blog=data.data[i];
+                            div.append(`
+                                <div>
+                                    <#--标题-->
+                                    <h4 class="overHide" style="padding: 0 60px 0 0">
+                                        <a href="/blog?id=`+blog.id+`" style="color:#3b86d8;">`+blog.name+`</a>
+                                        <a href="/blog/edit?id=`+blog.id+`" style="font-size: 60%">编辑</a>
+                                        <a href="javascript:void(0);" onclick="deleteBlogByHeader(`+blog.id+`)" style="font-size: 60%">删除</a>
+                                        <a href="javascript:void(0);" onclick="renameBlog(`+blog.id+`)" style="font-size: 60%">重命名</a>
+                                        <a href="javascript:void(0);" data-toggle="modal" data-target="#createTagToBlogModal"
+                                            onclick="openAddTagModalOnBlog(`+blog.id+`)" style="font-size: 60%">添加标签</a>
+                                    </h4>
+                                    <#--标签-->
+                                    <div class="d-inline text-muted">
+                                        <span style="margin-right: 10px"><i class="iconfont icon-gengxinshijian"></i> `+blog.updateTime.slice(0,10)+`</span>
+                                        <span style="margin-right: 10px"><i class="iconfont icon-chakan4"></i> 0</span>
+                                        <span style="margin-right: 10px"><i class="iconfont icon-pinglun3"></i> 0</span>
+
+                                        <span class="path" blogId="`+blog.id+`"></span>
+                                    </div>
+                                    <#--概述-->
+                                    <div class="text-muted" style="padding: 7px 0 2px 2px">`+blog.desc+`</div>
+                                </div>
+                                <hr style="margin: 10px 0">
+                        `);
+                        }
+                        page++;
+                    }else{
+                        layer.msg(data.msg);
+                    }
+                })
+            }
+        });
 
     })
 
 
-
-    window.onresize =function resizeFresh() {
-        if(window.innerWidth>=1200){
-            console.log("xl");
-        }else if(window.innerWidth>=992){
-            console.log("lg");
-        }else if(window.innerWidth>=768){
-            console.log("md");
-        }else if(window.innerWidth>=576){
-            console.log("sm");
-        }else{
-            console.log("col");
-        }
-        var buf=window.innerWidth/12;
-        console.log("列占比",buf,buf*8,buf*3);
-        var arrs=$("#test").children();
-        console.log("实际占比",$(arrs[0]).innerWidth(),$(arrs[1]).innerWidth(),$(arrs[2]).innerWidth())
+    function renameBlog(id){
+        layer.prompt({title: '输入博客名称'}, function(value, index){
+            layer.close(index);
+            $.post("/blog/update",{id:id,name:value},function (data,status) {
+                if(data.code){
+                    window.location.reload();//刷新页面
+                }
+                layer.msg(data.msg);
+            })
+        });
     }
 
-
+    function deleteBlogByHeader(id){
+        layer.confirm("确定要删除吗",{
+            btn: ['确定','取消'] //按钮
+        },function () {
+            $.post("/blog/delete",{id:id},function (data,status) {
+                if(data.code){
+                    window.location.reload();//刷新页面
+                }
+                layer.msg(data.msg);
+            })
+        })
+    }
 
 </script>

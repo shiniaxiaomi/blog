@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyj.blog.mapper.TagMapper">
+
+    <select id="selectByBlogId" resultType="com.lyj.blog.model.Tag">
+        select tag.id, tag.name
+        from tag
+                 left join blog_tag_relation btr on tag.id = btr.tag_id
+        where btr.blog_id = #{blogId}
+    </select>
+    <select id="selectBlogIds" resultType="java.lang.Integer">
+        select blog_id
+        from blog_tag_relation
+                 left join tag t on blog_tag_relation.tag_id = t.id
+        where t.name = #{tagName}
+    </select>
+</mapper>

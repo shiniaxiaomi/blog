@@ -4444,8 +4444,7 @@ var DragManager = /** @class */ (function () {
                 target: this._transferData.target,
             };
             this._move(from, to);
-            debugger
-            to.target.events.fire(types_1.DragEvents.dropComplete, [from.id,to.id, this._transferData.dropPosition]);
+            to.target.events.fire(types_1.DragEvents.dropComplete, [to.id, this._transferData.dropPosition]);
         }
         this._endDrop();
     };

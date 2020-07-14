@@ -8,7 +8,6 @@ body {
 }
 
 .overHide{
-    cursor: pointer;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -19,6 +18,9 @@ body {
     background-color: #FFF;
     padding: 20px;
     /*margin: 10px 0 0 -12px;*/
+}
+.tagPadding {
+    padding: 2px 8px 3px 8px
 }
 .center{
     text-align: center;

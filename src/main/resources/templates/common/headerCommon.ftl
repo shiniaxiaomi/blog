@@ -10,7 +10,10 @@
     <script src="/vditor/index.min.js" defer></script>
 
     <!--icons-->
-    <link rel="stylesheet" href="http://at.alicdn.com/t/font_1907545_o7642r0joh.css">
+    <link rel="stylesheet" href="http://at.alicdn.com/t/font_1907545_woxoxos7lxc.css">
+
+    <#--tagsinput-->
+    <link href="/tagsinput/tokenfield.css" rel="stylesheet" type="text/css">
 
     <!--tree-->
     <link rel="stylesheet" href="/tree/codebase/tree.css?v=6.5.1">
@@ -22,4 +25,7 @@
     <script src="/js/popper.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
     <script src="/layer/layer.js"></script>
+
+    <!-- tagsinput -->
+    <script src="/tagsinput/tokenfield.web.js"></script>
 </#macro>
