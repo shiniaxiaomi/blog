@@ -1293,7 +1293,9 @@ var Tokenfield = function (_EventEmitter) {
 
       this._vars.setItems.every(function (item, k) {
         if (item[_this11.key] === key) {
-          _this11.emit('removeToken', _this11, item);
+          if(!_this11.emit('removeToken', _this11, item)){
+            return false;
+          }
           _this11._vars.setItems.splice(k, 1);
           _this11.emit('removedToken', _this11, item);
           _this11.emit('change', _this11);
@@ -1310,7 +1312,9 @@ var Tokenfield = function (_EventEmitter) {
       var o = this._options;
       // Check if item already exists in a given list.
       if (item.isNew && !this._getItem(item[o.itemData], o.itemData) || !this._getItem(item[o.itemValue], o.itemValue)) {
-        this.emit('addToken', this, item);
+        if(!this.emit('addToken', this, item)){
+          return this;
+        }
         if (!this._options.maxItems || this._options.maxItems && this._vars.setItems.length < this._options.maxItems) {
           item.selected = false;
           var clonedItem = _extends({}, item);
@@ -1895,18 +1899,15 @@ EventEmitter.prototype.emit = function(type) {
     switch (arguments.length) {
       // fast cases
       case 1:
-        handler.call(this);
-        break;
+        return handler.call(this);
       case 2:
-        handler.call(this, arguments[1]);
-        break;
+        return handler.call(this, arguments[1]);
       case 3:
-        handler.call(this, arguments[1], arguments[2]);
-        break;
+        return handler.call(this, arguments[1], arguments[2]);
       // slower
       default:
         args = Array.prototype.slice.call(arguments, 1);
-        handler.apply(this, args);
+        return handler.apply(this, args);
     }
   } else if (isObject(handler)) {
     args = Array.prototype.slice.call(arguments, 1);
