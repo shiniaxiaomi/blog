@@ -5,15 +5,14 @@ import com.lyj.blog.handler.Message;
 import com.lyj.blog.service.BlogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
+@Validated
 @Controller
 @RequestMapping("blog")
 public class BlogController {
@@ -46,7 +45,7 @@ public class BlogController {
     @GetMapping("page")
     @ResponseBody
     public Message blogByPage(@NotNull Integer index){
-        return Message.success(blogService.blogByPage(index).getRecords());
+        return Message.success(blogService.selectByPage(index,5).getRecords());
     }
 
 
@@ -64,10 +63,17 @@ public class BlogController {
         ModelAndView modelAndView = new ModelAndView("edit");
         modelAndView.addObject("blogId",id);//设置本地浏览器缓存的id号
 
-        Blog blog = blogService.selectById(id);
-        modelAndView.addObject("md",blog.getMd());//拿到md信息
+//        Blog blog = blogService.selectById(id);
+//        modelAndView.addObject("md",blog.getMd());//拿到md信息
 
         return modelAndView;
+    }
+
+    @ResponseBody
+    @GetMapping("getMDByBlogId")
+    public String getMDByBlogId(@NotNull Integer id){
+        Blog blog = blogService.selectById(id);
+        return blog.getMd();//拿到md信息
     }
 
     @ResponseBody

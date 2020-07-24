@@ -27,7 +27,7 @@
 <#include "common/navCommon.ftl">
 <@nav/>
 
-<div id="container" class="container" style="margin-top:95px;max-width: 1350px">
+<div id="container" class="container-fluid" style="margin-top:95px;/*max-width: 1350px*/">
     <div id="test" class="row justify-content-center">
 
         <!--左（简介）-->
@@ -83,7 +83,6 @@
 <#include "common/beianCommon.ftl">
 <@beian/>
 
-
 </body>
 </html>
 
@@ -92,56 +91,43 @@
 <script>
 
     let page=2; // 当前页数
-    let isIncr=false; // 是否新增
+    // let isIncr=false; // 是否新增
 
     $(function () {
         //开启提示工具
         $('[data-toggle="tooltip"]').tooltip();
 
-        // 定时200毫秒修改一次状态
-        setInterval(function () {
-            if(isIncr===false){
-                isIncr=true;
-            }
-        },200);
-
         // 滚动分页实现
         $(document).scroll(function () {
-            // 限流
-            if(isIncr===false){
-                return;
+            let htmlDom=document.getElementsByTagName("html")[0];
+            let scrollTop = Math.ceil(htmlDom.scrollTop);//滚动与顶部的距离
+            let scrollHeight = htmlDom.scrollHeight;//滚动条高度
+            let clientHeight = htmlDom.clientHeight;//客户端高度
+            // console.log(scrollHeight - scrollTop - clientHeight)
+            if (scrollHeight - scrollTop - clientHeight < 10) {
+                loadNextPage();
             }
+        });
 
-            //滚动与顶部的距离
-            var scrollTop = Math.ceil($("html").eq(0).scrollTop());
-            //jq转js
-            var j = $("html").eq(0)[0];
-            //滚动条高度
-            var scrollHeight = j.scrollHeight;
-            //滚动条高度
-            var zj = j.clientHeight;
-            // console.log("整体高：" + scrollHeight + " >> 组件高：" + zj + "距离顶部高：" + scrollTop)
+    })
 
-            //获取滚动条与底部的距离，如果等于0 证明已下拉到最底部
-            if (scrollHeight - scrollTop - zj === 0) {
-                isIncr=false; //恢复标志位
-
-                //你自己的分页逻辑
-                if(page===-1){
-                    return; //如果
+    function loadNextPage() {
+        //已经到最后一页，则直接返回
+        if(page===-1){
+            return;
+        }
+        $.get("/blog/page?index="+page,function (data,status) {
+            if(data.code){
+                if(data.data.length===0){
+                    page=-1;
+                    $("#newestBlogContainer").append("<div class='text-muted text-center' style='padding: 7px 0 2px 2px'>已经到底了</div>");
+                    return;
                 }
-                $.get("/blog/page?index="+page,function (data,status) {
-                    if(data.code){
-                        if(data.data.length===0){
-                            page=-1;
-                            $("#newestBlogContainer").append("<div class='text-muted text-center' style='padding: 7px 0 2px 2px'>已经到底了</div>");
-                            return;
-                        }
-                        // 将数据动态的插入到尾部
-                        let div=$("#newestBlogDiv");
-                        for(var i=0;i<data.data.length;i++){
-                            var blog=data.data[i];
-                            div.append(`
+                // 将数据动态的插入到尾部
+                let div=$("#newestBlogDiv");
+                for(let i=0;i<data.data.length;i++){
+                    let blog=data.data[i];
+                    div.append(`
                                 <div>
                                     <#--标题-->
                                     <h4 class="overHide" style="padding: 0 60px 0 0">
@@ -150,7 +136,7 @@
                                         <a href="javascript:void(0);" onclick="deleteBlogByHeader(`+blog.id+`)" style="font-size: 60%">删除</a>
                                         <a href="javascript:void(0);" onclick="renameBlog(`+blog.id+`)" style="font-size: 60%">重命名</a>
                                         <a href="javascript:void(0);" data-toggle="modal" data-target="#createTagToBlogModal"
-                                            onclick="openAddTagModalOnBlog(`+blog.id+`)" style="font-size: 60%">添加标签</a>
+                                            onclick="openAddTagToBlogModal(`+blog.id+`)" style="font-size: 60%">添加标签</a>
                                     </h4>
                                     <#--标签-->
                                     <div class="d-inline text-muted">
@@ -165,16 +151,13 @@
                                 </div>
                                 <hr style="margin: 10px 0">
                         `);
-                        }
-                        page++;
-                    }else{
-                        layer.msg(data.msg);
-                    }
-                })
+                }
+                page++;
+            }else{
+                layer.msg(data.msg);
             }
-        });
-
-    })
+        })
+    }
 
 
     function renameBlog(id){

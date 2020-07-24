@@ -28,4 +28,7 @@
 
     <!-- tagsinput -->
     <script src="/tagsinput/tokenfield.web.js"></script>
+
+    <!-- nav.js -->
+    <script src="/js/nav.js"></script>
 </#macro>

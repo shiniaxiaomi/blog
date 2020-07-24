@@ -6,7 +6,6 @@ import com.lyj.blog.service.BlogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 
@@ -21,7 +20,7 @@ public class IndexController {
         ModelAndView modelAndView = new ModelAndView("index");
 
         Page<Blog> stickBlogs = blogService.selectBlogByTagName("置顶"); //置顶博客
-        Page<Blog> newestBlogs = blogService.blogByPage(1); //最新博客
+        Page<Blog> newestBlogs = blogService.selectByPage(1,5); //最新博客
 
         modelAndView.addObject("stickBlogs",stickBlogs.getRecords());
         modelAndView.addObject("newestBlogs",newestBlogs.getRecords());

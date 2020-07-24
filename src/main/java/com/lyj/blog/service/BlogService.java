@@ -30,8 +30,8 @@ public class BlogService {
     TagService tagService;
 
     // 分页查询，每次只查询3个（用于首页的滚动加载）
-    public Page<Blog> blogByPage(int page){
-        return blogMapper.selectPage(new Page<>(page, 3),
+    public Page<Blog> selectByPage(int page,int size){
+        return blogMapper.selectPage(new Page<>(page, size),
                 new QueryWrapper<Blog>().select("id","name","`desc`","create_time","update_time")
                         .orderByDesc("update_time","create_time"));
     }

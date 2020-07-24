@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <link rel="stylesheet" href="/css/blog.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.3.2/dist/js/highlight.js/styles/github.css">
+
 
     <#include "common/headerCommon.ftl">
     <@header/>
@@ -45,12 +47,12 @@
             <div class="col-md-3 d-none d-md-block" style="max-width: 250px;">
                 <div id="tocContainer" class="sticky-top overflow-auto shadow-lg p-3 rounded" style="top: 95px;margin-left:10px;max-height: 590px">
 <#--                    目录<hr style="margin: 10px 0">-->
-                    <div id="toc" style="margin-left: -30px;"></div>
+                    <div id="toc" style="margin-left: -35px;"></div>
                 </div>
             </div>
 
             <!--右（blog）-->
-            <div class="col col-md-8" style="padding: 0 30px 0 60px"><!--全部尺寸都设置为自动-->
+            <div class="col col-md-8" style="padding: 0 30px"><!--全部尺寸都设置为自动-->
                 <!--面包屑导航-->
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
@@ -86,31 +88,15 @@
         window.location.reload();
     }
 
-    window.onresize =function resizeFresh() {
-        if(window.innerWidth>=1200){
-            console.log("xl");
-        }else if(window.innerWidth>=992){
-            console.log("lg");
-        }else if(window.innerWidth>=768){
-            console.log("md");
-        }else if(window.innerWidth>=576){
-            console.log("sm");
-        }else{
-            console.log("col");
-        }
-    }
-
     $(function () {
         var buf=document.getElementById("vditor");
-        Vditor.highlightRender({},buf);//渲染代码高亮
-        Vditor.codeRender(buf);//渲染代码复制
+        // Vditor.highlightRender({},buf);//渲染代码高亮
+        // Vditor.codeRender(buf);//渲染代码复制
         Vditor.outlineRender(buf,document.getElementById("toc"));//渲染大纲到指定dom
         if($("#toc").html()===""){
             $("#toc").html("没有目录");
             $("#toc").css("margin-left",0);
         }
-
-
 
         //查找h1-h6
         $("#vditor :header").each(function(){
