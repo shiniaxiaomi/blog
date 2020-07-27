@@ -12,7 +12,7 @@
 <body>
 
 <#--引入顶部导航栏-->
-<#include "common/nav.ftl">
+<#include "../common/nav.ftl">
 <@nav/>
 
 <#--主体-->

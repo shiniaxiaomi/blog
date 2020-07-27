@@ -32,7 +32,23 @@
         <!--中（blog）-->
         <!--全部尺寸都设置为自动-->
         <div class="col-sm-12 col-md-10 col-lg-9">
-
+            <div>
+                <p class="h5">置顶博客<span class="float-right h6">更多</span></p>
+                <hr/>
+                <p class="h6"><a href="/blog/1">标题名称</a></p>
+                创建时间：xxx  更新时间：xxx 浏览量：xxx
+                标签：xxx
+                描述：xxx
+            </div>
+            <hr/>
+            <div>
+                <p class="h5">最新博客<span class="float-right h6">更多</span></p>
+                <hr/>
+                <p class="h6"><a href="/blog/1">标题名称</a></p>
+                创建时间：xxx  更新时间：xxx 浏览量：xxx
+                标签：xxx
+                描述：xxx
+            </div>
         </div>
     </div>
 

@@ -31,6 +31,7 @@
                         <a class="dropdown-item" href="/draft">草稿</a>
                         <a class="dropdown-item" href="/todo">待办</a>
                         <a class="dropdown-item" href="/word">单词</a>
+                        <a class="dropdown-item" href="/admin">后台</a>
                     </div>
                 </div>
             </div>
