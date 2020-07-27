@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Yingjie.Lu
@@ -24,7 +23,7 @@ public class WordController {
 
     @GetMapping
     public String index(){
-        return "word";
+        return "word/index";
     }
 
     @ResponseBody
@@ -36,7 +35,7 @@ public class WordController {
 
     @GetMapping("/detail/{id}")
     public ModelAndView detail(@PathVariable int id){
-        ModelAndView mav=new ModelAndView("word_detail");
+        ModelAndView mav=new ModelAndView("word/detail");
         mav.addObject("id",id);
         return mav; //返回单词详情页
     }
