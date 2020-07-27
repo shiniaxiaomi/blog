@@ -1,6 +1,10 @@
 mybatis-plus:
   mapper-locations: classpath:mapper/*.xml
 
+logging:
+  level:
+    com.lyj.blog.mapper: debug
+
 
 spring:
   datasource:

@@ -7,23 +7,23 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
 /**
- * tag
+ * config
  * @author 
  */
 @Data
-public class Tag implements Serializable {
+public class Config implements Serializable {
     @TableId(type = IdType.AUTO)
     private Integer id;
 
     /**
-     * 标签名称
+     * 腾讯翻译secretId
      */
-    private String name;
+    private String secretId;
 
     /**
-     * 标签下的blog数量
+     * 腾讯翻译secretKey
      */
-    private Integer count;
+    private String secretKey;
 
     private static final long serialVersionUID = 1L;
 }

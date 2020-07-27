@@ -2,6 +2,7 @@ package com.lyj.blog.service;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.lyj.blog.config.LoadConfig;
 import com.lyj.blog.mapper.WordMapper;
 import com.lyj.blog.model.Word;
 import com.tencentcloudapi.common.Credential;
@@ -53,7 +54,9 @@ public class WordService {
 
         // 将结果保存到
         Word word = new Word().setName(name).setContext(JSON.toJSONString(list));
-        return wordMapper.insert(word);
+        wordMapper.insert(word);
+
+        return word.getId();
     }
 
 
@@ -126,7 +129,7 @@ public class WordService {
     public TextTranslateBatchResponse translateUtil(String source,String target,List list){
         TextTranslateBatchResponse resp=null;
         try{
-            Credential cred = new Credential("AKIDC8tPfgr8XieLm1koKfspVxc6LK4XljSF", "pRKyTYO0EtIPGQL0TfawnTzEDm5zKPEu");
+            Credential cred = new Credential(LoadConfig.getSecretId(), LoadConfig.getSecretKey());
 
             HttpProfile httpProfile = new HttpProfile();
             httpProfile.setEndpoint("tmt.tencentcloudapi.com");
@@ -160,5 +163,9 @@ public class WordService {
     public void save(int id, Integer[] index) {
         Word word = new Word().setId(id).setIndex(JSON.toJSONString(index));
         wordMapper.updateById(word);
+    }
+
+    public void delete(int id) {
+        wordMapper.deleteById(id);
     }
 }

@@ -54,11 +54,19 @@ public class WordController {
     }
 
     @ResponseBody
-    @PostMapping("/save")
-    public String save(int id,Integer[] index){
+    @PostMapping("/saveIndex")
+    public String saveIndex(int id,Integer[] index){
         wordService.save(id,index);
         return "保存成功";
     }
+
+    @ResponseBody
+    @PostMapping("/delete")
+    public String delete(int id){
+        wordService.delete(id);
+        return "删除成功";
+    }
+
 
 
 }

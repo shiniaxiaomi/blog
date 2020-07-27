@@ -89,11 +89,23 @@
         });
     }
 
+    function deleteWord(id){
+        $.post("/word/delete",{id:id},function (data,status) {
+            layer.msg(data)
+        })
+    }
+
+
     $(function () {
         $.get("/word/list",function (data,status) {
             let str="";
             for(let i=0;i<data.length;i++){
-                str+="<a href='/word/detail/"+data[i].id+"'>"+data[i].name+"</a>";
+                str+= `
+                    <div class="row justify-content-between">
+                        <a class="col-auto" href='/word/detail/`+data[i].id+`'>`+data[i].name+`</a>
+                        <a class="col-auto" href='#' onclick='deleteWord(`+data[i].id+`)'>删除</a>
+                    </div>
+                `;
             }
             $("#wordList").html(str);
         })

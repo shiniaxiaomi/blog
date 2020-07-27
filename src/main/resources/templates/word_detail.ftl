@@ -48,7 +48,7 @@
     function save(){
         $.ajax({
             type: "POST",//方法类型
-            url: "/word/save" ,//url
+            url: "/word/saveIndex" ,//url
             data: $('#form').serialize(),
             success: function(data) {
                 console.log(data)
