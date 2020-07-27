@@ -1,0 +1,26 @@
+body {
+    background-color: #f8f9fa;
+}
+
+/*图标*/
+.icon-content {
+    width: 28px;
+    height: 28px;
+    line-height: 28px;
+    font-size: 18px;
+    color: #fff;
+    background: #ccc !important;
+    border-radius: 50%;
+    display: inline-block;
+    margin: 0 8px 0 8px;
+}
+
+.icon-body {
+    width: 28px;
+    height: 28px;
+    line-height: 28px;
+    font-size: 18px;
+    display: flex;
+    align-items: center; /*定义body的元素垂直居中*/
+    justify-content: center; /*定义body的里的元素水平居中*/
+}

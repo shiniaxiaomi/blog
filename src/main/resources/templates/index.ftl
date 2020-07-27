@@ -8,23 +8,30 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
 
+    <link rel="stylesheet" href="/css/blog.css">
+
 </head>
 <body>
 
 <#--引入顶部导航栏-->
 <#include "common/nav.ftl">
+<#--引入介绍信息-->
+<#include "common/info.ftl">
+
 <@nav/>
 
 <#--主体-->
 <div class="container-xl">
     <div class="row justify-content-center">
         <!--左（简介）-->
-        <div class="col-lg-3 d-none d-lg-block" style="max-width: 255px"><!--先设置为全部尺寸隐藏，然后再设置大于lg时显示-->
-
+        <!--先设置为全部尺寸隐藏，然后再设置大于lg时显示-->
+        <div class="col-lg-3 d-none d-lg-block">
+            <@info/>
         </div>
 
         <!--中（blog）-->
-        <div class="col-sm-12 col-md-10 col-lg-9"><!--全部尺寸都设置为自动-->
+        <!--全部尺寸都设置为自动-->
+        <div class="col-sm-12 col-md-10 col-lg-9">
 
         </div>
     </div>
@@ -44,6 +51,11 @@
 <script src="/js/bootstrap.min.js"></script>
 
 <script>
+
+    $(function () {
+        //开启提示工具
+        $('[data-toggle="tooltip"]').tooltip();
+    })
 
 </script>
 
