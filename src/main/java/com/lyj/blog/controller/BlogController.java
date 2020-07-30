@@ -1,13 +1,13 @@
 package com.lyj.blog.controller;
 
+import com.lyj.blog.config.Message;
 import com.lyj.blog.model.Blog;
+import com.lyj.blog.model.User;
 import com.lyj.blog.service.BlogService;
+import com.lyj.blog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author Yingjie.Lu
@@ -21,13 +21,20 @@ public class BlogController {
     @Autowired
     BlogService blogService;
 
+
     @ResponseBody
-    @PostMapping("insert")
-    public String insert(@RequestBody Blog blog){
-        blogService.insert(blog);
-        return "添加成功";
+    @GetMapping("md")
+    public Message getMD(int id){
+        String md = blogService.getMD(id);
+        return Message.success(null,md);
     }
 
+    @ResponseBody
+    @PostMapping("update")
+    public Message update(Blog blog){
+        blogService.update(blog);
+        return Message.success("更新成功");
+    }
 
 
 

@@ -1,0 +1,20 @@
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+
+logging:
+  level:
+    com.lyj.blog.mapper: debug
+
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/blog?serverTimezone=GMT%2B8&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: 12345678
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  freemarker:
+    cache: false
+    charset: utf-8
+    content-type: text/html
+    suffix: .ftl
+    template-loader-path: classpath:templates

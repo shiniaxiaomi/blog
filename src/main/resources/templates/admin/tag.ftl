@@ -19,7 +19,7 @@
 <@nav/>
 
 <#--主体-->
-<div class="container-xl">
+<div class="container-fluid">
     <div class="row justify-content-center">
         <!--左（公共导航栏）-->
         <div class="col-2" style="max-width: 150px">
@@ -28,7 +28,7 @@
         </div>
 
         <!--中（blog）-->
-        <div class="col-10">
+        <div class="col-10" style="padding-left: 200px">
             <div>
                 <input>
                 <button>搜索</button>

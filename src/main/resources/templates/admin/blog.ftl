@@ -14,12 +14,30 @@
     <link rel="stylesheet" href="/vditor/index.css" />
     <script src="/vditor/index.min.js" defer></script>
 
-    <!--tree-->
-    <link rel="stylesheet" href="/tree/tree.min.css">
-    <script type="text/javascript" src="/tree/tree.min.js"></script>
-
     <!--icons-->
     <link rel="stylesheet" href="http://at.alicdn.com/t/font_1907545_woxoxos7lxc.css">
+
+    <link rel="stylesheet" href="/ztree/zTreeStyle.css" />
+
+
+
+    <style>
+        <#--右键菜单-->
+        div#rMenu {position:absolute; visibility:hidden; top:0; background-color: #555;text-align: left;padding: 2px;}
+        div#rMenu ul{margin: 0;padding: 0}
+        div#rMenu ul li{margin: 1px 0;padding: 0 5px;cursor: pointer;list-style: none outside none;background-color: #DFDFDF;}
+        div#rMenu ul li:hover{background-color: #dfc4a0;}
+        <#--根节点-->
+        .ztree li span.button.switch.level0 {visibility:hidden; width:1px;}
+        .ztree li ul.level0 {padding:0; background:none;}
+        <#--字体大小-->
+        .ztree *{
+            font-size: 13px;
+        }
+        <#--搜索高亮样式-->
+        .highlight_red {color:#A60000;}
+    </style>
+
 
 </head>
 <body>
@@ -36,7 +54,7 @@
 -->
 
 <#--主体-->
-<div class="container" style="max-width: 1300px">
+<div class="container-fluid" >
     <div class="row justify-content-center">
         <!--左（公共导航栏）-->
         <div class="col-2" style="max-width: 150px">
@@ -48,7 +66,13 @@
         <div class="col-10">
             <div class="row">
                 <div class="col-3">
-                    <div id="catalog"></div>
+                    <div class="form-inline">
+                        <input class="mr-2" id="searchInput">
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="searchNode()">搜索</button>
+                    </div>
+                    <div class="overflow-auto" style="height: 500px">
+                        <ul id="treeDemo" class="ztree"></ul>
+                    </div>
                 </div>
 
                 <div class="col-9">
@@ -62,86 +86,82 @@
     </div>
 </div>
 
+<div id="rMenu">
+    <ul>
+        <li id="m_add_blog" onclick="addNode('file');">增加节点</li>
+        <li id="m_add_folder" onclick="addNode('folder');">创建文件夹</li>
+        <li id="m_edit" onclick="editTreeNode();">编辑节点</li>
+        <li id="m_remove" onclick="removeTreeNode();">删除节点</li>
+    </ul>
+</div>
+
+
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <script src="/js/jquery.min.js"></script>
 <script src="/js/popper.min.js"></script>
 <script src="/js/bootstrap.min.js"></script>
 
+<script src="/layer/layer.js"></script>
+<script src="/ztree/jquery.ztree.all.min.js"></script>
+
+<script src="/js/catalog.js"></script>
+
+
 <script>
 
-    // 工具栏
-    let toolbar=[
-        {
-            name: '返回', tip: '返回', icon: '<i class="iconfont icon-fanhui1"></i>',
-            click: () => {
-                window.localStorage.setItem("needReload","true");//设置为需要刷新页面
-                window.history.back();
-            },
-        },
-        {
-            name: '编辑', tip: '编辑', icon: '<i class="iconfont icon-ai-edit"></i>',
-            click: () => {},
-        },
-        {
-            name: 'save', tip: '保存', icon: '<i class="iconfont icon-baocun"></i>',
-            click: () => {
-                saveBlog();
-            },
-        },
-        "|","outline", "insert-before","insert-after",'headings', 'link', '|',
-        'list', 'ordered-list', 'check', 'outdent', 'indent', '|',
-        'quote', 'line', 'code', 'inline-code', '|',
-        'upload', 'table', '|',
-        'undo', 'redo', '|',
-        {
-            name: 'more',
-            toolbar: [
-                'edit-mode', 'fullscreen', 'preview',
-                'export', 'bold', 'italic', 'strike', 'record'
-            ],
+    function updateBlog(){
+        console.log("保存内容");
+        console.log(zTree.getSelectedNodes()[0]!==undefined && zTree.getSelectedNodes()[0].isFolder)
+        if(zTree.getSelectedNodes()[0]===undefined || zTree.getSelectedNodes()[0].isFolder){
+            return;
         }
-    ];
-
-    $(function () {
-        // 初始化目录
-        let tree = new dhx.Tree("catalog",{
-            dragMode:"both"
-        });
-        //加载数据
-        tree.data.load("/blog/getTreeData").then(function(){
-            tree.expandAll();//展开所有节点
-        });
-        //单击编辑文件
-        tree.events.on("itemClick", function(id, e){
-            if(isDropComplete){
-                setTimeout(function () {
-                    isDropComplete=false;
-                },300);//将标志位清空
-                return;
-            }
-            tree.toggle(id);//文件夹的开合
-        });
-        //拖拽保存层级
-        tree.events.on("beforeDrop",function (toId,target,fromId) {
-            isDropComplete=true;
-            let response = $.ajax({
-                type: "post",
-                url: "/blog/update",
-                async: false,
-                data: {id:fromId,pid:toId}
-            });
-
-            if(response.status===200){
-                layer.msg("移动成功！");
-                return true;
+        $.post("/blog/update",{
+            id: zTree.getSelectedNodes()[0].blogId,
+            md: window.vditor.getValue(),
+        },function (data,status) {
+            if(status==="success" && data.code){
             }else{
-                layer.msg("移动失败！");
-                return false;
+                layer.msg("保存失败");
             }
         })
+    }
 
+    $(function () {
+        initTree(); // 初始化目录
 
+        // 工具栏
+        let toolbar=[
+            {
+                name: '返回', tip: '返回', icon: '<i class="iconfont icon-fanhui1"></i>',
+                click: () => {
+                    window.localStorage.setItem("needReload","true");//设置为需要刷新页面
+                    window.history.back();
+                },
+            },
+            {
+                name: '配置信息', tip: '编辑', icon: '<i class="iconfont icon-ai-edit"></i>',
+                click: () => {},
+            },
+            {
+                name: '保存', tip: '保存', icon: '<i class="iconfont icon-baocun"></i>',
+                click: () => {
+                    updateBlog();
+                },
+            },
+            "|","outline", "insert-before","insert-after",'headings', 'link', '|',
+            'list', 'ordered-list', 'check', 'outdent', 'indent', '|',
+            'quote', 'line', 'code', 'inline-code', '|',
+            'upload', 'table', '|',
+            'undo', 'redo', '|',
+            {
+                name: 'more',
+                toolbar: [
+                    'edit-mode', 'fullscreen', 'preview',
+                    'export', 'bold', 'italic', 'strike', 'record'
+                ],
+            }
+        ];
         // 初始化编辑器
         window.vditor = new Vditor('vditor', {
             toolbar, //配置工具栏

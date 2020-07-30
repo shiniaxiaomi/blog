@@ -1,5 +1,6 @@
 package com.lyj.blog.controller;
 
+import com.lyj.blog.config.Message;
 import com.lyj.blog.model.Word;
 import com.lyj.blog.service.WordService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +29,9 @@ public class WordController {
 
     @ResponseBody
     @PostMapping("/analyze")
-    public Integer analyze(String name,String content){
+    public Message analyze(String name, String content){
         Integer id = wordService.analyze(name, content);
-        return id; //返回id
+        return Message.success(null,id);//返回id
     }
 
     @GetMapping("/detail/{id}")
@@ -42,28 +43,30 @@ public class WordController {
 
     @ResponseBody
     @GetMapping("/content/{id}")
-    public Word content(@PathVariable int id){
-        return wordService.content(id);
+    public Message content(@PathVariable int id){
+        Word word = wordService.content(id);
+        return Message.success(null,word.getContext());
     }
 
     @ResponseBody
     @GetMapping("/list")
-    public List<Word> list(){
-        return wordService.list(); //返回id和名称
+    public Message list(){
+        List<Word> list = wordService.list();//返回id和名称
+        return Message.success(null,list);
     }
 
     @ResponseBody
     @PostMapping("/saveIndex")
-    public String saveIndex(int id,Integer[] index){
+    public Message saveIndex(int id,Integer[] index){
         wordService.save(id,index);
-        return "保存成功";
+        return Message.success("保存成功");
     }
 
     @ResponseBody
     @PostMapping("/delete")
-    public String delete(int id){
+    public Message delete(int id){
         wordService.delete(id);
-        return "删除成功";
+        return Message.success("删除成功");
     }
 
 

@@ -19,12 +19,6 @@ public class IndexController {
         return "index";
     }
 
-    @ResponseBody
-    @RequestMapping("test")
-    public String test(){
-        return "test";
-    }
-
 
 
 

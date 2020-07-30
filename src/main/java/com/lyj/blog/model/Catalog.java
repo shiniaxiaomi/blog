@@ -1,7 +1,6 @@
 package com.lyj.blog.model;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -9,46 +8,34 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
- * blog
+ * catalog
  * @author 
  */
 @Accessors(chain = true)
 @Data
-public class Blog implements Serializable  {
+public class Catalog implements Serializable {
     @TableId(type = IdType.AUTO)
     private Integer id;
 
     /**
-     * 博客名称
+     * 名称（如果是blog，需要同步去blog表更新名称）
      */
     private String name;
 
     /**
-     * 博客描述
+     * 父级的id
      */
-    private String desc;
+    private Integer pid;
 
     /**
-     * 博客md原文
+     * 是否为文件夹
      */
-    private String md;
+    private Boolean isFolder;
 
     /**
-     * 博客html
+     * 记录blog的id，如果是文件夹，则为空（这个要带给前端，点击的时候可以打开对应的blog）
      */
-    private String mdHtml;
-
-    /**
-     * 创建时间
-     */
-    private Date createTime;
-
-    private Date updateTime;
-
-    /**
-     * 是否置顶，0（false不置顶），1（true置顶）
-     */
-    private Boolean isStick;
+    private Integer blogId;
 
     private static final long serialVersionUID = 1L;
 }
