@@ -1,12 +1,11 @@
 package com.lyj.blog.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.lyj.blog.mapper.BlogMapper;
 import com.lyj.blog.model.Blog;
-import com.lyj.blog.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Yingjie.Lu
@@ -22,6 +21,9 @@ public class BlogService {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    TagService tagService;
 
     // 添加blog
     public void insert(Blog blog) {
@@ -45,5 +47,20 @@ public class BlogService {
 
     public void update(Blog blog) {
         blogMapper.updateById(blog);
+    }
+
+    public boolean getIsPrivate(int id) {
+        Blog blog = blogMapper.selectOne(new QueryWrapper<Blog>().select("is_private").eq("id", id));
+        return blog.getIsPrivate();
+    }
+
+    @Transactional
+    public void updateConfig(int id,boolean isPrivate, Integer[] tags) {
+        // 更新blog的公开状态
+        Blog blog = new Blog().setId(id).setIsPrivate(isPrivate);
+        blogMapper.updateById(blog);
+
+        // 全量的同步更新标签关联
+        tagService.updateRelation(id,tags);
     }
 }

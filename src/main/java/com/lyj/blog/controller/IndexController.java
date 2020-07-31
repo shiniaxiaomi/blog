@@ -20,6 +20,12 @@ public class IndexController {
     }
 
 
+    @RequestMapping("/test")
+    public String test(){
+        return "admin/test";
+    }
+
+
 
 
 

@@ -41,7 +41,7 @@ public class CatalogController {
         return Message.success("删除成功");
     }
 
-    // 删除文件夹或者文件
+    // 更新文件夹或者文件
     @ResponseBody
     @PostMapping("updateName")
     public Message updateName(Catalog catalog){

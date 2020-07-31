@@ -11,7 +11,10 @@
     <link rel="stylesheet" href="/css/blog.css">
 
     <style>
-
+        .fontRed{
+            color: rgb(166, 0, 0);
+            font-weight: bold;
+        }
     </style>
 
 </head>
@@ -32,17 +35,17 @@
         </div>
 
         <!--中（blog）-->
-        <div class="col-10" style="padding-left: 100px">
-            <div>
-                <input id="searchTagInput" autocomplete="off">
-                <div>
-                    <button type="button" class="btn btn-secondary btn-sm mr-1" onclick="insertTag()">添加</button>
-                    <button type="button" class="btn btn-secondary btn-sm m-1" onclick="deleteTag()">删除</button>
-                    <button type="button" class="btn btn-secondary btn-sm m-1" onclick="updateTag()">更改</button>
-                    <button type="button" class="btn btn-secondary btn-sm m-1" onclick="searchTag(originalTagData)">搜索</button>
+        <div class="col-10" style="padding-left: 200px">
+
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" id="customCheck1">
+                    <label class="custom-control-label" id="test" for="customCheck1">Check this custom checkbox</label>
                 </div>
-            </div>
-            <form id="tags" class="mt-3"></form>
+
+                <button onclick="checked()">勾选</button>
+                <button onclick="cancel()">取消</button>
+
+
         </div>
 
         <#--备案信息-->
@@ -57,23 +60,19 @@
 <script src="/js/bootstrap.min.js"></script>
 
 <script src="/layer/layer.js"></script>
-<script src="/js/tag.js"></script>
-
 
 <script>
+    function cancel(){
+        $("#customCheck1").prop('checked', false)
 
+    }
 
-
+    function checked(){
+        $("#customCheck1").prop('checked', true)
+    }
 
     $(function () {
-        // // 绑定搜索输入框的回车事件
-        // $("#searchInput").keypress(function(e) {
-        //     if (e.keyCode === 13) {
-        //         searchTag(originalTagData);
-        //     }
-        // });
-        //
-        // initTags();
+
     })
 
 </script>

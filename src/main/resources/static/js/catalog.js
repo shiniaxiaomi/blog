@@ -226,6 +226,8 @@ function addNode(type) { //[file,folder]
             let node = zTree.getNodesByParam("id", newNode.id, null)[0];
             // 设置选中节点
             zTree.selectNode(node);
+            // 加载当前选中节点的md
+            loadMD(node);
             // 默认重命名节点
             editTreeNode();
         }else{
@@ -307,3 +309,11 @@ function initTree(){
     });
 }
 
+function getSelectedBlogId() {
+    // 判断选中的不是文件夹或者是否没有选择
+    if(zTree.getSelectedNodes()===undefined || zTree.getSelectedNodes()[0]===undefined || zTree.getSelectedNodes()[0].isFolder){
+        layer.msg('请选择对应的blog');
+        throw new Error( '请选择对应的blog' );
+    }
+    return zTree.getSelectedNodes()[0].blogId;
+}

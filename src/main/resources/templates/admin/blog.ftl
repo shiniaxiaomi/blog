@@ -67,7 +67,7 @@
             <div class="row">
                 <div class="col-3">
                     <div class="form-inline">
-                        <input class="mr-2" id="searchInput">
+                        <input class="mr-2" id="searchInput" autocomplete="off">
                         <button type="button" class="btn btn-secondary btn-sm" onclick="searchNode()">搜索</button>
                     </div>
                     <div class="overflow-auto" style="height: 500px">
@@ -83,6 +83,50 @@
 
         <#--备案信息-->
         <@record/>
+    </div>
+</div>
+
+<div class="modal fade" id="configModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">配置博客信息</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="configForm" onsubmit="return false;">
+                    <div class="form-group row">
+                        <label for="recipient-name" class="col-2 col-form-label">共享</label>
+                        <div class="ml-3 form-check-inline col">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="isPrivate" id="radio1" value="0">
+                                <label class="form-check-label" for="radio1">公有</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="isPrivate" id="radio2" value="1">
+                                <label class="form-check-label" for="radio2">私有</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="message-text" class="col-2 col-form-label">标签</label>
+                        <div class="col">
+                            <div class="form-inline">
+                                <input id="searchTagInput" autocomplete="off">
+                                <button type="button" class="btn btn-secondary btn-sm m-1" onclick="searchTag(originalTagData)">搜索</button>
+                            </div>
+                            <div id="tags"></div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick="saveConfig()">保存</button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -106,9 +150,19 @@
 <script src="/ztree/jquery.ztree.all.min.js"></script>
 
 <script src="/js/catalog.js"></script>
+<script src="/js/tag.js"></script>
 
 
 <script>
+
+    function saveConfig() {
+        $.post("/blog/config",$("#configForm").serialize()+"&id="+getSelectedBlogId(),function (data,status) {
+            if(status==="success" && data.code){
+                layer.msg("保存成功");
+                $("#configModal").modal("hide");
+            }
+        })
+    }
 
     function updateBlog(){
         console.log("保存内容");
@@ -127,8 +181,43 @@
         })
     }
 
+    // 加载blog相关的配置
+    function loadConfig() {
+        // 清空选中
+        $("#radio1").prop('checked', false);
+        $("#radio2").prop('checked', false);
+        for(let i=0;i<originalTagData.length;i++){
+            $("#"+originalTagData[i].id).prop('checked', false);
+        }
+
+        // 根据blogId请求blog信息，获取是否私有和其关联的tag，并自动进行勾选操作
+        $.get("/blog/config?id="+getSelectedBlogId(),function (data,status) {
+            if(status==="success" && data.code) {
+                // 设置私有选中
+                if(data.data.isPrivate){
+                    $("#radio2").prop('checked', true);
+                }else{ //设置公有选中
+                    $("#radio1").prop('checked', true);
+                }
+                // 设置tag选中
+                let tagIds = data.data.checkedTagIds;
+                for(let i=0;i<tagIds.length;i++){
+                    $("#"+tagIds[i]).prop('checked', true);
+                }
+            }
+        })
+    }
+
+    //关闭和刷新页面时自动保存
+    window.onbeforeunload = function (e) {
+        window.localStorage.setItem("needReload","true");//设置为需要刷新页面
+        updateBlog();//自动保存
+    };
+
     $(function () {
+
         initTree(); // 初始化目录
+        initTags(); // 初始化标签
 
         // 工具栏
         let toolbar=[
@@ -141,7 +230,11 @@
             },
             {
                 name: '配置信息', tip: '编辑', icon: '<i class="iconfont icon-ai-edit"></i>',
-                click: () => {},
+                click: () => {
+                    loadConfig();// 加载对应的blog配置
+                    resetTags();// 清除掉搜索高亮
+                    $('#configModal').modal("show");
+                },
             },
             {
                 name: '保存', tip: '保存', icon: '<i class="iconfont icon-baocun"></i>',
