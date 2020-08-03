@@ -22,12 +22,19 @@
                 <a class="nav-link" href="/aboutMe">关于</a>
                 <a class="nav-link" href="#" data-toggle="modal" data-target="#createBlogModal" onclick="selectBlog()">目录</a>
                 <a class="nav-link" href="#" data-toggle="modal" data-target="#createTagModal">标签</a>
-
                 <div class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" href="#" id="ToolMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        工具
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="toolDropdownMenuLink">
+                        <a class="dropdown-item" href="/tool/regular">正则表达式</a>
+                    </div>
+                </div>
+                <div class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="moreDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         更多
                     </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <div class="dropdown-menu" aria-labelledby="moreDropdownMenuLink">
                         <a class="dropdown-item" href="/draft">草稿</a>
                         <a class="dropdown-item" href="/todo">待办</a>
                         <a class="dropdown-item" href="/word">单词</a>

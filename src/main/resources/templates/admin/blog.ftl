@@ -1,25 +1,21 @@
 <!doctype html>
 <html lang="en">
-<head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
-
-    <link rel="stylesheet" href="/css/blog.css">
-
+<#include "../common/head.ftl">
+<@head>
     <!-- vditor -->
-    <link rel="stylesheet" href="/vditor/index.css" />
-    <script src="/vditor/index.min.js" defer></script>
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.4.1/dist/index.css" />
+    <script src="https://cdn.jsdelivr.net/npm/vditor@3.4.1/dist/index.min.js" defer></script>
     <!--icons-->
     <link rel="stylesheet" href="http://at.alicdn.com/t/font_1907545_woxoxos7lxc.css">
-
+    <!--ztree-->
     <link rel="stylesheet" href="/ztree/zTreeStyle.css" />
 
+    <!--相关js-->
+    <script src="/layer/layer.js"></script>
+    <script src="/ztree/jquery.ztree.all.min.js"></script>
 
+    <script src="/js/catalog.js"></script>
+    <script src="/js/tag.js"></script>
 
     <style>
         <#--右键菜单-->
@@ -37,54 +33,44 @@
         <#--搜索高亮样式-->
         .highlight_red {color:#A60000;}
     </style>
+</@head>
+<#include "../common/body.ftl">
+<@body>
+    <#--index页面默认就是展示blog的页面
+    左右结构
+    左边是简单的目录，可以增删查改（类似于简单的文件夹操作，新建后，右边就是空白的，可以直接进行编辑）
+    右边是博客的编辑区域把
+    -->
+    <#--主体-->
+    <div class="container-fluid" >
+        <div class="row justify-content-center">
+            <!--左（公共导航栏）-->
+            <div class="col-2" style="max-width: 150px">
+                <a class="d-block mb-2" href="/admin/blog">博客目录</a>
+                <a class="d-block mb-2" href="/admin/tag">标签管理</a>
+            </div>
 
-
-</head>
-<body>
-
-<#--引入顶部导航栏-->
-<#include "../common/nav.ftl">
-<#include "../common/record.ftl">
-<@nav/>
-
-<#--index页面默认就是展示blog的页面
-左右结构
-左边是简单的目录，可以增删查改（类似于简单的文件夹操作，新建后，右边就是空白的，可以直接进行编辑）
-右边是博客的编辑区域把
--->
-
-<#--主体-->
-<div class="container-fluid" >
-    <div class="row justify-content-center">
-        <!--左（公共导航栏）-->
-        <div class="col-2" style="max-width: 150px">
-            <a class="d-block mb-2" href="/admin/blog">博客目录</a>
-            <a class="d-block mb-2" href="/admin/tag">标签管理</a>
-        </div>
-
-        <!--中（blog）-->
-        <div class="col-10">
-            <div class="row">
-                <div class="col-3">
-                    <div class="form-inline">
-                        <input class="mr-2" id="searchInput" autocomplete="off">
-                        <button type="button" class="btn btn-secondary btn-sm" onclick="searchNode()">搜索</button>
+            <!--中（blog）-->
+            <div class="col-10">
+                <div class="row">
+                    <div class="col-3">
+                        <div class="form-inline">
+                            <input class="mr-2" id="searchInput" autocomplete="off">
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="searchNode()">搜索</button>
+                        </div>
+                        <div class="overflow-auto" style="height: 500px">
+                            <ul id="treeDemo" class="ztree"></ul>
+                        </div>
                     </div>
-                    <div class="overflow-auto" style="height: 500px">
-                        <ul id="treeDemo" class="ztree"></ul>
-                    </div>
-                </div>
 
-                <div class="col-9">
-                    <div id="vditor"></div>
+                    <div class="col-9">
+                        <div id="vditor"></div>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <#--备案信息-->
-        <@record/>
     </div>
-</div>
+</@body>
 
 <div class="modal fade" id="configModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -138,19 +124,7 @@
         <li id="m_remove" onclick="removeTreeNode();">删除节点</li>
     </ul>
 </div>
-
-
-<!-- Optional JavaScript -->
-<!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<script src="/js/jquery.min.js"></script>
-<script src="/js/popper.min.js"></script>
-<script src="/js/bootstrap.min.js"></script>
-
-<script src="/layer/layer.js"></script>
-<script src="/ztree/jquery.ztree.all.min.js"></script>
-
-<script src="/js/catalog.js"></script>
-<script src="/js/tag.js"></script>
+</html>
 
 
 <script>
@@ -164,7 +138,7 @@
         })
     }
 
-    function updateBlog(){
+    function updateBlog(tip){
         console.log("保存内容");
         console.log(zTree.getSelectedNodes()[0]!==undefined && zTree.getSelectedNodes()[0].isFolder)
         if(zTree.getSelectedNodes()[0]===undefined || zTree.getSelectedNodes()[0].isFolder){
@@ -175,6 +149,9 @@
             md: window.vditor.getValue(),
         },function (data,status) {
             if(status==="success" && data.code){
+                if(tip!==undefined){
+                    layer.msg("保存成功");
+                }
             }else{
                 layer.msg("保存失败");
             }
@@ -222,14 +199,14 @@
         // 工具栏
         let toolbar=[
             {
-                name: '返回', tip: '返回', icon: '<i class="iconfont icon-fanhui1"></i>',
+                name: '返回', tip: '返回', icon: '<i class="iconfont icon-fanhui1"></i>',tipPosition: 's',
                 click: () => {
                     window.localStorage.setItem("needReload","true");//设置为需要刷新页面
                     window.history.back();
                 },
             },
             {
-                name: '配置信息', tip: '编辑', icon: '<i class="iconfont icon-ai-edit"></i>',
+                name: '配置信息', tip: '编辑', icon: '<i class="iconfont icon-ai-edit"></i>',tipPosition: 's',
                 click: () => {
                     loadConfig();// 加载对应的blog配置
                     resetTags();// 清除掉搜索高亮
@@ -237,9 +214,9 @@
                 },
             },
             {
-                name: '保存', tip: '保存', icon: '<i class="iconfont icon-baocun"></i>',
+                name: '保存', tip: '保存', icon: '<i class="iconfont icon-baocun"></i>',tipPosition: 's',
                 click: () => {
-                    updateBlog();
+                    updateBlog("tip");
                 },
             },
             "|","outline", "insert-before","insert-after",'headings', 'link', '|',
@@ -286,11 +263,24 @@
                     replace('/\\s/g', '')
                 },
             },
+            after(){
+                // 初始化后修改工具栏的提示位置
+                $(".vditor-toolbar__item").each(function () {
+                    let item = $(this).children().eq(0);
+                    if(item.hasClass("vditor-tooltipped__nw")){
+                        item.removeClass("vditor-tooltipped__nw");
+                        item.addClass("vditor-tooltipped__sw");
+                    }else if(item.hasClass("vditor-tooltipped__n")){
+                        item.removeClass("vditor-tooltipped__n");
+                        item.addClass("vditor-tooltipped__s");
+                    }else if(item.hasClass("vditor-tooltipped__ne")){
+                        item.removeClass("vditor-tooltipped__ne");
+                        item.addClass("vditor-tooltipped__se");
+                    }
+                })
+            },
         })
+
     })
 
 </script>
-
-
-</body>
-</html>

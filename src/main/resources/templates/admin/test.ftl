@@ -1,82 +1,80 @@
 <!doctype html>
 <html lang="en">
-<head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
-
-    <link rel="stylesheet" href="/css/blog.css">
-
+<#include "../common/head.ftl">
+<@head>
+    <!-- vditor -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.4.1/dist/index.css" />
+    <script src="https://cdn.jsdelivr.net/npm/vditor@3.4.1/dist/index.min.js" defer></script>
+    <!-- layer -->
+    <script src="/layer/layer.js"></script>
     <style>
         .fontRed{
             color: rgb(166, 0, 0);
             font-weight: bold;
         }
     </style>
+</@head>
+<#include "../common/body.ftl">
+<@body>
+    <#--主体-->
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <!--左（公共导航栏）-->
+            <div class="col-2" style="max-width: 150px">
+                <div id="toc"></div>
+            </div>
 
-</head>
-<body>
-
-<#--引入顶部导航栏-->
-<#include "../common/nav.ftl">
-<#include "../common/record.ftl">
-<@nav/>
-
-<#--主体-->
-<div class="container-fluid">
-    <div class="row justify-content-center">
-        <!--左（公共导航栏）-->
-        <div class="col-2" style="max-width: 150px">
-            <a class="d-block mb-2" href="/admin/blog">博客目录</a>
-            <a class="d-block mb-2" href="/admin/tag">标签管理</a>
-        </div>
-
-        <!--中（blog）-->
-        <div class="col-10" style="padding-left: 200px">
-
-                <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" id="customCheck1">
-                    <label class="custom-control-label" id="test" for="customCheck1">Check this custom checkbox</label>
+            <!--中（blog）-->
+            <div class="col-10" style="padding-left: 200px">
+                <button onclick="hideAll()">隐藏所有</button>
+                <button onclick="showAll()">显示所有</button>
+                <div id="vditor" class="vditor-reset">
+                    jdskfjdskfjdkfjsk
                 </div>
-
-                <button onclick="checked()">勾选</button>
-                <button onclick="cancel()">取消</button>
-
-
+            </div>
         </div>
-
-        <#--备案信息-->
-        <@record/>
     </div>
-</div>
-
-<!-- Optional JavaScript -->
-<!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<script src="/js/jquery.min.js"></script>
-<script src="/js/popper.min.js"></script>
-<script src="/js/bootstrap.min.js"></script>
-
-<script src="/layer/layer.js"></script>
+</@body>
+</html>
 
 <script>
-    function cancel(){
-        $("#customCheck1").prop('checked', false)
 
+    function hideAll(){
+        let detail = $("#vditor detail");
+        detail.css("display","none");
+        detail.each(function(){
+            if(!$(this).next().hasClass("tip")){
+                $(this).after("<span class='tip'>隐藏了细节,点击标题展示细节</span>");
+            }
+        });
     }
 
-    function checked(){
-        $("#customCheck1").prop('checked', true)
+    function showAll(){
+        $("#vditor detail").css("display","inline");
+        $("#vditor .tip").remove();
     }
 
     $(function () {
+        Vditor.highlightRender({
+            lineNumber:true
+        },document.getElementById("vditor"));//渲染代码高亮
+        Vditor.codeRender(document.getElementById("vditor"));//渲染代码复制按钮
+        Vditor.outlineRender(document.getElementById("vditor"), document.getElementById("toc"));//生成toc目录
 
+        //查找h1-h6,并添加点击隐藏或显示内容的功能
+        $("#vditor :header").each(function(){
+            $(this).click(function () {
+                let next = $(this).next();
+                next.toggle();//展示或隐藏内容
+                // 显示提示字符
+                if(next.css("display")==="none"){
+                    next.after("<span class='tip'>隐藏了细节,点击标题展示细节</span>");
+                }else if(next.css("display")==="inline"){
+                    if(next.next().hasClass("tip")){
+                        next.next().remove();
+                    }
+                }
+            });
+        });
     })
-
 </script>
-
-
-</body>
-</html>

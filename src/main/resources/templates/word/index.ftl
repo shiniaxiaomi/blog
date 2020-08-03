@@ -1,79 +1,54 @@
 <!doctype html>
 <html lang="en">
-<head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<#include "../common/head.ftl">
+<@head>
+    <script src="/layer/layer.js"></script>
+</@head>
+<#include "../common/body.ftl">
+<@body>
+    <#--主体-->
+    <div class="container-xl">
+        <div class="row justify-content-center">
+            <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home"
+                       role="tab" aria-controls="pills-home" aria-selected="true">分析</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#wordList"
+                       role="tab" aria-controls="wordList" aria-selected="false">查看</a>
+                </li>
+            </ul>
+        </div>
+        <div class="row justify-content-center">
+            <div class="tab-content" id="pills-tabContent">
+                <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+                    <#--表单提交-->
+                    <form id="form" class="was-validated" onsubmit="analyze();return false;">
+                        <div class="form-row">
+                            <label for="name" class="col-form-label">文件名称</label>
+                            <input class="form-control is-valid" name="name" required>
+                            <label for="content" class="col-form-label">解析内容</label>
+                            <textarea name="content" class="form-control is-valid" required
+                                      style="height: 300px"></textarea>
+                        </div>
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
+                        <div class="form-row justify-content-center mt-3">
+                            <button class="btn btn-primary" type="submit">提交</button>
+                        </div>
+                    </form>
 
-</head>
-<body>
+                </div>
+                <div id="wordList" class="tab-pane fade" role="tabpanel" aria-labelledby="pills-profile-tab">
 
-<#--引入顶部导航栏-->
-<#include "../common/nav.ftl">
-<@nav/>
-
-<#--主体-->
-<div class="container-xl">
-
-    <div class="row justify-content-center">
-        <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-            <li class="nav-item">
-                <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home"
-                   role="tab" aria-controls="pills-home" aria-selected="true">分析</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#wordList"
-                   role="tab" aria-controls="wordList" aria-selected="false">查看</a>
-            </li>
-        </ul>
-    </div>
-    <div class="row justify-content-center">
-        <div class="tab-content" id="pills-tabContent">
-            <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
-                <#--表单提交-->
-                <form id="form" class="was-validated" onsubmit="analyze();return false;">
-                    <div class="form-row">
-                        <label for="name" class="col-form-label">文件名称</label>
-                        <input class="form-control is-valid" name="name" required>
-                        <label for="content" class="col-form-label">解析内容</label>
-                        <textarea name="content" class="form-control is-valid" required
-                                  style="height: 300px"></textarea>
-                    </div>
-
-                    <div class="form-row justify-content-center mt-3">
-                        <button class="btn btn-primary" type="submit">提交</button>
-                    </div>
-                </form>
-
-            </div>
-            <div id="wordList" class="tab-pane fade" role="tabpanel" aria-labelledby="pills-profile-tab">
-
+                </div>
             </div>
         </div>
     </div>
-
-
-
-
-    <#--备案号-->
-    <div class="m-3 text-center">
-        <a href="http://www.beian.miit.gov.cn" class="text-muted text-decoration-none">ICP证 : 浙ICP备18021271号</a>
-    </div>
-</div>
-
-<!-- Optional JavaScript -->
-<!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<script src="/js/jquery.min.js"></script>
-<script src="/js/popper.min.js"></script>
-<script src="/js/bootstrap.min.js"></script>
-
-<script src="/layer/layer.js"></script>
+</@body>
+</html>
 
 <script>
-
     function analyze() {
         $.ajax({
             type: "POST",//方法类型
@@ -95,7 +70,6 @@
         })
     }
 
-
     $(function () {
         $.get("/word/list",function (data,status) {
             let str="";
@@ -110,9 +84,4 @@
             $("#wordList").html(str);
         })
     })
-
 </script>
-
-
-</body>
-</html>
