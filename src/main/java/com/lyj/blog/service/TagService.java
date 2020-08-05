@@ -88,4 +88,14 @@ public class TagService {
         blogTagRelationService.insertBatch(blogId,insertList);
 
     }
+
+    public String selectTagNameByBlogId(Integer blogId) {
+        List<String> tagNames = tagMapper.selectTagNameByBlogId(blogId);
+        StringBuilder sb = new StringBuilder();
+        for (String tagName : tagNames) {
+            sb.append(tagName);
+            sb.append(",");
+        }
+        return sb.toString();
+    }
 }

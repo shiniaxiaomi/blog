@@ -28,6 +28,7 @@ public class Blog implements Serializable  {
     /**
      * 博客描述
      */
+    @TableField("`desc`")
     private String desc;
 
     /**
