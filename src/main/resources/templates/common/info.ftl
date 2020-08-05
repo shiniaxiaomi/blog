@@ -1,9 +1,9 @@
 <#--定义博客右侧的介绍信息-->
 
 <#macro info>
-    <div class="bg-white shadow-lg rounded text-center" style="max-width: 255px">
+    <div class="bg-white shadow-lg rounded text-center sticky-top" style="max-width: 255px;top: 90px;z-index: 1000">
         <#--介绍-->
-        <img class="rounded-circle" src="/img/myself.jpg">
+        <img class="rounded-circle mt-4 mb-2" src="/img/myself.jpg">
         <p >是你啊小米</p>
         <p class="text-muted">专注于Java后端开发</p>
         <div>

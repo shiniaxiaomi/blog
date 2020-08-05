@@ -3,4 +3,10 @@
 <mapper namespace="com.lyj.blog.mapper.TagMapper">
 
 
+    <select id="selectTagNameByBlogId" resultType="java.lang.String">
+        select tag.name
+        from tag
+                 left join blog_tag_relation btr on tag.id = btr.tag_id
+        where btr.blog_id = #{blogId}
+    </select>
 </mapper>

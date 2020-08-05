@@ -28,6 +28,7 @@
                     </a>
                     <div class="dropdown-menu" aria-labelledby="toolDropdownMenuLink">
                         <a class="dropdown-item" href="/tool/regular">正则表达式</a>
+                        <a class="dropdown-item" href="/word">单词</a>
                     </div>
                 </div>
                 <div class="nav-item dropdown">
@@ -37,15 +38,14 @@
                     <div class="dropdown-menu" aria-labelledby="moreDropdownMenuLink">
                         <a class="dropdown-item" href="/draft">草稿</a>
                         <a class="dropdown-item" href="/todo">待办</a>
-                        <a class="dropdown-item" href="/word">单词</a>
                         <a class="dropdown-item" href="/admin">后台</a>
                     </div>
                 </div>
             </div>
 
             <#--搜索框-->
-            <form class="form-inline my-2 my-lg-0" action="/searchMore">
-                <input id="keywordInput" name="blogName" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+            <form class="form-inline my-2 my-lg-0" method="get" action="/blog/search/index">
+                <input id="keywordInput" name="keyword" autocomplete="off" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
             </form>
         </div>

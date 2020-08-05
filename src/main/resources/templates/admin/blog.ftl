@@ -1,6 +1,9 @@
 <!doctype html>
 <html lang="en">
 <#include "../common/head.ftl">
+<#include "../common/body.ftl">
+<#include "../common/left.ftl">
+<#include "../common/right.ftl">
 <@head>
     <!-- vditor -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.4.1/dist/index.css" />
@@ -35,41 +38,28 @@
     </style>
 </@head>
 <#include "../common/body.ftl">
-<@body>
-    <#--index页面默认就是展示blog的页面
-    左右结构
-    左边是简单的目录，可以增删查改（类似于简单的文件夹操作，新建后，右边就是空白的，可以直接进行编辑）
-    右边是博客的编辑区域把
-    -->
-    <#--主体-->
-    <div class="container-fluid" >
-        <div class="row justify-content-center">
-            <!--左（公共导航栏）-->
-            <div class="col-2" style="max-width: 150px">
-                <a class="d-block mb-2" href="/admin/blog">博客目录</a>
-                <a class="d-block mb-2" href="/admin/tag">标签管理</a>
-            </div>
-
-            <!--中（blog）-->
-            <div class="col-10">
-                <div class="row">
-                    <div class="col-3">
-                        <div class="form-inline">
-                            <input class="mr-2" id="searchInput" autocomplete="off">
-                            <button type="button" class="btn btn-secondary btn-sm" onclick="searchNode()">搜索</button>
-                        </div>
-                        <div class="overflow-auto" style="height: 500px">
-                            <ul id="treeDemo" class="ztree"></ul>
-                        </div>
-                    </div>
-
-                    <div class="col-9">
-                        <div id="vditor"></div>
-                    </div>
+<@body class="container-fluid">
+    <@left class="col-2" style="max-width: 150px">
+        <a class="d-block mb-2" href="/admin/blog">博客目录</a>
+        <a class="d-block mb-2" href="/admin/tag">标签管理</a>
+    </@left>
+    <@right class="col-10">
+        <div class="row">
+            <div class="col-3">
+                <div class="form-inline">
+                    <input class="mr-2" id="searchInput" autocomplete="off">
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="searchNode()">搜索</button>
+                </div>
+                <div class="overflow-auto" style="height: 500px">
+                    <ul id="treeDemo" class="ztree"></ul>
                 </div>
             </div>
+
+            <div class="col-9">
+                <div id="vditor"></div>
+            </div>
         </div>
-    </div>
+    </@right>
 </@body>
 
 <div class="modal fade" id="configModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -139,6 +129,12 @@
     }
 
     function updateBlog(tip){
+        // 如果没有修改，则不保存
+        if(!isEdit){
+            return;
+        }
+        // 如果修改了，将修改状态设置为false
+        isEdit=false;
         console.log("保存内容");
         console.log(zTree.getSelectedNodes()[0]!==undefined && zTree.getSelectedNodes()[0].isFolder)
         if(zTree.getSelectedNodes()[0]===undefined || zTree.getSelectedNodes()[0].isFolder){
@@ -191,6 +187,8 @@
         updateBlog();//自动保存
     };
 
+    let isEdit=false;
+
     $(function () {
 
         initTree(); // 初始化目录
@@ -237,7 +235,7 @@
             toolbar, //配置工具栏
             height: window.innerHeight*0.8, //设置高度
             width:"100%",
-            outline: false, //开启大纲
+            outline: "${blogId!"null"}"==="null"?false:true, //开启大纲
             value:'',//编辑器初始化值(这里的内容只能存放markdown，不能存放html)
             placeholder: '', //内容为空时的提示
             toolbarConfig: {
@@ -263,6 +261,11 @@
                     replace('/\\s/g', '')
                 },
             },
+            input(){ //每次输入都会触发
+                if(!isEdit){
+                    isEdit=true;
+                }
+            },
             after(){
                 // 初始化后修改工具栏的提示位置
                 $(".vditor-toolbar__item").each(function () {
@@ -278,6 +281,25 @@
                         item.addClass("vditor-tooltipped__se");
                     }
                 })
+
+                //==========编辑时锚点的跳转==============
+                // 编辑对应的blogId
+                let blogId=${blogId!"null"};
+                if(blogId!=="null"){
+                    // 让左侧的菜单选中
+                    let node = zTree.getNodeByParam("blogId", blogId, null);
+                    zTree.selectNode(node);
+                    // 加载md内容
+                    loadMD(node);
+                    // 跳转到对应的锚点
+                    setTimeout(function () {
+                        if(location.hash!==""){
+                            let hash = "ir-"+decodeURI(location.hash).substr(1).replace(/[.*|+=\-()]/g,"-");
+                            console.log(hash)
+                            $("#vditor .vditor-outline__content div[data-id^="+hash+"]").click();//刷新页面锚点
+                        }
+                    },250);
+                }
             },
         })
 

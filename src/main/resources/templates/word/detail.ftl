@@ -1,21 +1,19 @@
 <!doctype html>
 <html lang="en">
 <#include "../common/head.ftl">
+<#include "../common/body.ftl">
+<#include "../common/right.ftl">
 <@head>
     <script src="/layer/layer.js"></script>
 </@head>
-<#include "../common/body.ftl">
 <@body>
-    <#--主体-->
-    <div class="container-xl">
-        <div class="row justify-content-center">
-            <form id="form" onsubmit="save();return false;">
-                <button class="btn btn-primary" type="submit">提交</button>
-                <input hidden name="id" value="${id!0}">
-                <div id="content"></div>
-            </form>
-        </div>
-    </div>
+    <@right>
+        <form id="form" onsubmit="save();return false;">
+            <button class="btn btn-primary" type="submit">提交</button>
+            <input hidden name="id" value="${id!0}">
+            <div id="content"></div>
+        </form>
+    </@right>
 </@body>
 </html>
 

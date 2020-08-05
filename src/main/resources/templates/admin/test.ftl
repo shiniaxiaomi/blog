@@ -1,6 +1,9 @@
 <!doctype html>
 <html lang="en">
 <#include "../common/head.ftl">
+<#include "../common/body.ftl">
+<#include "../common/left.ftl">
+<#include "../common/right.ftl">
 <@head>
     <!-- vditor -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.4.1/dist/index.css" />
@@ -14,26 +17,17 @@
         }
     </style>
 </@head>
-<#include "../common/body.ftl">
 <@body>
-    <#--主体-->
-    <div class="container-fluid">
-        <div class="row justify-content-center">
-            <!--左（公共导航栏）-->
-            <div class="col-2" style="max-width: 150px">
-                <div id="toc"></div>
-            </div>
-
-            <!--中（blog）-->
-            <div class="col-10" style="padding-left: 200px">
-                <button onclick="hideAll()">隐藏所有</button>
-                <button onclick="showAll()">显示所有</button>
-                <div id="vditor" class="vditor-reset">
-                    jdskfjdskfjdkfjsk
-                </div>
-            </div>
+    <@left class="col-2" style="max-width: 150px">
+        <div id="toc"></div>
+    </@left>
+    <@right class="col-10" style="padding-left: 200px">
+        <button onclick="hideAll()">隐藏所有</button>
+        <button onclick="showAll()">显示所有</button>
+        <div id="vditor" class="vditor-reset">
+            jdskfjdskfjdkfjsk
         </div>
-    </div>
+    </@right>
 </@body>
 </html>
 
