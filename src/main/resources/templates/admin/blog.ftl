@@ -74,6 +74,19 @@
             <div class="modal-body">
                 <form id="configForm" onsubmit="return false;">
                     <div class="form-group row">
+                        <label for="recipient-name" class="col-2 col-form-label">状态</label>
+                        <div class="ml-3 form-check-inline col">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="isStick" id="radio3" value="1">
+                                <label class="form-check-label" for="radio3">置顶</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="isStick" id="radio4" value="0">
+                                <label class="form-check-label" for="radio4">不置顶</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
                         <label for="recipient-name" class="col-2 col-form-label">共享</label>
                         <div class="ml-3 form-check-inline col">
                             <div class="form-check form-check-inline">
@@ -136,13 +149,15 @@
         // 如果修改了，将修改状态设置为false
         isEdit=false;
         console.log("保存内容");
-        console.log(zTree.getSelectedNodes()[0]!==undefined && zTree.getSelectedNodes()[0].isFolder)
+        // console.log(zTree.getSelectedNodes()[0]!==undefined && zTree.getSelectedNodes()[0].isFolder);
         if(zTree.getSelectedNodes()[0]===undefined || zTree.getSelectedNodes()[0].isFolder){
             return;
         }
+        let mdValue = window.vditor.getValue();
         $.post("/blog/update",{
             id: zTree.getSelectedNodes()[0].blogId,
-            md: window.vditor.getValue(),
+            md: mdValue,
+            desc: lute.Md2HTML((mdValue.substr(0,200)+"...").replace(/#.*/g,""))
         },function (data,status) {
             if(status==="success" && data.code){
                 if(tip!==undefined){
@@ -159,6 +174,8 @@
         // 清空选中
         $("#radio1").prop('checked', false);
         $("#radio2").prop('checked', false);
+        $("#radio3").prop('checked', false);
+        $("#radio4").prop('checked', false);
         for(let i=0;i<originalTagData.length;i++){
             $("#"+originalTagData[i].id).prop('checked', false);
         }
@@ -171,6 +188,12 @@
                     $("#radio2").prop('checked', true);
                 }else{ //设置公有选中
                     $("#radio1").prop('checked', true);
+                }
+                // 设置置顶状态
+                if(data.data.isStick){
+                    $("#radio3").prop('checked', true);
+                }else{
+                    $("#radio4").prop('checked', true);
                 }
                 // 设置tag选中
                 let tagIds = data.data.checkedTagIds;
@@ -188,6 +211,7 @@
     };
 
     let isEdit=false;
+    let lute;
 
     $(function () {
 
@@ -200,7 +224,10 @@
                 name: '返回', tip: '返回', icon: '<i class="iconfont icon-fanhui1"></i>',tipPosition: 's',
                 click: () => {
                     window.localStorage.setItem("needReload","true");//设置为需要刷新页面
-                    window.history.back();
+                    updateBlog();//自动保存
+                    setTimeout(function () {
+                        window.history.back();
+                    },250);
                 },
             },
             {
@@ -214,6 +241,8 @@
             {
                 name: '保存', tip: '保存', icon: '<i class="iconfont icon-baocun"></i>',tipPosition: 's',
                 click: () => {
+                    // 当点击保存按钮时，无论是否修改，都进行保存
+                    isEdit=true;
                     updateBlog("tip");
                 },
             },
@@ -251,14 +280,27 @@
             tab: '    ',//设置tab键为4个空格
             //图片上传
             upload: {
-                accept: 'image/*,.mp3, .wav, .rar',
-                token: 'test',
-                url: '/api/upload/editor',
-                linkToImgUrl: '/api/upload/fetch',
+                url: '/blog/upload',
+                // 文件名安全处理
                 filename (name) {
                     return name.replace(/[^(a-zA-Z0-9\u4e00-\u9fa5\.)]/g, '').
                     replace(/[\?\\/:|<>\*\[\]\(\)\$%\{\}@~]/g, '').
                     replace('/\\s/g', '')
+                },
+                success(editor,msg){
+                    let data = JSON.parse(msg);
+                    window.vditor.tip(data.msg, 1000);
+                    if(data.data.isImg){
+                        // 插入图片链接
+                        vditor.insertValue("!["+data.data.fileName+"](/file/"+data.data.fileName+")\n");
+                    }else{
+                        // 插入超链接
+                        vditor.insertValue("["+data.data.fileName+"](/file/"+data.data.fileName+")");
+                    }
+                },
+                error(msg){
+                    let data = JSON.parse(msg);
+                    window.vditor.tip(data.msg, 2000);
                 },
             },
             input(){ //每次输入都会触发
@@ -280,25 +322,29 @@
                         item.removeClass("vditor-tooltipped__ne");
                         item.addClass("vditor-tooltipped__se");
                     }
-                })
+                });
+
+                lute=Lute.New();//初始化md解析器
 
                 //==========编辑时锚点的跳转==============
                 // 编辑对应的blogId
                 let blogId=${blogId!"null"};
                 if(blogId!=="null"){
-                    // 让左侧的菜单选中
-                    let node = zTree.getNodeByParam("blogId", blogId, null);
-                    zTree.selectNode(node);
-                    // 加载md内容
-                    loadMD(node);
-                    // 跳转到对应的锚点
                     setTimeout(function () {
-                        if(location.hash!==""){
-                            let hash = "ir-"+decodeURI(location.hash).substr(1).replace(/[.*|+=\-()]/g,"-");
-                            console.log(hash)
-                            $("#vditor .vditor-outline__content div[data-id^="+hash+"]").click();//刷新页面锚点
-                        }
-                    },250);
+                        // 让左侧的菜单选中
+                        let node = zTree.getNodeByParam("blogId", blogId, null);
+                        zTree.selectNode(node);
+                        // 加载md内容
+                        loadMD(node);
+                        // 跳转到对应的锚点
+                        setTimeout(function () {
+                            if(location.hash!==""){
+                                let hash = "ir-"+decodeURI(location.hash).substr(1).replace(/[.*|+=\-()]/g,"-");
+                                console.log(hash)
+                                $("#vditor .vditor-outline__content div[data-id^="+hash+"]").click();//刷新页面锚点
+                            }
+                        },150);
+                    },100)
                 }
             },
         })

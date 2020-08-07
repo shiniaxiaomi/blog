@@ -1,11 +1,12 @@
 <!doctype html>
 <html lang="en">
-<#include "common/head.ftl">
-<#include "common/body.ftl">
-<#include "common/left.ftl">
-<#include "common/right.ftl">
-<#include "common/info.ftl">
-<#include "common/item.ftl">
+<#include "../common/head.ftl">
+<#include "../common/body.ftl">
+<#include "../common/left.ftl">
+<#include "../common/right.ftl">
+<#include "../common/info.ftl">
+<#include "../common/item.ftl">
+<#include "../common/page.ftl">
 <@head>
     <link rel="stylesheet" href="/vditor/index.css"/>
     <style>
@@ -44,18 +45,13 @@
     <@right class="col-sm-12 col-md-10 col-lg-9">
         <div class="bg-white px-4 pt-4 shadow-lg rounded">
             <div>
-                <p class="h3">置顶博客<span class="float-right h6"><a class="moreLink" href="/blog/stick/1">更多</a></span></p>
+                <p class="h3">${title}</p>
                 <hr/>
-                <@item stickBlogList/>
+                <@item moreBlogList/>
             </div>
         </div>
-        <div class="bg-white px-4 pt-4 shadow-lg rounded">
-            <div>
-                <p class="h3">最新博客<span class="float-right h6"><a class="moreLink" href="/blog/newest/1">更多</a></span></p>
-                <hr/>
-                <@item newestBlogList/>
-            </div>
-        </div>
+        <!--分页组件-->
+        <@page/>
     </@right>
 </@body>
 </html>

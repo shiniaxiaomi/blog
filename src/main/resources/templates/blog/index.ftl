@@ -22,8 +22,17 @@
             background-color: #e9ecefa8 !important;
         }
     </style>
+    <script>
+        // 当从编辑页面返回时，刷新页面
+        if(window.localStorage.getItem("needReload") === "true"){
+            window.localStorage.setItem("needReload","false");
+            setTimeout(function () {
+                window.location.reload();
+            },100);
+        }
+    </script>
 </@head>
-<@body>
+<@body style="max-width: 1300px">
     <@left class="col-4" style="max-width: 300px">
         <!--公共导航栏-->
         <div class="sticky-top" style="top: 100px;z-index: 1000">
@@ -33,9 +42,17 @@
             <div id="toc" class="overflow-auto" style="height: 545px;font-size: 14px"></div>
         </div>
     </@left>
-    <@right class="col-8 px-5">
-<#--        <button onclick="hideAll()">隐藏所有</button>-->
-<#--        <button onclick="showAll()">显示所有</button>-->
+    <@right class="col-8 px-5" style="border-left: 2px solid #e9ecef">
+        <!--面包屑导航-->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="/">首页</a>|<a href="/admin/blog/${blogId!}">编辑</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">${blogName!}</li>
+            </ol>
+        </nav>
+        <!--文章内容-->
         <div id="vditor" class="vditor-reset">
             ${html!}
         </div>
@@ -86,39 +103,8 @@
 
         //查找h1-h6,添加点击编辑的按钮
         $("#vditor :header").each(function(){
-            $(this).append("<span style='font-size: 15px'><a href='/admin/${blogId!}#"+$(this).attr("text")+"'> 编辑 </a></span>");
+            $(this).append("<span style='font-size: 15px'><a href='/admin/blog/${blogId!}#"+$(this).attr("text")+"'> 编辑 </a></span>");
             $(this).prepend($(this)[0].tagName+": ");
         });
     })
-
-    // function hideAll(){
-    //     let detail = $("#vditor detail");
-    //     detail.css("display","none");
-    //     detail.each(function(){
-    //         if(!$(this).next().hasClass("tip")){
-    //             $(this).after("<span class='tip'>隐藏了细节,点击标题展示细节</span>");
-    //         }
-    //     });
-    // }
-    //
-    // function showAll(){
-    //     $("#vditor detail").css("display","inline");
-    //     $("#vditor .tip").remove();
-    // }
-    //
-    //查找h1-h6,并添加点击隐藏或显示内容的功能
-    // $("#vditor :header").each(function(){
-    //     $(this).click(function () {
-    //         let next = $(this).next();
-    //         next.toggle();//展示或隐藏内容
-    //         // 显示提示字符
-    //         if(next.css("display")==="none"){
-    //             next.after("<span class='tip'>隐藏了细节,点击标题展示细节</span>");
-    //         }else if(next.css("display")==="inline"){
-    //             if(next.next().hasClass("tip")){
-    //                 next.next().remove();
-    //             }
-    //         }
-    //     });
-    // });
 </script>
