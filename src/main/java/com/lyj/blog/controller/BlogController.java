@@ -1,19 +1,26 @@
 package com.lyj.blog.controller;
 
-import com.lyj.blog.config.Message;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.lyj.blog.config.Util;
+import com.lyj.blog.model.req.FilingResult;
+import com.lyj.blog.model.req.Message;
 import com.lyj.blog.model.Blog;
 import com.lyj.blog.model.req.EsSearch;
 import com.lyj.blog.service.BlogService;
 import com.lyj.blog.service.BlogTagRelationService;
 import com.lyj.blog.service.EsService;
-import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.index.translog.BufferedChecksumStreamOutput;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.io.*;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Yingjie.Lu
@@ -51,12 +58,13 @@ public class BlogController {
     @ResponseBody
     @GetMapping("config")
     public Message selectConfig(int id){
-        boolean isPrivate = blogService.getIsPrivate(id);
+        Blog config = blogService.getBlogConfig(id);
         List<Integer> checkedTagIds = blogTagRelationService.selectTagIdsByBlogId(id);
 
         // 组合结果
         HashMap<Object, Object> map = new HashMap<>();
-        map.put("isPrivate",isPrivate);
+        map.put("isPrivate",config.getIsPrivate());
+        map.put("isStick",config.getIsStick());
         map.put("checkedTagIds",checkedTagIds);
 
         return Message.success(null,map);
@@ -64,8 +72,9 @@ public class BlogController {
 
     @ResponseBody
     @PostMapping("config")
-    public Message updateConfig(int id,boolean isPrivate,Integer[] tags){
-        blogService.updateConfig(id,isPrivate,tags);
+    public Message updateConfig(int id,boolean isPrivate,boolean isStick,Integer[] tags){
+        Blog blog = new Blog().setId(id).setIsPrivate(isPrivate).setIsStick(isStick);
+        blogService.updateConfig(blog,tags);
         return Message.success("更新成功");
     }
 
@@ -77,19 +86,62 @@ public class BlogController {
     }
 
     @ResponseBody
-    @GetMapping("search")
-    public Message search(EsSearch esSearch){
-        SearchHit[] search = esService.search(esSearch);
-        return Message.success(null,search);
+    @GetMapping("search/{page}")
+    public Message search(EsSearch esSearch,@PathVariable("page") int page){
+        Map map = esService.search(esSearch, page);
+        return Message.success(null,map);
     }
 
     @GetMapping("{id}")
     public ModelAndView blog(@PathVariable("id") int id){
         ModelAndView mav = new ModelAndView("blog/index");
-        String html = blogService.selectHTML(id);
-        mav.addObject("html",html);
+        Blog blog = blogService.selectHTMLAndName(id);
+        blogService.countIncr(id);//自增blog的访问次数
+        mav.addObject("html",blog.getMdHtml());
         mav.addObject("blogId",id);
+        mav.addObject("blogName",blog.getName());
         return mav;
+    }
+
+    // 查询归档数据
+    @ResponseBody
+    @GetMapping("filing")
+    public Message filing(){
+        List<FilingResult> filing = blogService.filing();
+        return Message.success(null,filing);
+    }
+
+    // 查询归档数据
+    @GetMapping("filing/{year}/{page}")
+    public ModelAndView filing(@PathVariable("year") int year,@PathVariable("page") int page){
+        ModelAndView mav = new ModelAndView("blog/more");
+        Page<Blog> blogPage = blogService.selectBlogItemsByYear(year, page, 10);
+        Util.renderPageParam(mav,blogPage,"/blog/filing/"+year+"/",year+" 归档");
+        return mav;
+    }
+
+    // 分页查询置顶数据
+    @GetMapping("stick/{page}")
+    public ModelAndView stick(@PathVariable("page") int page){
+        ModelAndView mav = new ModelAndView("blog/more");
+        Page<Blog> blogPage =  blogService.selectBlogItemsPage(true,false,page,10);
+        Util.renderPageParam(mav,blogPage,"/blog/stick/","置顶博客 分页");
+        return mav;
+    }
+
+    // 分页查询最新数据
+    @GetMapping("newest/{page}")
+    public ModelAndView newest(@PathVariable("page") int page){
+        ModelAndView mav = new ModelAndView("blog/more");
+        Page<Blog> blogPage =  blogService.selectBlogItemsPage(false,false,page,10);
+        Util.renderPageParam(mav,blogPage,"/blog/newest/","最新博客 分页");
+        return mav;
+    }
+
+    @ResponseBody
+    @PostMapping("upload")
+    public Message uploadFile(@RequestParam("file[]") MultipartFile multipartFile){
+        return blogService.uploadFile(multipartFile);
     }
 
 }

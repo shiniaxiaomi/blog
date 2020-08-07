@@ -58,5 +58,14 @@ public class Blog implements Serializable  {
      */
     private Boolean isPrivate;
 
+    /**
+     * 博客对应的访问次数
+     */
+    private Integer visitCount;
+
+    // 标记为不是数据库字段
+    @TableField(exist = false)
+    private List<Tag> tags;
+
     private static final long serialVersionUID = 1L;
 }

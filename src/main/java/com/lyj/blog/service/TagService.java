@@ -1,7 +1,9 @@
 package com.lyj.blog.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lyj.blog.mapper.TagMapper;
+import com.lyj.blog.model.Blog;
 import com.lyj.blog.model.BlogTagRelation;
 import com.lyj.blog.model.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +60,9 @@ public class TagService {
      */
     @Transactional
     public void updateRelation(int blogId,Integer[] tags) {
+        if(tags==null){
+            return;
+        }
 
         List<Integer> originalTagIds = blogTagRelationService.selectTagIdsByBlogId(blogId);
 
@@ -97,5 +102,22 @@ public class TagService {
             sb.append(",");
         }
         return sb.toString();
+    }
+
+    public List<Tag> selectTagByBlogIds(List<Integer> blogIds) {
+        if(blogIds.size()==0){
+            return Collections.emptyList();
+        }
+        List<Tag> tags = tagMapper.selectTagByBlogIds(blogIds);
+        return tags;
+    }
+
+    public Page<BlogTagRelation> selectBlogIdByTagId(int tagId, int page, int size) {
+         return blogTagRelationService.selectBlogIdByTagId(tagId,page,size);
+    }
+
+    public String selectTagNameById(int id) {
+        Tag tag = tagMapper.selectOne(new QueryWrapper<Tag>().select("name").eq("id", id));
+        return tag.getName();
     }
 }

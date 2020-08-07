@@ -35,4 +35,8 @@ public class UserService {
         }
     }
 
+    public int selectVisitCount() {
+        User user = userMapper.selectOne(new QueryWrapper<User>().select("visit_count").eq("id", 1));
+        return user.getVisitCount();
+    }
 }

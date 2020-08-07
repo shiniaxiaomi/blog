@@ -1,6 +1,6 @@
 package com.lyj.blog.controller;
 
-import com.lyj.blog.config.Message;
+import com.lyj.blog.model.req.Message;
 import com.lyj.blog.model.Word;
 import com.lyj.blog.service.WordService;
 import org.springframework.beans.factory.annotation.Autowired;

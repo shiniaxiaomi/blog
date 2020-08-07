@@ -1,5 +1,6 @@
 package com.lyj.blog.service;
 
+import com.lyj.blog.model.req.EsResult;
 import com.lyj.blog.model.req.EsSearch;
 import com.lyj.blog.parser.model.ESHeading;
 import org.elasticsearch.action.bulk.BulkRequest;
@@ -13,13 +14,13 @@ import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.*;
 import org.elasticsearch.index.reindex.DeleteByQueryRequest;
-import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Yingjie.Lu
@@ -74,35 +75,54 @@ public class EsService {
 
 
     // 搜索关键字
-    public SearchHit[] search(EsSearch esSearch) {
-        if(esSearch.getKeyword()==null || "".equals(esSearch.getKeyword())){
-            return new SearchHit[0];
+    public Map search(EsSearch esSearch, int page) {
+//        page--;//前端的页数从1开始，es的页数从0开始，在这里做一下转化
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("result",Collections.emptyList());
+        map.put("pages",1);
+        map.put("currentPage",1);
+        map.put("total",0);
+        map.put("url","/blog/search/");
+
+        int size=5;
+        if((esSearch.getKeyword()==null || "".equals(esSearch.getKeyword()))
+                && (esSearch.getTagKeyword()==null || "".equals(esSearch.getTagKeyword()))){
+            return map;
         }
         SearchRequest searchRequest = new SearchRequest("blog");
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
         // 复合查询
         BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery();
-        queryBuilder.should(QueryBuilders.matchQuery("blogName",esSearch.getKeyword()).operator(Operator.OR).boost(4f));//增加匹配程度
-        queryBuilder.should(QueryBuilders.matchQuery("headingName",esSearch.getKeyword()).operator(Operator.OR).boost(2f));//增加匹配程度
-        //todo 先用空格分割，然后
-        queryBuilder.should(QueryBuilders.matchQuery("content",esSearch.getKeyword()).operator(Operator.AND));//必须有出现关键字
-        if(esSearch.getTagKeyword()!=null && !"".equals(esSearch.getTagKeyword())){
-            queryBuilder.filter(QueryBuilders.matchQuery("tagName",esSearch.getTagKeyword()).operator(Operator.AND));
+        if(!"".equals(esSearch.getKeyword())){
+            queryBuilder.should(QueryBuilders.matchQuery("blogName",esSearch.getKeyword()).boost(4f));//增加匹配程度
+            queryBuilder.should(QueryBuilders.matchQuery("headingName",esSearch.getKeyword()).boost(2f));//增加匹配程度
+            queryBuilder.should(QueryBuilders.matchQuery("content",esSearch.getKeyword()));//必须有出现关键字
         }
-        searchSourceBuilder.query(queryBuilder);
-
-
-        System.out.println(searchSourceBuilder.toString());
-
-
+        if(esSearch.getTagKeyword()!=null && !"".equals(esSearch.getTagKeyword())){
+            queryBuilder.filter(QueryBuilders.matchQuery("tagName",esSearch.getTagKeyword()));
+        }
+        searchSourceBuilder.query(queryBuilder).size(size).from((page-1)*size);
         searchRequest.source(searchSourceBuilder);
+        SearchResponse searchResponse = null;
         try {
-            SearchResponse searchResponse = elasticClient.search(searchRequest, RequestOptions.DEFAULT);
-            return searchResponse.getHits().getHits();
+            searchResponse=elasticClient.search(searchRequest, RequestOptions.DEFAULT);
         } catch (IOException e) {
             e.printStackTrace();
+            return map;
         }
-        return new SearchHit[0];
+
+        List<EsResult> collect = Arrays.stream(searchResponse.getHits().getHits()).map(searchHit -> {
+            return new EsResult().setScore(searchHit.getScore()).setSourceAsMap(searchHit.getSourceAsMap());
+        }).collect(Collectors.toList());
+
+        int total= (int) searchResponse.getHits().getTotalHits().value;
+        map.put("result",collect);
+        map.put("pages",total%size==0?total/size:total/size+1);
+        map.put("currentPage",page);//返回给前端的时候重新转化一下
+        map.put("total",total);
+        map.put("url","/blog/search/");
+
+        return map;
     }
 }

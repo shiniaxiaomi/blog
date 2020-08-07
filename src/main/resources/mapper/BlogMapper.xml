@@ -3,4 +3,18 @@
 <mapper namespace="com.lyj.blog.mapper.BlogMapper">
 
 
+    <select id="filing" resultType="com.lyj.blog.model.req.FilingResult">
+        select count(*) as count, DATE_FORMAT(create_time, '%Y') as year
+        from blog
+        GROUP BY DATE_FORMAT(create_time, '%Y')
+        order by year desc
+    </select>
+    <select id="selectBlogItemsByTagId" resultType="com.lyj.blog.model.Blog">
+        select blog.id, blog.name, blog.desc, blog.visit_count, blog.create_time, blog.update_time
+        from blog
+                 left join blog_tag_relation btr on blog.id = btr.blog_id
+        where tag_id = ${tagId}
+          and blog.is_private = ${isPrivate}
+        order by update_time, create_time desc
+    </select>
 </mapper>

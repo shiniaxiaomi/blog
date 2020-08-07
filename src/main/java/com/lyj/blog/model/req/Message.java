@@ -1,4 +1,4 @@
-package com.lyj.blog.config;
+package com.lyj.blog.model.req;
 
 import lombok.Data;
 

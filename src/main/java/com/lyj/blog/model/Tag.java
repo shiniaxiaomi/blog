@@ -3,6 +3,7 @@ package com.lyj.blog.model;
 import java.io.Serializable;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
@@ -24,6 +25,9 @@ public class Tag implements Serializable {
      * 标签下的blog数量
      */
     private Integer count;
+
+    @TableField(exist = false)
+    private Integer blogId;
 
     private static final long serialVersionUID = 1L;
 }

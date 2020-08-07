@@ -18,3 +18,8 @@ spring:
     content-type: text/html
     suffix: .ftl
     template-loader-path: classpath:templates
+  resources:
+    static-locations: classpath:/static/,file:${file.location}
+
+file:
+  location: ./upload

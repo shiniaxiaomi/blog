@@ -1,8 +1,7 @@
 package com.lyj.blog.controller;
 
-import com.lyj.blog.config.Message;
+import com.lyj.blog.model.req.Message;
 import com.lyj.blog.model.Catalog;
-import com.lyj.blog.service.BlogService;
 import com.lyj.blog.service.CatalogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

@@ -20,7 +20,7 @@ public class AdminController {
         return "admin/blog";
     }
 
-    @GetMapping("{id}")
+    @GetMapping("blog/{id}")
     public ModelAndView editBlog(@PathVariable("id") int id){
         ModelAndView mav = new ModelAndView("admin/blog");
         mav.addObject("blogId",id);

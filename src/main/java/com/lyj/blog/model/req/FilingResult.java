@@ -5,10 +5,10 @@ import lombok.Data;
 /**
  * @author Yingjie.Lu
  * @description
- * @date 2020/8/4 1:55 下午
+ * @date 2020/8/6 5:31 下午
  */
 @Data
-public class EsSearch {
-    String keyword;
-    String tagKeyword;
+public class FilingResult {
+    String year;
+    int count;
 }

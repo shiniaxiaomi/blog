@@ -72,7 +72,7 @@ public class HeadingContentVisitor extends AbstractVisitor {
         headingIdList=null;
         headingIndex=0;
 
-        return list;//返回标题即内容的list
+        return list;//返回标题及内容的list
     }
 
     //需要将左右尖括号进行转义
@@ -80,7 +80,7 @@ public class HeadingContentVisitor extends AbstractVisitor {
     @Override
     public void visit(Text text) {
         sb.append(text.getLiteral());//添加普通文本内容
-        sb.append("\r\n");
+        sb.append("\n");
     }
 
     @Override
@@ -95,7 +95,7 @@ public class HeadingContentVisitor extends AbstractVisitor {
 
         sb.append(HeadingSplitLine);//添加内容分割线
         sb.append(text);//添加标题
-        sb.append("\r\n");
+        sb.append("\n");
 
         //设置headingId
         String headingId = UUID.randomUUID().toString();
@@ -105,13 +105,13 @@ public class HeadingContentVisitor extends AbstractVisitor {
     @Override
     public void visit(FencedCodeBlock fencedCodeBlock) {
         sb.append(fencedCodeBlock.getLiteral());//添加代码块
-        sb.append("\r\n");
+        sb.append("\n");
     }
 
     @Override
     public void visit(Code code) {
         sb.append(code.getLiteral());//添加内联代码块
-        sb.append("\r\n");
+        sb.append("\n");
     }
 
 

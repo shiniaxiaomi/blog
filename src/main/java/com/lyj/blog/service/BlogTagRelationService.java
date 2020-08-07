@@ -1,8 +1,10 @@
 package com.lyj.blog.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lyj.blog.mapper.BlogTagRelationMapper;
 import com.lyj.blog.model.BlogTagRelation;
+import com.lyj.blog.model.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,5 +42,10 @@ public class BlogTagRelationService {
             return;
         }
         blogTagRelationMapper.insertBatch(blogId,tagIds);
+    }
+
+    public Page<BlogTagRelation> selectBlogIdByTagId(int tagId,int page,int size){
+        return blogTagRelationMapper.selectPage(new Page<>(page, size),
+                new QueryWrapper<BlogTagRelation>().select("blog_id").eq("tag_id", tagId));
     }
 }

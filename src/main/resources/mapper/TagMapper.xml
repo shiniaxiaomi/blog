@@ -9,4 +9,13 @@
                  left join blog_tag_relation btr on tag.id = btr.tag_id
         where btr.blog_id = #{blogId}
     </select>
+    <select id="selectTagByBlogIds" resultType="com.lyj.blog.model.Tag">
+        select tag.id,tag.name,btr.blog_id
+        from tag
+                 left join blog_tag_relation btr on tag.id = btr.tag_id
+        where btr.blog_id in
+        <foreach collection="blogIds" item="blogId" open="(" close=")" separator=",">
+            #{blogId}
+        </foreach>
+    </select>
 </mapper>
