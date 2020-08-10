@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyj.blog.mapper.FileMapper">
+
+    <select id="selectPageByBlogId" resultType="com.lyj.blog.model.File">
+        select f.id,f.name,f.type,f.count from file as f left join blog_file_relation bfr on f.id = bfr.file_id
+        <trim prefix="where" prefixOverrides="and">
+            <if test="blogId != null">
+                and bfr.blog_id = #{blogId}
+            </if>
+        </trim>
+    </select>
+</mapper>

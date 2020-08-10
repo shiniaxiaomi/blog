@@ -17,24 +17,6 @@ public class UserService {
     @Autowired
     UserMapper userMapper;
 
-    // 保存目录
-    public void updateCatalog(int id,String tree){
-        User user = new User().setId(id).setTree(tree);
-        userMapper.updateById(user);
-    }
-
-    // 查询目录
-    public String selectCatalog(int id){
-        User user = userMapper.selectById(id);
-        String tree = user.getTree();
-        if(tree!=null && !"".equals(tree)){
-            return tree;
-        }else{
-            // 如果为空的话，则返回默认根节点
-            return "[{\"id\":0,\"pId\":null,\"name\":\"/\",\"isFolder\":true,\"icon\":\"/ztree/img/folder.png\"}]";
-        }
-    }
-
     public int selectVisitCount() {
         User user = userMapper.selectOne(new QueryWrapper<User>().select("visit_count").eq("id", 1));
         return user.getVisitCount();

@@ -11,8 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class Util {
 
     public static void renderPageParam(ModelAndView mav, Page<?> pages, String url,String title){
-        mav.addObject("moreBlogList",pages.getRecords());//分页数据
-        mav.addObject("pages",pages.getPages()); //总页数
+        mav.addObject("pages",pages.getPages()==0?1:pages.getPages()); //总页数
         mav.addObject("currentPage",pages.getCurrent()); //当前页
         mav.addObject("total",pages.getTotal()); //总数
         mav.addObject("url",url);//组装url（不包括页数）

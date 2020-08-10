@@ -4,14 +4,14 @@
 <#include "../common/body.ftl">
 <#include "../common/left.ftl">
 <#include "../common/right.ftl">
+<#include "../common/sidebar.ftl">
 <@head>
     <script src="/layer/layer.js"></script>
     <script src="/js/tag.js"></script>
 </@head>
 <@body>
     <@left class="col-2" style="max-width: 150px">
-        <a class="d-block mb-2" href="/admin/blog">博客目录</a>
-        <a class="d-block mb-2" href="/admin/tag">标签管理</a>
+        <@sidebar></@sidebar>
     </@left>
     <@right class="col-10" style="padding-left: 100px">
         <div>
@@ -20,6 +20,7 @@
                 <button type="button" class="btn btn-secondary btn-sm mr-1" onclick="insertTag()">添加</button>
                 <button type="button" class="btn btn-secondary btn-sm m-1" onclick="deleteTag()">删除</button>
                 <button type="button" class="btn btn-secondary btn-sm m-1" onclick="updateTag()">更改</button>
+                <button type="button" class="btn btn-secondary btn-sm m-1" onclick="openTag()">打开</button>
                 <button type="button" class="btn btn-secondary btn-sm m-1" onclick="searchTag(originalTagData)">搜索</button>
             </div>
         </div>

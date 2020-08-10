@@ -23,40 +23,6 @@ function uuid() {
     return uuid.substr(uuid.lastIndexOf("/") + 1);
 }
 
-let setting = {
-    edit:{
-        enable: true,
-        editNameSelectAll:true,
-        showRemoveBtn: false,
-        showRenameBtn: false,
-        // 拖动规则
-        drag:{
-            isCopy:false,
-            isMove : true,
-            prev:false,
-            inner:true,
-            next:false
-        }
-    },
-    view: {
-        dblClickExpand: true,
-        fontCss:getFontCss
-    },
-    data: {
-        simpleData: {
-            enable: true,
-            idKey: "id",
-            pIdKey: "pid",
-            rootPId: null
-        }
-    },
-    callback: {
-        onRightClick: OnRightClick,
-        beforeDrop: beforeDrop,
-        beforeClick:beforeClick,//点击之前，如果点击了不是已经选中的节点，则自动保存右侧对应的内容
-        beforeRename:beforeRename
-    }
-};
 // 搜索的样式使用
 function getFontCss(treeId, treeNode) {
     return  (!!treeNode.highlight) ? {color:"#A60000", "font-weight":"bold"} : {color:"#333", "font-weight":"normal"};
@@ -102,7 +68,6 @@ function beforeRename(treeId, treeNode, newName, isCancel) {
 }
 // 加载对应id的blog内容到编辑器
 function loadMD(treeNode) {
-
     // 在编辑器上显示对应的blog内容
     // 如果点击的是文件夹，则将右侧编辑器设置为不编辑
     if(treeNode.isFolder){
@@ -112,6 +77,7 @@ function loadMD(treeNode) {
     // 如果点击的是文件，则在右侧编辑器中显示文件内容
     else{
         console.log("加载内容");
+        window.blogId=treeNode.blogId;
         window.vditor.enable();
         $.get("/blog/md?id="+treeNode.blogId,function (data,status) {
             if(status==="success" && data.code){
@@ -247,6 +213,8 @@ function removeTreeNode() {
             $.post("/catalog/delete",{id:nodes[0].id,isFolder:nodes[0].isFolder,blogId:nodes[0].blogId},function (data,status) {
                 if(status==="success" && data.code){
                     zTree.removeNode(nodes[0]);
+                    window.vditor.setValue("", true);//清空编辑器数据
+                    window.vditor.disabled();//	禁用编辑器
                     layer.msg("删除成功")
                 }else{
                     layer.msg("删除失败");
@@ -280,9 +248,71 @@ function updateNodes(highlight,nodeList){
 }
 
 let zTree, rMenu, zNodes,nodeList=[];
-
+let setting = {
+    edit:{
+        enable: true,
+        editNameSelectAll:true,
+        showRemoveBtn: false,
+        showRenameBtn: false,
+        // 拖动规则
+        drag:{
+            isCopy:false,
+            isMove : true,
+            prev:false,
+            inner:true,
+            next:false
+        }
+    },
+    view: {
+        dblClickExpand: true,
+        fontCss:getFontCss
+    },
+    data: {
+        simpleData: {
+            enable: true,
+            idKey: "id",
+            pIdKey: "pid",
+            rootPId: null
+        }
+    },
+    callback: {
+        onRightClick: OnRightClick,
+        beforeDrop: beforeDrop,
+        beforeClick:beforeClick,//点击之前，如果点击了不是已经选中的节点，则自动保存右侧对应的内容
+        beforeRename:beforeRename
+    }
+};
 // 加载目录数据
-function initTree(){
+function initTree(isLogin){
+    // 权限校验
+    if(isLogin===false){
+        setting = {
+            edit:{
+                enable: false,
+            },
+            view: {
+                dblClickExpand: true,
+                fontCss:getFontCss
+            },
+            data: {
+                simpleData: {
+                    enable: true,
+                    idKey: "id",
+                    pIdKey: "pid",
+                    rootPId: null
+                }
+            },
+            callback: {
+                beforeClick:function (treeId, treeNode, clickFlag) {
+                    if(treeNode.blogId===null){
+                        return;
+                    }
+                    window.location="/blog/"+treeNode.blogId;
+                }
+            }
+        };
+    }
+
     // 绑定搜索输入框的回车事件
     $("#searchInput").keypress(function(e) {
         if (e.keyCode === 13) {

@@ -4,12 +4,13 @@
 <#include "../common/body.ftl">
 <#include "../common/left.ftl">
 <#include "../common/right.ftl">
+<#include "../common/sidebar.ftl">
 <@head>
     <!-- vditor -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.4.1/dist/index.css" />
     <script src="https://cdn.jsdelivr.net/npm/vditor@3.4.1/dist/index.min.js" defer></script>
     <!--icons-->
-    <link rel="stylesheet" href="http://at.alicdn.com/t/font_1907545_woxoxos7lxc.css">
+    <link rel="stylesheet" href="http://at.alicdn.com/t/font_1990451_36hvvfymceu.css">
     <!--ztree-->
     <link rel="stylesheet" href="/ztree/zTreeStyle.css" />
 
@@ -40,12 +41,11 @@
 <#include "../common/body.ftl">
 <@body class="container-fluid">
     <@left class="col-2" style="max-width: 150px">
-        <a class="d-block mb-2" href="/admin/blog">博客目录</a>
-        <a class="d-block mb-2" href="/admin/tag">标签管理</a>
+        <@sidebar></@sidebar>
     </@left>
     <@right class="col-10">
         <div class="row">
-            <div class="col-3">
+            <div id="tocDiv" class="col-3">
                 <div class="form-inline">
                     <input class="mr-2" id="searchInput" autocomplete="off">
                     <button type="button" class="btn btn-secondary btn-sm" onclick="searchNode()">搜索</button>
@@ -151,9 +151,11 @@
         console.log("保存内容");
         // console.log(zTree.getSelectedNodes()[0]!==undefined && zTree.getSelectedNodes()[0].isFolder);
         if(zTree.getSelectedNodes()[0]===undefined || zTree.getSelectedNodes()[0].isFolder){
+            layer.msg("请选择对应的博客");
             return;
         }
         let mdValue = window.vditor.getValue();
+
         $.post("/blog/update",{
             id: zTree.getSelectedNodes()[0].blogId,
             md: mdValue,
@@ -211,7 +213,13 @@
     };
 
     let isEdit=false;
+    window.blogId=${blogId!0};
     let lute;
+
+    // 打开或关闭大纲
+    function toggleToc(){
+        $("#vditor .vditor-toolbar__item button[aria-label=大纲]").eq(0).click();
+    }
 
     $(function () {
 
@@ -238,12 +246,61 @@
                     $('#configModal').modal("show");
                 },
             },
+            // {
+            //     name: '隐藏目录', tip: '隐藏目录', icon: '<i class="iconfont icon-yincangmulu"></i>',tipPosition: 's',
+            //     click: () => {
+            //         // 当点击保存按钮时，无论是否修改，都进行保存
+            //         // isEdit=true;
+            //         // updateBlog("tip");
+            //
+            //         let outline = $(".vditor-outline").eq(0).css("display");
+            //         if()
+            //         $("#tocDiv").hide();
+            //         $("#vditor").css("width","700px");
+            //
+            //     },
+            // },
             {
                 name: '保存', tip: '保存', icon: '<i class="iconfont icon-baocun"></i>',tipPosition: 's',
                 click: () => {
                     // 当点击保存按钮时，无论是否修改，都进行保存
                     isEdit=true;
                     updateBlog("tip");
+                },
+            },
+            {
+                name: '删除图片', tip: '删除图片(只支持快捷键)', icon: '<i class="iconfont icon-shanchu"></i>',
+                tipPosition: 's', hotkey: '⌘-⇧-S',
+                click: () => {
+                    let selection = vditor.getSelection();
+                    if(selection==="") {
+                        window.vditor.tip("请选择对应的图片", 1000);
+                        return;
+                    }
+                    if(window.blogId===0) {
+                        window.vditor.tip("请选择对应的博客", 1000);
+                        return;
+                    }
+                    // 当点击删除图片按钮时，将选中的图片链接内容删除，并且删除掉博客对该图片的引用
+                    $.post("/file/deleteRelation",{name: selection.substr(6),blogId:window.blogId},function (data,status) {
+                        if(status==="success" && data.code){
+                            window.vditor.tip(data.msg, 1000);
+                            window.vditor.deleteValue();//删除选中的url
+                        }else{
+                            window.vditor.tip("删除失败", 2000);
+                        }
+                    })
+                },
+            },
+            {
+                name: '查看附件', tip: '查看附件', icon: '<i class="iconfont icon-fujian"></i>',tipPosition: 's',
+                click: () => {
+                    // 当点击查看附件按钮时，跳转到文件管理页面，并显示该blog所对应的分页附件
+                    if(zTree.getSelectedNodes()[0]===undefined || zTree.getSelectedNodes()[0].isFolder){
+                        layer.msg("请选择对应的博客");
+                        return;
+                    }
+                    window.location="/admin/file/"+blogId+"/1";
                 },
             },
             "|","outline", "insert-before","insert-after",'headings', 'link', '|',
@@ -280,27 +337,38 @@
             tab: '    ',//设置tab键为4个空格
             //图片上传
             upload: {
-                url: '/blog/upload',
+                url:'/blog/upload',
                 // 文件名安全处理
                 filename (name) {
                     return name.replace(/[^(a-zA-Z0-9\u4e00-\u9fa5\.)]/g, '').
                     replace(/[\?\\/:|<>\*\[\]\(\)\$%\{\}@~]/g, '').
                     replace('/\\s/g', '')
                 },
-                success(editor,msg){
-                    let data = JSON.parse(msg);
-                    window.vditor.tip(data.msg, 1000);
-                    if(data.data.isImg){
-                        // 插入图片链接
-                        vditor.insertValue("!["+data.data.fileName+"](/file/"+data.data.fileName+")\n");
-                    }else{
-                        // 插入超链接
-                        vditor.insertValue("["+data.data.fileName+"](/file/"+data.data.fileName+")");
-                    }
-                },
-                error(msg){
-                    let data = JSON.parse(msg);
-                    window.vditor.tip(data.msg, 2000);
+                // 自定义上传
+                handler(files){
+                    let data = new FormData();
+                    data.append('file', files[0]);
+                    $.ajax({
+                        type: 'POST',
+                        url: "/blog/upload/"+window.blogId,
+                        data: data,
+                        cache: false,
+                        processData: false,
+                        contentType: false,
+                        success: function (data) {
+                            window.vditor.tip(data.msg, 1000);
+                            if(data.data.isImg){
+                                // 插入图片链接
+                                vditor.insertValue("!["+data.data.fileName+"](/file/"+data.data.fileName+")\n");
+                            }else{
+                                // 插入超链接
+                                vditor.insertValue("["+data.data.fileName+"](/file/"+data.data.fileName+")");
+                            }
+                        },
+                        error: function (data) {
+                            window.vditor.tip(data, 3000);
+                        }
+                    });
                 },
             },
             input(){ //每次输入都会触发
@@ -340,8 +408,8 @@
                         setTimeout(function () {
                             if(location.hash!==""){
                                 let hash = "ir-"+decodeURI(location.hash).substr(1).replace(/[.*|+=\-()]/g,"-");
-                                console.log(hash)
                                 $("#vditor .vditor-outline__content div[data-id^="+hash+"]").click();//刷新页面锚点
+                                toggleToc();//关闭大纲
                             }
                         },150);
                     },100)

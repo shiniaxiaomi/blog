@@ -1,6 +1,6 @@
 <#--定义顶部的header导航栏 默认将fixedTop参数设置为true,表示固定在顶部-->
 
-<#macro nav>
+<#macro nav active="首页">
 
 <#--导航栏-->
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow sticky-top mb-3">
@@ -18,10 +18,9 @@
         <#--菜单按钮-->
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <div class="navbar-nav mr-auto">
-                <a class="nav-link active" href="/">首页 <span class="sr-only">(current)</span></a>
-                <a class="nav-link" href="/aboutMe">关于</a>
-                <a class="nav-link" href="#" data-toggle="modal" data-target="#createBlogModal" onclick="selectBlog()">目录</a>
-                <a class="nav-link" href="#" data-toggle="modal" data-target="#createTagModal">标签</a>
+                <a class="<#if active=="首页">active</#if> nav-link" href="/">首页</a>
+                <a class="<#if active=="目录">active</#if> nav-link" href="/index/toc">目录</a>
+                <a class="<#if active=="标签">active</#if> nav-link" href="/index/tag">标签</a>
                 <div class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="ToolMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         工具
@@ -36,8 +35,9 @@
                         更多
                     </a>
                     <div class="dropdown-menu" aria-labelledby="moreDropdownMenuLink">
-                        <a class="dropdown-item" href="/draft">草稿</a>
-                        <a class="dropdown-item" href="/todo">待办</a>
+<#--                        <a class="dropdown-item" href="/index/draft">草稿</a>-->
+                        <a class="dropdown-item" href="/index/todo">待办</a>
+                        <a class="dropdown-item" href="/index/about">关于</a>
                         <a class="dropdown-item" href="/admin">后台</a>
                     </div>
                 </div>

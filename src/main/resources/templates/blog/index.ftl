@@ -4,10 +4,17 @@
 <#include "../common/body.ftl">
 <#include "../common/left.ftl">
 <#include "../common/right.ftl">
+<#include "../common/comment.ftl">
 <@head>
     <!-- vditor -->
     <link rel="stylesheet" href="/vditor/index.css" />
     <script src="/vditor/index.min.js" defer></script>
+    <script src="/vditor/js/lute/lute.min.js"></script>
+    <!-- comment -->
+    <link rel="stylesheet" href="/css/comment.css" />
+    <script src="/js/comment.js"></script>
+<#--    <link rel="stylesheet" href="https://cdn.bootcss.com/gitalk/1.5.0/gitalk.min.css"/>-->
+<#--    <script src="https://cdn.bootcss.com/gitalk/1.5.0/gitalk.min.js"></script>-->
     <!-- layer -->
     <script src="/layer/layer.js"></script>
     <style>
@@ -21,6 +28,14 @@
         .hljs{
             background-color: #e9ecefa8 !important;
         }
+        .gt-avatar >img{
+            border-radius: 50%!important;
+            width: 40px !important;
+            height: auto !important;
+            margin: 5px 0 0 5px;
+        }
+        body .layui-layer-lan .layui-layer-title{background:rgb(67 101 162); color:#fff; border: none;}
+        body .layui-layer-page .layui-layer-content{padding: 10px}
     </style>
     <script>
         // 当从编辑页面返回时，刷新页面
@@ -32,7 +47,7 @@
         }
     </script>
 </@head>
-<@body style="max-width: 1300px">
+<@body style="max-width: 1300px" active="博客">
     <@left class="col-4" style="max-width: 300px">
         <!--公共导航栏-->
         <div class="sticky-top" style="top: 100px;z-index: 1000">
@@ -56,6 +71,47 @@
         <div id="vditor" class="vditor-reset">
             ${html!}
         </div>
+
+        <!--评论-->
+<#--        <@comment></@comment>-->
+
+        <div id="comment-container">
+            <div class="gt-container">
+                <div class="gt-meta">
+                    <span id="gt-counts" class="gt-counts">2</span><span>条评论</span>
+                </div>
+                <div class="gt-header">
+                    <div class="gt-avatar gt-comment-avatar">
+                        <img src="/img/GitHub.png" alt="头像">
+                    </div>
+                    <div class="gt-header-comment">
+                        <form id="commentForm" onsubmit="return false;">
+                            <textarea id="comment_content" class="gt-header-textarea " placeholder="说点什么"
+                                      style="overflow-wrap: break-word; resize: none; height: 100px;"></textarea>
+                            <div class="gt-header-preview markdown-body hide"></div>
+                            <div class="gt-header-controls">
+                                <input id="email" name="email" class="comment-input" placeholder="Email : 用于收到回复" autocomplete="off">
+                                <input id="github_username" name="github_username" class="comment-input" placeholder="Github UserName : 选填" autocomplete="off">
+                                <div style="float: right">
+                                    <button class="gt-btn gt-btn-public" onclick="commitComment()"><span class="gt-btn-text">评论</span></button>
+                                    <button class="gt-btn gt-btn-preview" onclick="preview()"><span class="gt-btn-text">预览</span></button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="gt-comments">
+                    <div id="commentsDiv" style="position: relative;"></div>
+                    <div id="loadMoreBtn" class="gt-comments-controls">
+                        <button class="gt-btn gt-btn-loadmore" onclick="loadMore()">
+                            <span class="gt-btn-text">加载更多</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<#--        <div id="gitalk-container"></div>-->
     </@right>
 </@body>
 </html>
@@ -103,8 +159,38 @@
 
         //查找h1-h6,添加点击编辑的按钮
         $("#vditor :header").each(function(){
+            let buf="";
             $(this).append("<span style='font-size: 15px'><a href='/admin/blog/${blogId!}#"+$(this).attr("text")+"'> 编辑 </a></span>");
-            $(this).prepend($(this)[0].tagName+": ");
+            let level=$(this)[0].tagName.substring(1);
+            for(let i=0;i<level;i++){
+                buf+="#";
+            }
+            $(this).prepend("<span style='color: rgb(222 95 96)'>"+buf+"&nbsp;</span>");
         });
+
+        // 加载评论
+        loadComment(${blogId!},1);
+
+
+        // 初始化博客评论
+        <#--const gitalk = new Gitalk({-->
+        <#--    clientID: 'f25af9e7e40b4ad27b88', // 将上面创建的 Client ID 填写到这里-->
+        <#--    clientSecret: 'a21809a82c624e67f5478a056558517898faab5b', // 将上面创建的 Client Secret 填写到这里-->
+        <#--    repo: 'blog-talk', // 上面创建的Repo的地址 如: https://github.com/icowan/blog-gitalk.git-->
+        <#--    owner: 'shiniaxiaomi',-->
+        <#--    admin: ['shiniaxiaomi'],-->
+        <#--    id: location.pathname,      // Ensure uniqueness and length less than 50-->
+        <#--    distractionFreeMode: false,  // Facebook-like distraction free mode-->
+        <#--    title: '${blogName!}',-->
+        <#--    perPage:10,-->
+        <#--    flipMoveOptions:{-->
+        <#--        staggerDelayBy: 50,-->
+        <#--        appearAnimation: 'accordionVertical',-->
+        <#--        enterAnimation: 'fade',-->
+        <#--        leaveAnimation: 'fade',-->
+        <#--    }-->
+        <#--});-->
+
+        <#--gitalk.render('gitalk-container'); // 生成评论框，输入 标签的ID 就是 `<div id="gitalk-container"></div>-->
     })
 </script>

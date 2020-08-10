@@ -51,17 +51,23 @@
                     layer.msg("没有相应的结果");
                     return;
                 }
+                let keyword = $("#keyword").val();
+                let splits = keyword.split(" ");
                 // 构造搜索结果
                 let str="";
                 for(let i=0;i<data.data.result.length;i++){
                     let result=data.data.result[i].sourceAsMap;
+                    let md2HTML = lute.Md2HTML(result.content.replace(/\</g,"&lt;").replace(/\>/g,"&gt;"));
+                    for(let j=0;j<splits.length;j++){
+                        md2HTML=md2HTML.replace(new RegExp(splits[j],"gi"),"<span style='color: red'>"+splits[j]+"</span>");
+                    }
                     str+=`
                         <div>
                             <h5><a href="/blog/`+result.blogId+`#`+result.headingId+`">`+result.headingName+`</a>
                             <span style="font-size: 12px">📒`+result.blogName+`</span>
                             <span style="font-size: 12px">🔖`+result.tagName+`</span>
                             </h5>
-                            <div class="vditor-reset">`+lute.Md2HTML(result.content)+`</div>
+                            <div class="vditor-reset">`+md2HTML+`</div>
                         </div><hr>
                     `;
                 }

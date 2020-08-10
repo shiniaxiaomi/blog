@@ -1,5 +1,6 @@
 package com.lyj.blog.controller;
 
+import com.lyj.blog.model.req.Message;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,7 +27,13 @@ public class ToolController {
     @ResponseBody
     @PostMapping("regular")
     public String regularTest(String content,String regular){
-        Pattern pattern = Pattern.compile(regular);
+        Pattern pattern = null;
+        try {
+            pattern=Pattern.compile(regular);
+        }catch (Exception e){
+            e.printStackTrace();
+            return "正则表达式不正确："+e.getMessage();
+        }
         // 现在创建 matcher 对象
         Matcher matcher = pattern.matcher(content);
         // 打印
@@ -35,6 +42,7 @@ public class ToolController {
             sb.append(matcher.group());
             sb.append("\n-------------\n");
         }
-        return sb.toString();
+
+        return "".equals(sb.toString())?"没有匹配到结果":sb.toString();
     }
 }

@@ -18,7 +18,7 @@
             </li>
             <li class="page-item disabled">
                 <a class="page-link" href="#" aria-label="Next">
-                    <span aria-hidden="true">总计：${total!}</span>
+                    总计：<span aria-hidden="true" id="totalSpan">${total!}</span>
                 </a>
             </li>
         </ul>

@@ -1,11 +1,9 @@
 package com.lyj.blog.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lyj.blog.mapper.BlogMapper;
 import com.lyj.blog.model.Blog;
-import com.lyj.blog.model.BlogTagRelation;
 import com.lyj.blog.model.Tag;
 import com.lyj.blog.model.req.FilingResult;
 import com.lyj.blog.model.req.Message;
@@ -47,6 +45,12 @@ public class BlogService {
     @Autowired
     EsService esService;
 
+    @Autowired
+    FileService fileService;
+
+    @Autowired
+    BlogTagRelationService blogTagRelationService;
+
     @Value("${file.location}/file")
     String filePath;
 
@@ -59,6 +63,8 @@ public class BlogService {
     @Transactional
     public void delete(int id) {
         blogMapper.deleteById(id);
+        // 删除博客与标签的关系
+        blogTagRelationService.deleteByBlogId(id);
         // 清除es中的索引
         esService.deleteHeadingByBlogIdInES("blog",String.valueOf(id));
     }
@@ -86,72 +92,7 @@ public class BlogService {
 
         blogMapper.updateById(blog);
 
-        // 清除es中blogId对应的数据
-//        deleteDocumentInES("blog", blog.getId().toString(), uuid);//blog数据库，blogId表，以header的uuid为一行数据
-        // 往es中添加blogId对应的数据
-//        insertDocumentToEsBatch("blog",blog.getId().toString(),uuid,blog.getMd());
     }
-
-//    public void insertDocumentToES(String id){
-//        IndexRequest indexRequest = new IndexRequest("blog")
-//                .id(id)
-//                .source("blogId", id,
-//                        "header", "标题名称",
-//                        "tag", "标签名称"
-//                        );
-//    }
-
-//    public void insertDocumentToEsBatch(String index,String type,String id,String md){
-//        //创建批量请求
-//        BulkRequest request = new BulkRequest();
-//
-//        Matcher matcher = mdPattern.matcher(md);//使用正则将标题的内容分离
-//        while(matcher.find()) {
-//            String group = matcher.group();//每个标题对应的内容
-//            // 解析标题名称
-//            Matcher head = headPattern.matcher(group);
-//            if(head.find()){
-//                String s = head.group();
-//                int level=0;
-//                String header = null;
-//                for(int i=0;i<s.length();i++){
-//                    if(s.charAt(i)=='#'){
-//                        level++;
-//                    }else if(s.charAt(i)==' '){
-//                        header=s.substring(i);
-//                        break;
-//                    }
-//                }
-//                request.add(new IndexRequest(index, type, id).source("header", header,"content",group,"level",level));
-//            }
-//        }
-//
-//        try {
-//            elasticClient.bulk(request, RequestOptions.DEFAULT);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
-    // 删除elasticSearch中的文档
-//    public void deleteDocumentInES(String index,String type,String id){
-//
-//        GetRequest getRequest = new GetRequest(index, type, id);
-//
-//        //创建delete请求
-//        DeleteRequest request = new DeleteRequest(index, type, id);
-//        //通过client进行删除
-//        try {
-//            elasticClient.delete(request, RequestOptions.DEFAULT);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
-//    public boolean getIsPrivate(int id) {
-//        Blog blog = blogMapper.selectOne(new QueryWrapper<Blog>().select("is_private").eq("id", id));
-//        return blog.getIsPrivate();
-//    }
 
     @Transactional
     public void updateConfig(Blog blog, Integer[] tags) {
@@ -260,7 +201,7 @@ public class BlogService {
 
     // 上传文件的处理
     @Transactional
-    public Message uploadFile(MultipartFile multipartFile) {
+    public Message uploadFile(MultipartFile multipartFile,int blogId) {
         if(multipartFile.isEmpty()){
             return Message.error("文件不能为空");
         }
@@ -292,8 +233,10 @@ public class BlogService {
             }
         }
 
-        //todo 将文件名称和文件路径在数据库保存一份
-
+        //将文件名称和关系数据库保存一份
+        com.lyj.blog.model.File dbFile = new com.lyj.blog.model.File();
+        dbFile.setName(filename).setType(isImg?0:1);
+        fileService.insertFile(dbFile,blogId);
 
         try(
             //自动关闭流
@@ -314,5 +257,9 @@ public class BlogService {
         map.put("fileName",filename);
         map.put("isImg",isImg);
         return Message.success("上传成功",map);
+    }
+
+    public Blog selectHTMLAndNameByName(String name) {
+        return blogMapper.selectOne(new QueryWrapper<Blog>().select("id","md_html", "name").eq("name", name));
     }
 }

@@ -68,6 +68,17 @@ function updateTag() {
     });
 }
 
+function openTag() {
+    // 只能勾选一个tag，然后再添加
+    let checkedTags = $("#tags").serializeArray();
+    if(checkedTags.length!==1){
+        layer.msg("至少选择一个进行删除");
+        return;
+    }
+
+    window.location="/tag/"+checkedTags[0].value+"/1";
+}
+
 // 渲染tag
 function initTags(){
     $.get("/tag",function (data,status) {

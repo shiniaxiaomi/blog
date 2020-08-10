@@ -48,4 +48,8 @@ public class BlogTagRelationService {
         return blogTagRelationMapper.selectPage(new Page<>(page, size),
                 new QueryWrapper<BlogTagRelation>().select("blog_id").eq("tag_id", tagId));
     }
+
+    public void deleteByBlogId(int blogId) {
+        blogTagRelationMapper.delete(new QueryWrapper<BlogTagRelation>().eq("blog_id",blogId));
+    }
 }

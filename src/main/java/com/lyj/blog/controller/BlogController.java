@@ -1,6 +1,7 @@
 package com.lyj.blog.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.lyj.blog.config.Constant;
 import com.lyj.blog.config.Util;
 import com.lyj.blog.model.req.FilingResult;
 import com.lyj.blog.model.req.Message;
@@ -115,8 +116,9 @@ public class BlogController {
     @GetMapping("filing/{year}/{page}")
     public ModelAndView filing(@PathVariable("year") int year,@PathVariable("page") int page){
         ModelAndView mav = new ModelAndView("blog/more");
-        Page<Blog> blogPage = blogService.selectBlogItemsByYear(year, page, 10);
+        Page<Blog> blogPage = blogService.selectBlogItemsByYear(year, page, Constant.SIZE);
         Util.renderPageParam(mav,blogPage,"/blog/filing/"+year+"/",year+" 归档");
+        mav.addObject("moreBlogList",blogPage.getRecords());//分页数据
         return mav;
     }
 
@@ -124,8 +126,9 @@ public class BlogController {
     @GetMapping("stick/{page}")
     public ModelAndView stick(@PathVariable("page") int page){
         ModelAndView mav = new ModelAndView("blog/more");
-        Page<Blog> blogPage =  blogService.selectBlogItemsPage(true,false,page,10);
+        Page<Blog> blogPage =  blogService.selectBlogItemsPage(true,false,page,Constant.SIZE);
         Util.renderPageParam(mav,blogPage,"/blog/stick/","置顶博客 分页");
+        mav.addObject("moreBlogList",blogPage.getRecords());//分页数据
         return mav;
     }
 
@@ -133,15 +136,16 @@ public class BlogController {
     @GetMapping("newest/{page}")
     public ModelAndView newest(@PathVariable("page") int page){
         ModelAndView mav = new ModelAndView("blog/more");
-        Page<Blog> blogPage =  blogService.selectBlogItemsPage(false,false,page,10);
+        Page<Blog> blogPage =  blogService.selectBlogItemsPage(false,false,page,Constant.SIZE);
         Util.renderPageParam(mav,blogPage,"/blog/newest/","最新博客 分页");
+        mav.addObject("moreBlogList",blogPage.getRecords());//分页数据
         return mav;
     }
 
     @ResponseBody
-    @PostMapping("upload")
-    public Message uploadFile(@RequestParam("file[]") MultipartFile multipartFile){
-        return blogService.uploadFile(multipartFile);
+    @PostMapping("upload/{blogId}")
+    public Message uploadFile(@RequestParam("file") MultipartFile multipartFile,@PathVariable("blogId") int blogId){
+        return blogService.uploadFile(multipartFile,blogId);
     }
 
 }

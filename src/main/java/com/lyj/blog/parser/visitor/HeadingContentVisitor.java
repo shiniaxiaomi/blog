@@ -37,7 +37,7 @@ public class HeadingContentVisitor extends AbstractVisitor {
 
     public static String HeadingSplitLine="=======------=======";//内容分割线
 
-    Pattern pattern = Pattern.compile("^.*\\r\\n");
+    Pattern pattern = Pattern.compile("^.*\n");
 
 
     private StringBuilder sb=new StringBuilder();
@@ -57,7 +57,7 @@ public class HeadingContentVisitor extends AbstractVisitor {
             Matcher matcher = pattern.matcher(split);
             if (matcher.find()) {
                 String group = matcher.group();
-                esHeading.setHeadingName(group.substring(0,group.length()-2));//去掉回车换行
+                esHeading.setHeadingName(group.substring(0,group.length()-1));//去掉回车换行
             }else{ //如果没找到标题，设置默认标题
                 esHeading.setHeadingName("默认标题");
             }

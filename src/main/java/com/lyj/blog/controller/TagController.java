@@ -1,6 +1,7 @@
 package com.lyj.blog.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.lyj.blog.config.Constant;
 import com.lyj.blog.config.Util;
 import com.lyj.blog.model.Blog;
 import com.lyj.blog.model.req.Message;
@@ -62,9 +63,10 @@ public class TagController {
     @GetMapping("{id}/{page}")
     public ModelAndView selectBlogItemByTagId(@PathVariable("id") int id, @PathVariable("page") int page){
         ModelAndView mav = new ModelAndView("blog/more");
-        Page<Blog> blogPage = blogService.selectBlogItemsByTagId(id, page, 2);
+        Page<Blog> blogPage = blogService.selectBlogItemsByTagId(id, page, Constant.SIZE);
         String tagName = tagService.selectTagNameById(id);
         Util.renderPageParam(mav,blogPage,"/tag/"+id+"/",tagName+"标签 分页");
+        mav.addObject("moreBlogList",blogPage.getRecords());//分页数据
         return mav;
     }
 
