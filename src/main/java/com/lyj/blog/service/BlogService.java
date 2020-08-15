@@ -267,4 +267,8 @@ public class BlogService {
     public Blog selectBlogByCommentId(int commentId) {
         return blogMapper.selectBlogByCommentId(commentId);
     }
+
+    public int selectVisitCount() {
+        return blogMapper.selectSum();
+    }
 }

@@ -23,4 +23,7 @@
                  left join comment c on blog.id = c.blog_id
         where c.id = #{commentId}
     </select>
+    <select id="selectSum" resultType="java.lang.Integer">
+        SELECT sum(visit_count) FROM blog
+    </select>
 </mapper>

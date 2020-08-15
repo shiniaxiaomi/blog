@@ -17,4 +17,6 @@ public interface BlogMapper extends BaseMapper<Blog> {
     Page<Blog> selectBlogItemsByTagId(@Param("isPrivate") boolean isPrivate, @Param("tagId") int tagId, Page<?> page);
 
     Blog selectBlogByCommentId(@Param("commentId") int commentId);
+
+    int selectSum();
 }

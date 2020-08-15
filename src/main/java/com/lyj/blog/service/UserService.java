@@ -21,11 +21,13 @@ public class UserService {
     UserMapper userMapper;
 
     @Autowired
+    BlogService blogService;
+
+    @Autowired
     HttpSession session;
 
     public int selectVisitCount() {
-        User user = userMapper.selectOne(new QueryWrapper<User>().select("visit_count").eq("id", 1));
-        return user.getVisitCount();
+        return blogService.selectVisitCount();
     }
 
     public boolean login(User user) {

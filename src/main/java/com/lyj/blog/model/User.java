@@ -22,11 +22,6 @@ public class User implements Serializable {
     private String password;
 
     /**
-     * 博客的总访问次数
-     */
-    private Integer visitCount;
-
-    /**
      * 文件目录信息
      */
     private String tree;
