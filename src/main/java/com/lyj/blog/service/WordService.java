@@ -129,7 +129,7 @@ public class WordService {
     public TextTranslateBatchResponse translateUtil(String source,String target,List list){
         TextTranslateBatchResponse resp=null;
         try{
-            Credential cred = new Credential(LoadConfig.getSecretId(), LoadConfig.getSecretKey());
+            Credential cred = new Credential(LoadConfig.getInstance().getSecretId(), LoadConfig.getInstance().getSecretKey());
 
             HttpProfile httpProfile = new HttpProfile();
             httpProfile.setEndpoint("tmt.tencentcloudapi.com");

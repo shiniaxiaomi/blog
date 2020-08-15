@@ -1,5 +1,6 @@
 package com.lyj.blog.controller;
 
+import com.lyj.blog.interceptor.NeedLogin;
 import com.lyj.blog.model.req.Message;
 import com.lyj.blog.model.Word;
 import com.lyj.blog.service.WordService;
@@ -27,6 +28,7 @@ public class WordController {
         return "word/index";
     }
 
+    @NeedLogin
     @ResponseBody
     @PostMapping("/analyze")
     public Message analyze(String name, String content){
@@ -45,7 +47,7 @@ public class WordController {
     @GetMapping("/content/{id}")
     public Message content(@PathVariable int id){
         Word word = wordService.content(id);
-        return Message.success(null,word.getContext());
+        return Message.success(null,word);
     }
 
     @ResponseBody
@@ -55,6 +57,7 @@ public class WordController {
         return Message.success(null,list);
     }
 
+    @NeedLogin
     @ResponseBody
     @PostMapping("/saveIndex")
     public Message saveIndex(int id,Integer[] index){
@@ -62,6 +65,7 @@ public class WordController {
         return Message.success("保存成功");
     }
 
+    @NeedLogin
     @ResponseBody
     @PostMapping("/delete")
     public Message delete(int id){

@@ -51,19 +51,18 @@
             type: "POST",//方法类型
             url: "/word/analyze" ,//url
             data: $('#form').serialize(),
-            success: function (result) {
-                console.log(result);
-                window.location.href="/word/detail/"+result;//请求单词详情页
+            success: function (data) {
+                if(data.code){
+                    window.location.href="/word/detail/"+data.data;//请求单词详情页
+                }
+                layer.msg(data.msg)
             },
-            error : function(data) {
-                layer.msg(data)
-            }
         });
     }
 
     function deleteWord(id){
         $.post("/word/delete",{id:id},function (data,status) {
-            layer.msg(data)
+            layer.msg(data.msg)
         })
     }
 

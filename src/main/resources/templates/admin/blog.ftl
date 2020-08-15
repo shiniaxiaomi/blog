@@ -142,6 +142,7 @@
     }
 
     function updateBlog(tip){
+        debugger
         // 如果没有修改，则不保存
         if(!isEdit){
             return;
@@ -149,6 +150,7 @@
         // 如果修改了，将修改状态设置为false
         isEdit=false;
         console.log("保存内容");
+        let layerMsg = layer.msg("正在保存...",{time:0});
         // console.log(zTree.getSelectedNodes()[0]!==undefined && zTree.getSelectedNodes()[0].isFolder);
         if(zTree.getSelectedNodes()[0]===undefined || zTree.getSelectedNodes()[0].isFolder){
             layer.msg("请选择对应的博客");
@@ -161,9 +163,10 @@
             md: mdValue,
             desc: lute.Md2HTML((mdValue.substr(0,200)+"...").replace(/#.*/g,""))
         },function (data,status) {
+            layer.close(layerMsg);
             if(status==="success" && data.code){
                 if(tip!==undefined){
-                    layer.msg("保存成功");
+                    layer.msg("保存成功",{time:1000});
                 }
             }else{
                 layer.msg("保存失败");
@@ -263,8 +266,6 @@
             {
                 name: '保存', tip: '保存', icon: '<i class="iconfont icon-baocun"></i>',tipPosition: 's',
                 click: () => {
-                    // 当点击保存按钮时，无论是否修改，都进行保存
-                    isEdit=true;
                     updateBlog("tip");
                 },
             },
@@ -338,16 +339,11 @@
             //图片上传
             upload: {
                 url:'/blog/upload',
-                // 文件名安全处理
-                filename (name) {
-                    return name.replace(/[^(a-zA-Z0-9\u4e00-\u9fa5\.)]/g, '').
-                    replace(/[\?\\/:|<>\*\[\]\(\)\$%\{\}@~]/g, '').
-                    replace('/\\s/g', '')
-                },
                 // 自定义上传
                 handler(files){
                     let data = new FormData();
                     data.append('file', files[0]);
+                    debugger
                     $.ajax({
                         type: 'POST',
                         url: "/blog/upload/"+window.blogId,

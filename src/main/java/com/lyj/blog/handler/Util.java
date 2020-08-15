@@ -1,4 +1,4 @@
-package com.lyj.blog.config;
+package com.lyj.blog.handler;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.web.servlet.ModelAndView;

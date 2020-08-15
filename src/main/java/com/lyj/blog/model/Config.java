@@ -25,5 +25,16 @@ public class Config implements Serializable {
      */
     private String secretKey;
 
+    /**
+     * 发送email
+     */
+    private String email;
+
+    /**
+     * email授权码
+     */
+    private String emailPassword;
+
+
     private static final long serialVersionUID = 1L;
 }

@@ -1,5 +1,6 @@
 package com.lyj.blog.controller;
 
+import com.lyj.blog.interceptor.NeedLogin;
 import com.lyj.blog.model.req.Message;
 import com.lyj.blog.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ public class FileController {
     @Autowired
     FileService fileService;
 
-
+    @NeedLogin
     @ResponseBody
     @PostMapping("deleteRelation")
     public Message deleteRelation(@RequestParam("name") String name,@RequestParam("blogId") int blogId){
@@ -29,6 +30,7 @@ public class FileController {
         return Message.success("删除成功");
     }
 
+    @NeedLogin
     @ResponseBody
     @PostMapping("delete")
     public Message delete(@RequestParam("id") int id){

@@ -24,10 +24,25 @@ public class CommentUserService {
 
     public CommentUser selectByEmail(String email) {
         return commentUserMapper.selectOne(new QueryWrapper<CommentUser>().eq("email", email));
-
     }
 
-    public void updateUserNameById(CommentUser update) {
+    public void updateById(CommentUser update){
         commentUserMapper.updateById(update);
+    }
+
+    public CommentUser selectByUserName(String username) {
+        return commentUserMapper.selectOne(new QueryWrapper<CommentUser>().eq("username", username));
+    }
+
+    public String selectEmailById(int userId) {
+        CommentUser commentUser = commentUserMapper.selectOne(new QueryWrapper<CommentUser>().select("email").eq("id", userId));
+        if(commentUser==null){
+            return null;
+        }
+        return commentUser.getEmail();
+    }
+
+    public CommentUser selectByUserNameAndEmail(String username, String email) {
+        return commentUserMapper.selectOne(new QueryWrapper<CommentUser>().eq("username", username).eq("email", email));
     }
 }

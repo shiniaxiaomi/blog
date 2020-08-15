@@ -6,28 +6,13 @@
 <#include "../common/right.ftl">
 <#include "../common/comment.ftl">
 <@head>
-    <!-- vditor -->
-    <link rel="stylesheet" href="/vditor/index.css" />
-    <script src="/vditor/index.min.js" defer></script>
     <script src="/vditor/js/lute/lute.min.js"></script>
     <!-- comment -->
     <link rel="stylesheet" href="/css/comment.css" />
     <script src="/js/comment.js"></script>
-<#--    <link rel="stylesheet" href="https://cdn.bootcss.com/gitalk/1.5.0/gitalk.min.css"/>-->
-<#--    <script src="https://cdn.bootcss.com/gitalk/1.5.0/gitalk.min.js"></script>-->
     <!-- layer -->
     <script src="/layer/layer.js"></script>
     <style>
-        .fontRed{
-            color: rgb(166, 0, 0);
-            font-weight: bold;
-        }
-        .vditor-outline__item:hover{
-            color: #2e72e2;
-        }
-        .hljs{
-            background-color: #e9ecefa8 !important;
-        }
         .gt-avatar >img{
             border-radius: 50%!important;
             width: 40px !important;
@@ -65,19 +50,13 @@
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item">
-                    <a href="/">首页</a>|<a href="/admin/blog/${blogId!}">编辑</a>
+                    <a href="/">首页</a>|<a href="/blog/${blogId!}">返回博客</a>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">${blogName!}</li>
             </ol>
         </nav>
-        <!--文章内容-->
-        <div id="vditor" class="vditor-reset">
-            ${html!}
-        </div>
 
         <!--评论-->
-<#--        <@comment></@comment>-->
-
         <div id="comment-container">
             <div class="gt-container vditor-reset">
                 <div class="gt-meta">
@@ -108,12 +87,6 @@
                 <div class="gt-comments">
                     <!--评论内容-->
                     <div id="commentsDiv" style="position: relative;"></div>
-                    <!--加载更多按钮-->
-                    <div id="loadMoreBtn" class="gt-comments-controls">
-                        <button class="gt-btn gt-btn-loadmore" onclick="loadMore()">
-                            <span class="gt-btn-text">加载更多</span>
-                        </button>
-                    </div>
                 </div>
             </div>
         </div>
@@ -123,59 +96,15 @@
 </html>
 
 <script>
-
-    // 搜索heading
-    function searchHeading(){
-        let header = $("#header-search");
-        let val = header.val();
-        if(val===""){
-            //恢复
-            $("#toc div").each(function () {
-                $(this).show();
-            });
-        }else{
-            //搜索
-            $("#toc div").each(function () {
-                if($(this).text().toLowerCase().indexOf(val.toLowerCase())===-1){
-                    $(this).hide();
-                }
-            });
-            //清空输入框
-            header.val("");
-        }
-    }
-
     $(function () {
-        Vditor.highlightRender({lineNumber:true},document.getElementById("vditor"));//渲染代码高亮
-        Vditor.codeRender(document.getElementById("vditor"));//渲染代码复制按钮
-        Vditor.outlineRender(document.getElementById("vditor"), document.getElementById("toc"));//生成toc目录
+        // 每次加载评论时都从缓存先读取信息
+        selectEmailAndUserName();
 
-        // 绑定回车搜索heading事件
-        $("#header-search").keypress(function(e) {
-            if (e.keyCode === 13) {
-                searchHeading();
-            }
-        });
+        getCommentById(${commentId!},${blogId!});
 
+        // 自动点击回复
         setTimeout(function () {
-            if(location.hash!==""){
-                $("#toc div[data-id^="+location.hash.substr(1)+"]").click();//刷新页面锚点
-            }
-        },200);
-
-        //查找h1-h6,添加点击编辑的按钮
-        $("#vditor :header").each(function(){
-            let buf="";
-            $(this).append("<span style='font-size: 15px'><a href='/admin/blog/${blogId!}#"+$(this).attr("text")+"'> 编辑 </a></span>");
-            let level=$(this)[0].tagName.substring(1);
-            for(let i=0;i<level;i++){
-                buf+="#";
-            }
-            $(this).prepend("<span style='color: rgb(222 95 96)'>"+buf+"&nbsp;</span>");
-        });
-
-        // 加载评论
-        loadComment(${blogId!},1);
-
+            $(".gt-reply-small-button").eq(0).click();
+        },500)
     })
 </script>

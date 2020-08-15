@@ -17,4 +17,10 @@
           and blog.is_private = ${isPrivate}
         order by update_time, create_time desc
     </select>
+    <select id="selectBlogByCommentId" resultType="com.lyj.blog.model.Blog">
+        select blog.id, blog.name
+        from blog
+                 left join comment c on blog.id = c.blog_id
+        where c.id = #{commentId}
+    </select>
 </mapper>

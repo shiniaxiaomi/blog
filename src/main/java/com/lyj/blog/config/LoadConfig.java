@@ -15,22 +15,20 @@ import javax.annotation.PostConstruct;
 @Component
 public class LoadConfig {
 
-    static Config config;
-
     @Autowired
     ConfigMapper configMapper;
 
+    static Config config;
+
+    // 加载配置
     @PostConstruct
     public void loadConfig(){
         config = configMapper.selectById(1);
     }
 
-    public static String getSecretId(){
-        return config.getSecretId();
+    public static Config getInstance(){
+        return config;
     }
 
-    public static String getSecretKey(){
-        return config.getSecretKey();
-    }
 
 }

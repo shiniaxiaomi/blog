@@ -2,7 +2,8 @@ package com.lyj.blog.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lyj.blog.config.Constant;
-import com.lyj.blog.config.Util;
+import com.lyj.blog.handler.Util;
+import com.lyj.blog.interceptor.NeedLogin;
 import com.lyj.blog.model.Blog;
 import com.lyj.blog.model.req.Message;
 import com.lyj.blog.model.Tag;
@@ -30,6 +31,7 @@ public class TagController {
     @Autowired
     BlogService blogService;
 
+    @NeedLogin
     @ResponseBody
     @PostMapping("update")
     public Message update(Tag tag){
@@ -37,6 +39,7 @@ public class TagController {
         return Message.success("更新成功");
     }
 
+    @NeedLogin
     @ResponseBody
     @PostMapping("insert")
     public Message insert(Tag tag){
@@ -52,6 +55,7 @@ public class TagController {
     }
 
     // 支持批量删除
+    @NeedLogin
     @ResponseBody
     @PostMapping("delete")
     public Message deleteBatch(@RequestParam("tags") Integer[] tagIds){

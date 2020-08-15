@@ -1,5 +1,6 @@
 package com.lyj.blog.model.req;
 
+import com.alibaba.fastjson.JSON;
 import lombok.Data;
 
 /**
@@ -38,4 +39,9 @@ public class Message {
         return new Message(false,msg,null);
     }
 
+    //直接转化为json
+    @Override
+    public String toString() {
+        return JSON.toJSONString(this);
+    }
 }

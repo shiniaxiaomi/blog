@@ -1,18 +1,17 @@
 package com.lyj.blog.controller;
 
 import com.lyj.blog.config.Constant;
+import com.lyj.blog.interceptor.NeedLogin;
 import com.lyj.blog.model.Blog;
 import com.lyj.blog.service.BlogService;
+import com.lyj.blog.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author Yingjie.Lu
@@ -26,6 +25,9 @@ public class IndexController {
     @Autowired
     BlogService blogService;
 
+    @Autowired
+    CommentService commentService;
+
     @RequestMapping("/")
     public ModelAndView index(){
         ModelAndView mav = new ModelAndView("index");
@@ -38,8 +40,9 @@ public class IndexController {
         return mav;
     }
 
+    @ResponseBody
     @RequestMapping("test")
-    public String test(){
+    public String test() {
         return "admin/test";
     }
 

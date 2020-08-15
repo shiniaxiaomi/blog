@@ -1,5 +1,6 @@
 package com.lyj.blog.controller;
 
+import com.lyj.blog.interceptor.NeedLogin;
 import com.lyj.blog.model.req.Message;
 import com.lyj.blog.model.Catalog;
 import com.lyj.blog.service.CatalogService;
@@ -25,6 +26,7 @@ public class CatalogController {
     CatalogService catalogService;
 
     // 插入文件夹或者文件
+    @NeedLogin
     @ResponseBody
     @PostMapping("insert")
     public Message insert(Catalog catalog){
@@ -33,6 +35,7 @@ public class CatalogController {
     }
 
     // 删除文件夹或者文件
+    @NeedLogin
     @ResponseBody
     @PostMapping("delete")
     public Message delete(Catalog catalog){
@@ -41,6 +44,7 @@ public class CatalogController {
     }
 
     // 更新文件夹或者文件
+    @NeedLogin
     @ResponseBody
     @PostMapping("updateName")
     public Message updateName(Catalog catalog){
@@ -49,6 +53,7 @@ public class CatalogController {
     }
 
     // 移动文件夹或者文件
+    @NeedLogin
     @ResponseBody
     @PostMapping("move")
     public Message move(Catalog catalog){

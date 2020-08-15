@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.lyj.blog.mapper.CommentMapper">
+    <update id="incrById">
+        update comment set like_count = like_count+1 where id = #{commentId}
+    </update>
 
+    <select id="selectByBlogId" resultType="com.lyj.blog.model.Comment">
+        select c.id, c.content, c.create_time, c.like_count, cu.github_name,cu.username
+        from comment as c
+                 left join comment_user cu on c.comment_user_id = cu.id
+        where c.blog_id = #{blogId}
+        order by c.create_time desc
+    </select>
+    <select id="selectLeftJoinCommentUserById" resultType="com.lyj.blog.model.Comment">
+        select c.id, c.content, c.create_time, c.like_count, cu.github_name,cu.username
+        from comment as c
+                 left join comment_user cu on c.comment_user_id = cu.id
+        where c.id = #{commentId}
+    </select>
 </mapper>

@@ -2,7 +2,8 @@ package com.lyj.blog.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lyj.blog.config.Constant;
-import com.lyj.blog.config.Util;
+import com.lyj.blog.handler.Util;
+import com.lyj.blog.interceptor.NeedLogin;
 import com.lyj.blog.model.req.FilingResult;
 import com.lyj.blog.model.req.Message;
 import com.lyj.blog.model.Blog;
@@ -10,15 +11,12 @@ import com.lyj.blog.model.req.EsSearch;
 import com.lyj.blog.service.BlogService;
 import com.lyj.blog.service.BlogTagRelationService;
 import com.lyj.blog.service.EsService;
-import org.elasticsearch.index.translog.BufferedChecksumStreamOutput;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +47,7 @@ public class BlogController {
         return Message.success(null,md);
     }
 
+    @NeedLogin
     @ResponseBody
     @PostMapping("update")
     public Message update(Blog blog){
@@ -71,6 +70,7 @@ public class BlogController {
         return Message.success(null,map);
     }
 
+    @NeedLogin
     @ResponseBody
     @PostMapping("config")
     public Message updateConfig(int id,boolean isPrivate,boolean isStick,Integer[] tags){
@@ -142,6 +142,7 @@ public class BlogController {
         return mav;
     }
 
+    @NeedLogin
     @ResponseBody
     @PostMapping("upload/{blogId}")
     public Message uploadFile(@RequestParam("file") MultipartFile multipartFile,@PathVariable("blogId") int blogId){

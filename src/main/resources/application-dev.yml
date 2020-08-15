@@ -23,3 +23,5 @@ spring:
 
 file:
   location: ./upload
+
+host: localhost:8080

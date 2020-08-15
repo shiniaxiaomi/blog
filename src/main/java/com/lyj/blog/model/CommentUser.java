@@ -21,6 +21,11 @@ public class CommentUser implements Serializable {
     private Integer id;
 
     /**
+     * 用户名
+     */
+    private String username;
+
+    /**
      * 邮箱
      */
     private String email;

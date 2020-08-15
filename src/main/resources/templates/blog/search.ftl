@@ -51,19 +51,26 @@
                     layer.msg("没有相应的结果");
                     return;
                 }
-                let keyword = $("#keyword").val();
-                let splits = keyword.split(" ");
+                let splits = $("#keyword").val().match(/[\u4e00-\u9fa5]+|\w+/g);
+                if(splits==null) splits=[];
                 // 构造搜索结果
                 let str="";
                 for(let i=0;i<data.data.result.length;i++){
                     let result=data.data.result[i].sourceAsMap;
+                    // 过滤特殊符号
                     let md2HTML = lute.Md2HTML(result.content.replace(/\</g,"&lt;").replace(/\>/g,"&gt;"));
+                    // 高亮内容
                     for(let j=0;j<splits.length;j++){
                         md2HTML=md2HTML.replace(new RegExp(splits[j],"gi"),"<span style='color: red'>"+splits[j]+"</span>");
                     }
+                    // 高亮标题
+                    let highlightHeading=result.headingName;
+                    for(let j=0;j<splits.length;j++){
+                        highlightHeading=highlightHeading.replace(new RegExp(splits[j],"gi"),"<span style='color: red'>"+splits[j]+"</span>");
+                    }
                     str+=`
                         <div>
-                            <h5><a href="/blog/`+result.blogId+`#`+result.headingId+`">`+result.headingName+`</a>
+                            <h5><a href="/blog/`+result.blogId+`#`+result.headingId+`">`+highlightHeading+`</a>
                             <span style="font-size: 12px">📒`+result.blogName+`</span>
                             <span style="font-size: 12px">🔖`+result.tagName+`</span>
                             </h5>

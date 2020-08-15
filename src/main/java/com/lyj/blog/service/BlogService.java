@@ -208,19 +208,20 @@ public class BlogService {
         if(multipartFile.getOriginalFilename()==null){
             return Message.error("文件名称不能为空");
         }
-
         //获取并处理文件名
-        String originalFilename = multipartFile.getOriginalFilename();
+        String originalFilename = multipartFile.getOriginalFilename()
+            .replaceAll("[^(a-zA-Z0-9\\u4e00-\\u9fa5\\.)]","")
+                .replaceAll("[\\?\\\\\\/:\\|<>\\*\\[\\]\\$%\\{\\}@~\\(\\)\\s]","");
         String[] split = originalFilename.split("\\.");
         String filename;
         boolean isImg=false;
         if(split.length==2){
-            filename = split[0]+ DateTimeFormatter.ofPattern("yyyy-MM-dd-HH:mm:ss").format(LocalDateTime.now())+"."+split[1];
+            filename = split[0]+"-"+ DateTimeFormatter.ofPattern("yyyy-MM-dd-HH:mm:ss").format(LocalDateTime.now())+"."+split[1];
             if("png".equals(split[1]) || "jpg".equals(split[1]) || "jpeg".equals(split[1]) || "gif".equals(split[1])){
                 isImg=true;
             }
         }else{
-            filename = split[0]+ LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            filename = split[0]+"-"+ LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH:mm:ss"));
         }
         //获取文件存放路径
         File file = new File(filePath,filename);
@@ -261,5 +262,9 @@ public class BlogService {
 
     public Blog selectHTMLAndNameByName(String name) {
         return blogMapper.selectOne(new QueryWrapper<Blog>().select("id","md_html", "name").eq("name", name));
+    }
+
+    public Blog selectBlogByCommentId(int commentId) {
+        return blogMapper.selectBlogByCommentId(commentId);
     }
 }

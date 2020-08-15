@@ -2,7 +2,8 @@ package com.lyj.blog.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lyj.blog.config.Constant;
-import com.lyj.blog.config.Util;
+import com.lyj.blog.handler.Util;
+import com.lyj.blog.interceptor.NeedLogin;
 import com.lyj.blog.model.File;
 import com.lyj.blog.service.BlogService;
 import com.lyj.blog.service.FileService;
@@ -28,11 +29,13 @@ public class AdminController {
     @Autowired
     BlogService blogService;
 
+    @NeedLogin
     @GetMapping({"","blog"})
     public String blog(){
         return "admin/blog";
     }
 
+    @NeedLogin
     @GetMapping("blog/{id}")
     public ModelAndView editBlog(@PathVariable("id") int id){
         ModelAndView mav = new ModelAndView("admin/blog");
@@ -40,12 +43,14 @@ public class AdminController {
         return mav;
     }
 
+    @NeedLogin
     @GetMapping("tag")
     public String tag(){
         return "admin/tag";
     }
 
     // 分页查询所有的文件
+    @NeedLogin
     @GetMapping("file/{page}")
     public ModelAndView fileDashboard(@PathVariable("page") int page){
         ModelAndView mav = new ModelAndView("admin/file");
@@ -56,12 +61,13 @@ public class AdminController {
     }
 
     // 分页查询具体某个blog的所有的文件
+    @NeedLogin
     @GetMapping("file/{blogId}/{page}")
     public ModelAndView fileDashboard(@PathVariable("blogId") int blogId,@PathVariable("page") int page){
         ModelAndView mav = new ModelAndView("admin/file");
         Page<File> filePage = fileService.selectPageByBlogId(blogId,page, Constant.SIZE);
         String blogName = blogService.selectNameById(blogId);
-        Util.renderPageParam(mav,filePage,"/file/"+blogId+"/",blogName+"文件 分页");
+        Util.renderPageParam(mav,filePage,"/admin/file/"+blogId+"/",blogName+"文件 分页");
         mav.addObject("fileList",filePage.getRecords());
         mav.addObject("blogId",blogId);
         return mav;

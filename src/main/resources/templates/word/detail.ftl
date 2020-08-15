@@ -25,22 +25,15 @@
             url: "/word/saveIndex" ,//url
             data: $('#form').serialize(),
             success: function(data) {
-                console.log(data)
-                layer.msg('保存成功');
+                layer.msg(data.msg);
             },
-            error: function(request) {
-                console.log(request)
-                alert("Connection error");
-            }
         });
     }
 
     $(function () {
 
         $.get("/word/content/${id!0}",function (data,status) {
-            console.log(data)
-            let parse = JSON.parse(data.context);
-            console.log(parse)
+            let parse = JSON.parse(data.data.context);
             let str="";
             for(let i=0;i<parse.length;i++){
                 let element = parse[i];
@@ -59,7 +52,7 @@
             $("#content").html(str);
 
             // 设置已经勾选的
-            let index = JSON.parse(data.index);
+            let index = JSON.parse(data.data.index);
             if(index!==null){
                 for(let i=0;i<index.length;i++){
                     let checkedIndex = index[i];

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -42,11 +43,6 @@ public class Comment implements Serializable {
     private String content;
 
     /**
-     * 渲染后的html
-     */
-    private String html;
-
-    /**
      * 点赞数
      */
     private Integer likeCount;
@@ -55,6 +51,18 @@ public class Comment implements Serializable {
      * 创建时间
      */
     private Date createTime;
+
+    //标记为不是数据库字段
+    @TableField(exist = false)
+    private String username;
+
+    //标记为不是数据库字段
+    @TableField(exist = false)
+    private String githubName;
+
+    //标记为不是数据库字段
+    @TableField(exist = false)
+    private String email;
 
     private static final long serialVersionUID = 1L;
 }

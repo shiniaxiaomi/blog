@@ -95,8 +95,8 @@ public class EsService {
         // 复合查询
         BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery();
         if(!"".equals(esSearch.getKeyword())){
-            queryBuilder.should(QueryBuilders.matchQuery("blogName",esSearch.getKeyword()).boost(4f));//增加匹配程度
-            queryBuilder.should(QueryBuilders.matchQuery("headingName",esSearch.getKeyword()).boost(2f));//增加匹配程度
+            queryBuilder.should(QueryBuilders.matchQuery("blogName",esSearch.getKeyword()).boost(2.5f));//增加匹配程度
+            queryBuilder.should(QueryBuilders.matchQuery("headingName",esSearch.getKeyword()).boost(1.5f));//增加匹配程度
             queryBuilder.should(QueryBuilders.matchQuery("content",esSearch.getKeyword()));//必须有出现关键字
         }
         if(esSearch.getTagKeyword()!=null && !"".equals(esSearch.getTagKeyword())){

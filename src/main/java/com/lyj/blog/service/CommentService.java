@@ -2,20 +2,35 @@ package com.lyj.blog.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.lyj.blog.exception.MessageException;
 import com.lyj.blog.mapper.CommentMapper;
 import com.lyj.blog.model.Comment;
 import com.lyj.blog.model.CommentUser;
+import com.lyj.blog.model.req.CommentReq;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.mail.MessagingException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Yingjie.Lu
  * @description
  * @date 2020/8/10 1:40 下午
  */
+@Slf4j
 @Service
 public class CommentService {
+
+    @Value("${host}")
+    String host;
+
+    @Autowired
+    AsyncService asyncService;
 
     @Autowired
     CommentMapper commentMapper;
@@ -24,36 +39,89 @@ public class CommentService {
     CommentUserService commentUserService;
 
     public Page<Comment> selectByBlogId(int blogId, int page, int size){
-        return commentMapper.selectPage(new Page<>(page, size),
-                new QueryWrapper<Comment>().select("id", "html").eq("blog_id",blogId)
-                        .orderByDesc("create_time"));
+        return commentMapper.selectByBlogId(new Page<>(page, size), blogId);
     }
 
-    public String selectUserNameByEmail(String email){
-        CommentUser commentUser = commentUserService.selectByEmail(email);
-        return commentUser.getGithubName();
-    }
+    public Integer updateCommentUser(String userName,String email,String githubName){
+        CommentUser dbUser =null;
 
-
-    @Transactional
-    public void insert(int blogId,int replyId,String email, String github_username,String html) {
-        // 1.判断用户是否已经存在
-        CommentUser dbUser = commentUserService.selectByEmail(email);
-        if(dbUser!=null){
-            //如果数据库存在用户，且传入的github_username不为空，则更新对应的用户名
-            if(github_username!=null && !"".equals(github_username)){
-                //更新用户名
-                CommentUser update = new CommentUser().setId(dbUser.getId()).setGithubName(github_username);
-                commentUserService.updateUserNameById(update);
+        if(email!=null){
+            dbUser = commentUserService.selectByEmail(email);
+            if(dbUser!=null && userName!=null && !userName.equals(dbUser.getUsername())){
+                throw new MessageException("邮箱已被占用，请输入正确的用户名");
             }
-        }else{ // 2.如果不存在，则创建user
-            dbUser = new CommentUser().setEmail(email).setGithubName(github_username);
-            commentUserService.insert(dbUser);
         }
 
+        dbUser = commentUserService.selectByUserName(userName);
+        if(dbUser==null){
+            // 创建用户
+            CommentUser insert = new CommentUser().setUsername(userName).setEmail(email).setGithubName(githubName);
+            commentUserService.insert(insert);
+            return insert.getId();
+        }else{
+            CommentUser update = new CommentUser().setId(dbUser.getId());
+            if(githubName!=null && !githubName.equals(dbUser.getGithubName())){
+                update.setGithubName(githubName);
+            }
+            if(email!=null && dbUser.getEmail()==null){
+                update.setEmail(email);
+            }
+            if(update.getGithubName()!=null || update.getEmail()!=null){
+                commentUserService.updateById(update);
+            }
+        }
+
+        return dbUser.getId();
+    }
+
+    @Transactional
+    public int insert(CommentReq commentReq){
+        String userName=commentReq.getUsername().equals("")?null:commentReq.getUsername();
+        String email=commentReq.getEmail().equals("")?null:commentReq.getEmail();
+        String githubName=commentReq.getGithub_username().equals("")?null:commentReq.getGithub_username();
+        Integer commentUserId = updateCommentUser(userName,email,githubName);
+
         // 插入评论
-        Comment comment = new Comment().setBlogId(blogId).setReplyId(replyId)
-                .setCommentUserId(dbUser.getId()).setHtml(html);
+        Comment comment = new Comment().setBlogId(commentReq.getBlogId()).setReplyId(commentReq.getReplyId())
+                .setCommentUserId(commentUserId).setContent(commentReq.getComment_content());
         commentMapper.insert(comment);
+
+        // 发送评论邮件通知
+        asyncService.notifyEmail(commentReq.getBlogId(),comment.getContent());
+
+        // 如果回复id不为null，并且被回复方有邮件的情况下，发送邮件通知被回复方
+        if(commentReq.getReplyId()!=null){
+            // 通过reply_id查询回复的用户email
+            String toEmail = selectUserEmailByReplyId(commentReq.getReplyId());
+            if(toEmail!=null){
+                Comment comment_reply = commentMapper.selectOne(new QueryWrapper<Comment>().select("content").eq("id", commentReq.getReplyId()));
+                Map<String, Object> model = new HashMap<>();
+                model.put("originalComment", comment_reply.getContent());// 原始评论内容
+                model.put("replyComment", commentReq.getComment_content()); // 回复内容
+                model.put("replyLink", "http://"+host+"/comment/reply/"+commentReq.getReplyId());// 回复链接
+                asyncService.sendMail(toEmail,model);
+            }
+        }
+
+        return comment.getId();
+    }
+
+    public Comment selectLeftJoinCommentUserById(int commentId) {
+        return commentMapper.selectLeftJoinCommentUserById(commentId);
+    }
+
+    public String selectUserEmailByReplyId(int replyId){
+        Comment comment = commentMapper.selectOne(new QueryWrapper<Comment>().select("comment_user_id").eq("id", replyId));
+        int userId=comment.getCommentUserId();
+        return commentUserService.selectEmailById(userId);
+    }
+
+    public Comment selectById(int commentId) {
+        return commentMapper.selectById(commentId);
+    }
+
+
+    public void incr(int commentId) {
+        commentMapper.incrById(commentId);
     }
 }
