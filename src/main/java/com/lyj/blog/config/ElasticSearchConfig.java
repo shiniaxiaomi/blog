@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.elasticsearch.client.ClientConfiguration;
 import org.springframework.data.elasticsearch.client.RestClients;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * @author Yingjie.Lu
@@ -21,11 +22,16 @@ public class ElasticSearchConfig {
 
     //配置client客户端
     @Bean
-    RestHighLevelClient client() {
+    public RestHighLevelClient client() {
         ClientConfiguration clientConfiguration = ClientConfiguration.builder()
                 .connectedTo(hostAndPort)
                 .build();
         return RestClients.create(clientConfiguration).rest();
+    }
+
+    @Bean
+    public RestTemplate restTemplate(){
+        return new RestTemplate();
     }
 
 }

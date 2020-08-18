@@ -6,6 +6,7 @@ import com.lyj.blog.mapper.BlogTagRelationMapper;
 import com.lyj.blog.model.BlogTagRelation;
 import com.lyj.blog.model.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -44,10 +45,10 @@ public class BlogTagRelationService {
         blogTagRelationMapper.insertBatch(blogId,tagIds);
     }
 
-    public Page<BlogTagRelation> selectBlogIdByTagId(int tagId,int page,int size){
-        return blogTagRelationMapper.selectPage(new Page<>(page, size),
-                new QueryWrapper<BlogTagRelation>().select("blog_id").eq("tag_id", tagId));
-    }
+//    public Page<BlogTagRelation> selectBlogIdByTagId(int tagId,int page,int size){
+//        return blogTagRelationMapper.selectPage(new Page<>(page, size),
+//                new QueryWrapper<BlogTagRelation>().select("blog_id").eq("tag_id", tagId));
+//    }
 
     public void deleteByBlogId(int blogId) {
         blogTagRelationMapper.delete(new QueryWrapper<BlogTagRelation>().eq("blog_id",blogId));

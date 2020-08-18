@@ -11,10 +11,10 @@
     <script src="/js/tag.js"></script>
 </@head>
 <@body>
-    <@left class="col-2" style="max-width: 150px">
+    <@left class="col-md-1 col-lg-2" style="max-width: 150px">
         <@sidebar></@sidebar>
     </@left>
-    <@right class="col-10">
+    <@right class="col-md-11 col-lg-10">
         <p class="h3">${title}</p>
         <a href="javascript:void(0);" onclick="back(${blogId!})">返回</a>
         <table class="table table-hover">

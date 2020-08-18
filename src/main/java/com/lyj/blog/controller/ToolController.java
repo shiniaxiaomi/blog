@@ -19,11 +19,6 @@ import java.util.regex.Pattern;
 @RequestMapping("tool")
 public class ToolController {
 
-    @GetMapping("regular")
-    public String regular(){
-        return "tool/regular";
-    }
-
     @ResponseBody
     @PostMapping("regular")
     public String regularTest(String content,String regular){

@@ -36,16 +36,22 @@
         }
         <#--搜索高亮样式-->
         .highlight_red {color:#A60000;}
+
+        @media (max-width: 768px){
+            #tocDiv{
+                order: 2;
+            }
+        }
     </style>
 </@head>
 <#include "../common/body.ftl">
 <@body class="container-fluid">
-    <@left class="col-2" style="max-width: 150px">
+    <@left class="col-md-1 col-lg-2" style="max-width: 150px">
         <@sidebar></@sidebar>
     </@left>
-    <@right class="col-10">
+    <@right class="col-md-11 col-lg-10">
         <div class="row">
-            <div id="tocDiv" class="col-3">
+            <div id="tocDiv" class="col-12 col-md-3 order-1">
                 <div class="form-inline">
                     <input class="mr-2" id="searchInput" autocomplete="off">
                     <button type="button" class="btn btn-secondary btn-sm" onclick="searchNode()">搜索</button>
@@ -55,7 +61,7 @@
                 </div>
             </div>
 
-            <div class="col-9">
+            <div class="col-12 col-md-9 order-1">
                 <div id="vditor"></div>
             </div>
         </div>
@@ -141,8 +147,15 @@
         })
     }
 
+    // 更新blog
     function updateBlog(tip){
-        debugger
+        // 延时500ms，保证input函数能够触发
+        setTimeout(function () {
+            _updateBlog(tip);
+        },500)
+    }
+
+    function _updateBlog(tip) {
         // 如果没有修改，则不保存
         if(!isEdit){
             return;
@@ -249,20 +262,6 @@
                     $('#configModal').modal("show");
                 },
             },
-            // {
-            //     name: '隐藏目录', tip: '隐藏目录', icon: '<i class="iconfont icon-yincangmulu"></i>',tipPosition: 's',
-            //     click: () => {
-            //         // 当点击保存按钮时，无论是否修改，都进行保存
-            //         // isEdit=true;
-            //         // updateBlog("tip");
-            //
-            //         let outline = $(".vditor-outline").eq(0).css("display");
-            //         if()
-            //         $("#tocDiv").hide();
-            //         $("#vditor").css("width","700px");
-            //
-            //     },
-            // },
             {
                 name: '保存', tip: '保存', icon: '<i class="iconfont icon-baocun"></i>',tipPosition: 's',
                 click: () => {

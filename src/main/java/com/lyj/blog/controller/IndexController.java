@@ -1,12 +1,13 @@
 package com.lyj.blog.controller;
 
 import com.lyj.blog.config.Constant;
-import com.lyj.blog.interceptor.NeedLogin;
 import com.lyj.blog.model.Blog;
+import com.lyj.blog.model.req.Message;
 import com.lyj.blog.service.BlogService;
 import com.lyj.blog.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -78,13 +79,10 @@ public class IndexController {
         return mav;
     }
 
-    @RequestMapping("index/toc")
-    public String toc(){
-        return "nav/toc";
-    }
-
-    @RequestMapping("index/tag")
-    public String tag(){
-        return "nav/tag";
+    @ResponseBody
+    @PostMapping("feedback")
+    public Message feedback(String email,String content){
+        commentService.feedback(email,content);
+        return Message.success("反馈成功");
     }
 }

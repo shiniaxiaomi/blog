@@ -10,6 +10,9 @@ import com.lyj.blog.model.req.CommentReq;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +41,7 @@ public class CommentService {
     @Autowired
     CommentUserService commentUserService;
 
+    @CachePut(value = "CommentPage",key = "#blogId + ',' + #page")
     public Page<Comment> selectByBlogId(int blogId, int page, int size){
         return commentMapper.selectByBlogId(new Page<>(page, size), blogId);
     }
@@ -75,6 +79,7 @@ public class CommentService {
     }
 
     @Transactional
+    @CachePut(value = "CommentPage",key = "#commentReq.blogId + ',' + 1") //当有评论时，去掉第一页的缓存
     public int insert(CommentReq commentReq){
         String userName=commentReq.getUsername().equals("")?null:commentReq.getUsername();
         String email=commentReq.getEmail().equals("")?null:commentReq.getEmail();
@@ -106,6 +111,7 @@ public class CommentService {
         return comment.getId();
     }
 
+    @Cacheable(value = "Comment",key = "#commentId")
     public Comment selectLeftJoinCommentUserById(int commentId) {
         return commentMapper.selectLeftJoinCommentUserById(commentId);
     }
@@ -116,12 +122,12 @@ public class CommentService {
         return commentUserService.selectEmailById(userId);
     }
 
-    public Comment selectById(int commentId) {
-        return commentMapper.selectById(commentId);
-    }
-
-
     public void incr(int commentId) {
         commentMapper.incrById(commentId);
+    }
+
+    // 反馈内容
+    public void feedback(String email, String content) {
+        asyncService.feedbackMail(email,content);
     }
 }

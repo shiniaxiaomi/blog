@@ -4,6 +4,7 @@ import com.lyj.blog.model.req.Message;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,8 +39,9 @@ public class LoginInterceptor implements HandlerInterceptor {
             response.setContentType("application/json; charset=utf-8");
             PrintWriter writer = response.getWriter();
             writer.println(Message.error("请先登入"));
-        }else{ //当请求页面时，重定向到登入
-            response.sendRedirect("/user/login/form");
+        }else{ //当请求页面时，转发到登入页
+            request.getRequestDispatcher("/user/login/form").forward(request,response);//根据url进行转发
+            //response.sendRedirect("/user/login/form");//根据url进行重定向
         }
         return false;
     }

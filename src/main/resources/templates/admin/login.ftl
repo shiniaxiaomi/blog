@@ -8,26 +8,27 @@
 </@head>
 <@body>
     <@right class="">
-        <#if isLogin!=true>
-            <form id="form" onsubmit="login();return false;">
-                <div class="form-group">
-                    <label for="username">用户名</label>
-                    <input name="username" id="username" autocomplete="off" type="text" class="form-control">
-                </div>
-                <div class="form-group">
-                    <label for="password">密码</label>
-                    <input  name="password" id="password" autocomplete="off" type="password" class="form-control">
-                </div>
-                <div style="text-align: center">
-                    <button type="submit" class="btn btn-primary mb-2 mx-2">登入</button>
-                    <button type="reset" onclick="history.back()" class="btn btn-primary mb-2 mx-2">返回</button>
-                </div>
-            </form>
-        <#else>
-            已登入<br>
-            <button class="btn btn-primary mb-2 mx-2" onclick="exitLogin()">退出登入</button>
-        </#if>
-
+        <div class="mb-5">
+            <#if isLogin!=true>
+                <form id="form" onsubmit="login();return false;">
+                    <div class="form-group">
+                        <label for="username">用户名</label>
+                        <input name="username" id="username" autocomplete="off" type="text" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">密码</label>
+                        <input  name="password" id="password" autocomplete="off" type="password" class="form-control">
+                    </div>
+                    <div style="text-align: center">
+                        <button type="submit" class="btn btn-primary mb-2 mx-2">登入</button>
+                        <button type="reset" onclick="history.back()" class="btn btn-primary mb-2 mx-2">返回</button>
+                    </div>
+                </form>
+            <#else>
+                已登入<br>
+                <button class="btn btn-primary mb-2 mx-2" onclick="exitLogin()">退出登入</button>
+            </#if>
+        </div>
     </@right>
 </@body>
 </html>
@@ -58,7 +59,7 @@
                 window.localStorage.setItem("loginUserName",$("#username").val());
                 // 1s后返回原始页面
                 setTimeout(function () {
-                    history.back();
+                    window.location.reload();//刷新页面
                 },500)
             }
             layer.msg(data.msg)

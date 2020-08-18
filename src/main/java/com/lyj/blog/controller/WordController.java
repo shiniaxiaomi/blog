@@ -23,11 +23,6 @@ public class WordController {
     @Autowired
     WordService wordService;
 
-    @GetMapping
-    public String index(){
-        return "word/index";
-    }
-
     @NeedLogin
     @ResponseBody
     @PostMapping("/analyze")

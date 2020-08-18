@@ -20,8 +20,15 @@ spring:
     template-loader-path: classpath:templates
   resources:
     static-locations: classpath:/static/,file:${file.location}
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: 12345678
 
 file:
   location: /upload
 
 host: luyingjie.cn
+
+elasticsearch:
+  hostAndPort: 47.105.165.211:9200

@@ -42,7 +42,7 @@ public class CommentUserService {
         return commentUser.getEmail();
     }
 
-    public CommentUser selectByUserNameAndEmail(String username, String email) {
-        return commentUserMapper.selectOne(new QueryWrapper<CommentUser>().eq("username", username).eq("email", email));
-    }
+//    public CommentUser selectByUserNameAndEmail(String username, String email) {
+//        return commentUserMapper.selectOne(new QueryWrapper<CommentUser>().eq("username", username).eq("email", email));
+//    }
 }

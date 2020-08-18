@@ -10,10 +10,10 @@
     <script src="/js/tag.js"></script>
 </@head>
 <@body>
-    <@left class="col-2" style="max-width: 150px">
+    <@left class="col-md-1 col-lg-2" style="max-width: 150px">
         <@sidebar></@sidebar>
     </@left>
-    <@right class="col-10" style="padding-left: 100px">
+    <@right class="col-md-11 col-lg-10">
         <div>
             <input id="searchTagInput" autocomplete="off">
             <div>

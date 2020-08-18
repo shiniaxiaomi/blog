@@ -41,6 +41,7 @@
                         <a class="dropdown-item" href="/admin">后台</a>
                     </div>
                 </div>
+                <a class="<#if active=="反馈">active</#if> nav-link" href="/index/feedback">反馈</a>
             </div>
 
             <#--搜索框-->

@@ -6,11 +6,13 @@ import com.lyj.blog.handler.Util;
 import com.lyj.blog.interceptor.NeedLogin;
 import com.lyj.blog.model.File;
 import com.lyj.blog.service.BlogService;
+import com.lyj.blog.service.EsService;
 import com.lyj.blog.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -28,6 +30,9 @@ public class AdminController {
 
     @Autowired
     BlogService blogService;
+
+    @Autowired
+    EsService esService;
 
     @NeedLogin
     @GetMapping({"","blog"})

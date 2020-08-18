@@ -29,7 +29,22 @@ public class AsyncService {
     @Autowired
     private Configuration configuration;//freemarker配置
 
-    // 开启异步发送邮件
+    // 开启异步发送反馈邮件
+    @Async
+    public void feedbackMail(String from,String content){
+        try {
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mailSender.createMimeMessage(), false);
+            mimeMessageHelper.setFrom(from);
+            mimeMessageHelper.setTo("lyj.8066@qq.com");
+            mimeMessageHelper.setSubject("博客反馈意见");
+            mimeMessageHelper.setText("<html><div>"+content+"</div></html>",true);//邮件内容
+            mailSender.send(mimeMessageHelper.getMimeMessage());//正式发送邮件
+        } catch (Exception e) {
+            throw new RuntimeException("邮件发送异常");
+        }
+    }
+
+    // 开启异步发送评论回复邮件
     @Async
     public void sendMail(String toEmail, Map<String, Object> model){
         try {
@@ -48,7 +63,7 @@ public class AsyncService {
 
     }
 
-    // 开启异步发送邮件
+    // 开启异步发送通知邮件
     @Async
     public void notifyEmail(int blogId,String html) {
         try {

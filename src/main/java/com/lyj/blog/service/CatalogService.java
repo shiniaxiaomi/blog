@@ -6,6 +6,9 @@ import com.lyj.blog.mapper.CatalogMapper;
 import com.lyj.blog.model.Blog;
 import com.lyj.blog.model.Catalog;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +29,7 @@ public class CatalogService {
     BlogService blogService;
 
     @Transactional
+    @CacheEvict(value = "Catalog")
     public void insert(Catalog catalog){
         // 如果不是文件夹，则先添加blog，再添加目录item
         if(!catalog.getIsFolder()){
@@ -36,12 +40,14 @@ public class CatalogService {
         catalogMapper.insert(catalog);
     }
 
+    @Cacheable(value = "Catalog")
     public List<Catalog> selectCatalog() {
         List<Catalog> list = catalogMapper.selectList(new QueryWrapper<>());
         return list;
     }
 
     @Transactional
+    @CacheEvict(value = "Catalog")
     public void delete(Catalog catalog) {
         // 如果是文件，则删除文件
         if(!catalog.getIsFolder()){
@@ -53,6 +59,7 @@ public class CatalogService {
     }
 
     @Transactional
+    @CachePut(value = "Catalog")
     public void updateName(Catalog catalog) {
         // 如果是文件，更改blogName
         if(!catalog.getIsFolder()){
@@ -64,6 +71,7 @@ public class CatalogService {
         catalogMapper.updateById(update);
     }
 
+    @CachePut(value = "Catalog")
     public void updatePid(Catalog catalog) {
         catalogMapper.updateById(catalog);
     }

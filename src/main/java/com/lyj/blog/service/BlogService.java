@@ -10,6 +10,9 @@ import com.lyj.blog.model.req.Message;
 import com.lyj.blog.parser.ParserUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -81,6 +84,7 @@ public class BlogService {
 
     // 保存在渲染md的时候的线程安全
     @Transactional
+    @CacheEvict(value = "Blog",key = "#blog.id")
     public synchronized void update(Blog blog) {
 
         // 解析md为html
@@ -108,10 +112,12 @@ public class BlogService {
         return blog.getName();
     }
 
+    @Cacheable(value = "Blog",key = "#id")
     public Blog selectHTMLAndName(int id) {
         return blogMapper.selectOne(new QueryWrapper<Blog>().select("md_html","name").eq("id", id));
     }
 
+    @Cacheable(value = "BlogPage",key = "#isStick + ',' + #isPrivate + ',' + #page + ',' + #size")
     public List<Blog> selectIndexBlogs(boolean isStick, boolean isPrivate, int page, int size) {
         Page<Blog> result = blogMapper.selectPage(new Page<>(page, size), new QueryWrapper<Blog>()
                 .select("id", "name", "`desc`","visit_count","create_time","update_time")
@@ -155,11 +161,13 @@ public class BlogService {
         blogMapper.updateById(blog);
     }
 
+    @Cacheable(value = "Filing",cacheManager = "cacheManager") //归档数据
     public List<FilingResult> filing() {
         return blogMapper.filing();
     }
 
     //分页查询在指定年份的blogItem
+    @Cacheable(value = "BlogByYear",key = "#year + ',' + #page + ',' + #size")
     public Page<Blog> selectBlogItemsByYear(int year,int page,int size) {
         Date startYear=Date.from(LocalDate.of(year,1,1)
                 .atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
@@ -179,6 +187,7 @@ public class BlogService {
     }
 
     // 根据tagId分页查询blogItems
+    @Cacheable(value = "BlogByTag",key = "#tagId + ',' + #page + ',' + #size")
     public Page<Blog> selectBlogItemsByTagId(int tagId, int page, int size) {
         Page<Blog> blogPage = blogMapper.selectBlogItemsByTagId(false, tagId, new Page<>(page, size));//公有
         renderBlogItems(blogPage.getRecords());
@@ -186,6 +195,7 @@ public class BlogService {
     }
 
     // 分页查询：根据是否置顶和私有
+    @Cacheable(value = "BlogPage",key = "#isStick + ',' + #isPrivate + ',' + #page + ',' + #size")
     public Page<Blog> selectBlogItemsPage(boolean isStick, boolean isPrivate, int page, int size){
         Page<Blog> result = blogMapper.selectPage(new Page<>(page, size), new QueryWrapper<Blog>()
                 .select("id", "name", "`desc`","visit_count","create_time","update_time")
@@ -199,6 +209,20 @@ public class BlogService {
         return result;
     }
 
+    @Cacheable(value = "Blog",key = "#name")
+    public Blog selectHTMLAndNameByName(String name) {
+        return blogMapper.selectOne(new QueryWrapper<Blog>().select("id","md_html", "name").eq("name", name));
+    }
+
+    public Blog selectBlogByCommentId(int commentId) {
+        return blogMapper.selectBlogByCommentId(commentId);
+    }
+
+    @Cacheable("VisitCount")
+    public int selectVisitCount() {
+        return blogMapper.selectSum();
+    }
+
     // 上传文件的处理
     @Transactional
     public Message uploadFile(MultipartFile multipartFile,int blogId) {
@@ -210,7 +234,7 @@ public class BlogService {
         }
         //获取并处理文件名
         String originalFilename = multipartFile.getOriginalFilename()
-            .replaceAll("[^(a-zA-Z0-9\\u4e00-\\u9fa5\\.)]","")
+                .replaceAll("[^(a-zA-Z0-9\\u4e00-\\u9fa5\\.)]","")
                 .replaceAll("[\\?\\\\\\/:\\|<>\\*\\[\\]\\$%\\{\\}@~\\(\\)\\s]","");
         String[] split = originalFilename.split("\\.");
         String filename;
@@ -240,9 +264,9 @@ public class BlogService {
         fileService.insertFile(dbFile,blogId);
 
         try(
-            //自动关闭流
-            BufferedInputStream bis = new BufferedInputStream(multipartFile.getInputStream());
-            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
+                //自动关闭流
+                BufferedInputStream bis = new BufferedInputStream(multipartFile.getInputStream());
+                BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
         ){
             byte[] b=new byte[100];//也可以使用默认的缓冲区大小
             int len=0;
@@ -260,15 +284,4 @@ public class BlogService {
         return Message.success("上传成功",map);
     }
 
-    public Blog selectHTMLAndNameByName(String name) {
-        return blogMapper.selectOne(new QueryWrapper<Blog>().select("id","md_html", "name").eq("name", name));
-    }
-
-    public Blog selectBlogByCommentId(int commentId) {
-        return blogMapper.selectBlogByCommentId(commentId);
-    }
-
-    public int selectVisitCount() {
-        return blogMapper.selectSum();
-    }
 }

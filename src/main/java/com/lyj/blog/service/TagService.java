@@ -7,6 +7,8 @@ import com.lyj.blog.model.Blog;
 import com.lyj.blog.model.BlogTagRelation;
 import com.lyj.blog.model.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,21 +33,24 @@ public class TagService {
     BlogTagRelationService blogTagRelationService;
 
 
+    @CachePut("Tag")
     public void update(Tag tag){
         tagMapper.updateById(tag);
     }
 
+    @CachePut("Tag")
     public void insert(Tag tag) {
         tagMapper.insert(tag);
     }
 
+    @Cacheable("Tag")
     public List<Tag> select() {
         return tagMapper.selectList(new QueryWrapper<>());
     }
 
     @Transactional
+    @CachePut("Tag")
     public void deleteBatch(Integer[] tagIds) {
-        // TODO: 2020/7/31 删除每个tagId对应的tag，并且还要删除blog_tag_relation关联表中对应tag的数据
         List<Integer> ids = Arrays.asList(tagIds);
         // 删除对应tag
         tagMapper.deleteBatchIds(ids);
@@ -94,6 +99,7 @@ public class TagService {
 
     }
 
+
     public String selectTagNameByBlogId(Integer blogId) {
         List<String> tagNames = tagMapper.selectTagNameByBlogId(blogId);
         StringBuilder sb = new StringBuilder();
@@ -112,9 +118,9 @@ public class TagService {
         return tags;
     }
 
-    public Page<BlogTagRelation> selectBlogIdByTagId(int tagId, int page, int size) {
-         return blogTagRelationService.selectBlogIdByTagId(tagId,page,size);
-    }
+//    public Page<BlogTagRelation> selectBlogIdByTagId(int tagId, int page, int size) {
+//         return blogTagRelationService.selectBlogIdByTagId(tagId,page,size);
+//    }
 
     public String selectTagNameById(int id) {
         Tag tag = tagMapper.selectOne(new QueryWrapper<Tag>().select("name").eq("id", id));
