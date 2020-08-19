@@ -29,7 +29,7 @@ public class CatalogService {
     BlogService blogService;
 
     @Transactional
-    @CacheEvict(value = "Catalog")
+    @CacheEvict(value = "Catalog",allEntries=true)
     public void insert(Catalog catalog){
         // 如果不是文件夹，则先添加blog，再添加目录item
         if(!catalog.getIsFolder()){
@@ -47,7 +47,7 @@ public class CatalogService {
     }
 
     @Transactional
-    @CacheEvict(value = "Catalog")
+    @CacheEvict(value = "Catalog",allEntries=true)
     public void delete(Catalog catalog) {
         // 如果是文件，则删除文件
         if(!catalog.getIsFolder()){
@@ -59,7 +59,7 @@ public class CatalogService {
     }
 
     @Transactional
-    @CachePut(value = "Catalog")
+    @CacheEvict(value = "Catalog",allEntries=true)
     public void updateName(Catalog catalog) {
         // 如果是文件，更改blogName
         if(!catalog.getIsFolder()){
@@ -71,7 +71,7 @@ public class CatalogService {
         catalogMapper.updateById(update);
     }
 
-    @CachePut(value = "Catalog")
+    @CacheEvict(value = "Catalog",allEntries=true)
     public void updatePid(Catalog catalog) {
         catalogMapper.updateById(catalog);
     }

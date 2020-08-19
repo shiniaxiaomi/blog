@@ -117,7 +117,7 @@ public class BlogService {
         return blogMapper.selectOne(new QueryWrapper<Blog>().select("md_html","name").eq("id", id));
     }
 
-    @Cacheable(value = "BlogPage",key = "#isStick + ',' + #isPrivate + ',' + #page + ',' + #size")
+    @Cacheable(value = "BlogIndexPage",key = "#isStick + ',' + #isPrivate + ',' + #page + ',' + #size")
     public List<Blog> selectIndexBlogs(boolean isStick, boolean isPrivate, int page, int size) {
         Page<Blog> result = blogMapper.selectPage(new Page<>(page, size), new QueryWrapper<Blog>()
                 .select("id", "name", "`desc`","visit_count","create_time","update_time")

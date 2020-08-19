@@ -79,7 +79,7 @@ public class CommentService {
     }
 
     @Transactional
-    @CachePut(value = "CommentPage",key = "#commentReq.blogId + ',' + 1") //当有评论时，去掉第一页的缓存
+    @CacheEvict(value = "CommentPage",key = "#commentReq.blogId + ',' + 1") //当有评论时，去掉第一页的缓存
     public int insert(CommentReq commentReq){
         String userName=commentReq.getUsername().equals("")?null:commentReq.getUsername();
         String email=commentReq.getEmail().equals("")?null:commentReq.getEmail();

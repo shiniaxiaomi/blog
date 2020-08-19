@@ -7,6 +7,7 @@ import com.lyj.blog.model.Blog;
 import com.lyj.blog.model.BlogTagRelation;
 import com.lyj.blog.model.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -33,12 +34,12 @@ public class TagService {
     BlogTagRelationService blogTagRelationService;
 
 
-    @CachePut("Tag")
+    @CacheEvict(value = "Tag",allEntries = true)
     public void update(Tag tag){
         tagMapper.updateById(tag);
     }
 
-    @CachePut("Tag")
+    @CacheEvict(value = "Tag",allEntries = true)
     public void insert(Tag tag) {
         tagMapper.insert(tag);
     }
@@ -49,7 +50,7 @@ public class TagService {
     }
 
     @Transactional
-    @CachePut("Tag")
+    @CacheEvict(value = "Tag",allEntries = true)
     public void deleteBatch(Integer[] tagIds) {
         List<Integer> ids = Arrays.asList(tagIds);
         // 删除对应tag
