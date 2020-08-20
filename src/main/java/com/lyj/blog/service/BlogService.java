@@ -8,6 +8,8 @@ import com.lyj.blog.model.Tag;
 import com.lyj.blog.model.req.FilingResult;
 import com.lyj.blog.model.req.Message;
 import com.lyj.blog.parser.ParserUtil;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.update.UpdateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -57,6 +60,9 @@ public class BlogService {
     @Value("${file.location}/file")
     String filePath;
 
+    @Autowired
+    HttpSession session;
+
     // 添加blog
     public void insert(Blog blog) {
         blogMapper.insert(blog);
@@ -88,7 +94,7 @@ public class BlogService {
     public synchronized void update(Blog blog) {
 
         // 解析md为html
-        String html = parserUtil.parseMdToHtml(blog.getId(),blog.getMd());
+        String html = parserUtil.parseMdToHtml(blog);
 
         // 保存blog
         blog.setMdHtml(html);
@@ -105,6 +111,9 @@ public class BlogService {
 
         // 全量的同步更新标签关联
         tagService.updateRelation(blog.getId(),tags);
+
+        // 同步更新es中的指定的blogId的isPrivate字段
+        esService.updateIsPrivateByBlogId(blog.getId(),blog.getIsPrivate());
     }
 
     public String selectNameById(Integer blogId) {
@@ -114,18 +123,26 @@ public class BlogService {
 
     @Cacheable(value = "Blog",key = "#id")
     public Blog selectHTMLAndName(int id) {
-        return blogMapper.selectOne(new QueryWrapper<Blog>().select("md_html","name").eq("id", id));
+        // 根据是否登入，查询公有的blog
+        if(session.getAttribute("isLogin")!=null){
+            return blogMapper.selectOne(new QueryWrapper<Blog>().select("md_html","name").eq("id", id));
+        }else{
+            return blogMapper.selectOne(new QueryWrapper<Blog>().select("md_html","name").eq("id", id)
+                    .eq("is_private",false));
+        }
     }
 
     @Cacheable(value = "BlogIndexPage",key = "#isStick + ',' + #isPrivate + ',' + #page + ',' + #size")
     public List<Blog> selectIndexBlogs(boolean isStick, boolean isPrivate, int page, int size) {
-        Page<Blog> result = blogMapper.selectPage(new Page<>(page, size), new QueryWrapper<Blog>()
-                .select("id", "name", "`desc`","visit_count","create_time","update_time")
-                .eq("is_stick", isStick)     //是否指定
-                .eq("is_private", isPrivate) //是否公有
-                .orderByDesc("update_time") //按照更新时间降序排列
-                .orderByDesc("create_time") //按照创建时间降序排列
-        );
+        QueryWrapper<Blog> queryWrapper = new QueryWrapper<Blog>()
+                .select("id", "name", "`desc`", "visit_count", "create_time", "update_time")
+                .eq("is_stick", isStick);//是否指定
+        if(!isPrivate){
+            queryWrapper.eq("is_private", false); //是否公有
+        }
+        queryWrapper.orderByDesc("update_time") //按照更新时间降序排列
+                .orderByDesc("create_time"); //按照创建时间降序排列
+        Page<Blog> result = blogMapper.selectPage(new Page<>(page, size), queryWrapper);
 
         return renderBlogItems(result.getRecords());
     }

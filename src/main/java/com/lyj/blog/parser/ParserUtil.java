@@ -53,12 +53,12 @@ public class ParserUtil {
             }).build();//创建html渲染器
 
     // 将md转换成html
-    public String parseMdToHtml(Integer blogId, String md){
+    public String parseMdToHtml(Blog blog){
         //解析md，转换为语法树
-        Node document = parser.parse(md);
+        Node document = parser.parse(blog.getMd());
         //创建标题内容的处理器
         HeadingContentVisitor headingContentVisitor = new HeadingContentVisitor();
-        headingContentVisitor.setBlogId(blogId);//设置blogId
+        headingContentVisitor.setBlogId(blog.getId());//设置blogId
         //添加visitor，用于生成标题及标题内容
         document.accept(headingContentVisitor);
         //渲染语法树，生成html
@@ -67,18 +67,18 @@ public class ParserUtil {
         //获取已经解析好的标题
         List<ESHeading> handledContent = headingContentVisitor.getHandledContent();
         //组装blogName和tagName
-        String blogName = blogService.selectNameById(blogId);
-        String tagName = tagService.selectTagNameByBlogId(blogId);
+        String blogName = blogService.selectNameById(blog.getId());
+        String tagName = tagService.selectTagNameByBlogId(blog.getId());
         handledContent.forEach(esHeading -> {
             esHeading.setBlogName(blogName);
             esHeading.setTagName(tagName);
         });
 
         //清除es中blogId对应的数据
-        esService.deleteHeadingByBlogIdInES("blog",String.valueOf(blogId));//根据blogId字段进行删除数据
+        esService.deleteHeadingByBlogIdInES("blog",String.valueOf(blog.getId()));//根据blogId字段进行删除数据
         //批量保存到ES中
         if(handledContent.size()!=0){
-            esService.insertHeadingToESBatch("blog",handledContent);
+            esService.insertHeadingToESBatch("blog",handledContent,false); //默认保存的都是非私有的内容，除非在config中配置为私有
         }
 
         return html;

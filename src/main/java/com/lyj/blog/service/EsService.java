@@ -1,7 +1,9 @@
 package com.lyj.blog.service;
 
+import com.lyj.blog.exception.MessageException;
 import com.lyj.blog.model.req.EsResult;
 import com.lyj.blog.model.req.EsSearch;
+import com.lyj.blog.model.req.Message;
 import com.lyj.blog.parser.model.ESHeading;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.index.IndexRequest;
@@ -16,8 +18,12 @@ import org.elasticsearch.index.query.*;
 import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -32,6 +38,14 @@ public class EsService {
 
     @Autowired
     RestHighLevelClient elasticClient;
+
+    @Autowired
+    HttpSession session;
+
+    @Autowired
+    RestTemplate restTemplate;
+
+    final String esHost="http://localhost:9200";
 
     //根据blogId删除es中的headings
     public void deleteHeadingByBlogIdInES(String index,String blogId){
@@ -51,7 +65,7 @@ public class EsService {
     }
 
     //批量插入headings到es中
-    public void insertHeadingToESBatch(String index, List<ESHeading> handledContent){
+    public void insertHeadingToESBatch(String index, List<ESHeading> handledContent, Boolean isPrivate){
         BulkRequest request = new BulkRequest();
 
         for (ESHeading esHeading : handledContent) {
@@ -62,7 +76,8 @@ public class EsService {
                             "blogName",esHeading.getBlogName(),
                             "tagName",esHeading.getTagName(),
                             "headingName",esHeading.getHeadingName(),
-                            "content",esHeading.getContent()
+                            "content",esHeading.getContent(),
+                            "isPrivate",isPrivate  //标记为是否私有
                     ));
         }
 
@@ -102,6 +117,10 @@ public class EsService {
         if(esSearch.getTagKeyword()!=null && !"".equals(esSearch.getTagKeyword())){
             queryBuilder.filter(QueryBuilders.matchQuery("tagName",esSearch.getTagKeyword()));
         }
+        // 如果未登入，则过滤掉私有数据
+        if(session.getAttribute("isLogin")==null){
+            queryBuilder.filter(QueryBuilders.matchQuery("isPrivate","false"));//过滤出isPrivate为false的数据
+        }
         searchSourceBuilder.query(queryBuilder).size(size).from((page-1)*size);
         searchRequest.source(searchSourceBuilder);
         SearchResponse searchResponse = null;
@@ -124,5 +143,28 @@ public class EsService {
         map.put("url","/blog/search/");
 
         return map;
+    }
+
+
+    public void updateIsPrivateByBlogId(Integer blogId, Boolean isPrivate) {
+        // post请求
+        HttpHeaders headers = new HttpHeaders();// 添加请求头
+        headers.add("Content-Type","application/json");
+        HttpEntity<String> entity = new HttpEntity<>("{\n" +
+                "    \"script\": {\n" +
+                "        \"source\": \"ctx._source.isPrivate="+isPrivate+"\",\n" +
+                "        \"lang\": \"painless\"\n" +
+                "    },\n" +
+                "    \"query\": {\n" +
+                "        \"term\": {\n" +
+                "            \"blogId\": \""+blogId+"\"\n" +
+                "        }\n" +
+                "    }\n" +
+                "}", headers);
+        try {
+            restTemplate.postForObject(esHost+"/blog/_update_by_query?format=JSON&pretty", entity, String.class);
+        }catch (Exception e){
+            throw new MessageException("es更新失败");
+        }
     }
 }

@@ -57,4 +57,37 @@ public class EsController {
             return Message.error(e.getMessage());
         }
     }
+
+    @NeedLogin
+    @ResponseBody
+    @PostMapping("update")
+    public Message update(String json) {
+        // post请求
+        HttpHeaders headers = new HttpHeaders();// 添加请求头
+        headers.add("Content-Type","application/json");
+        HttpEntity<String> entity = new HttpEntity<>(json, headers);
+        try {
+            String data = restTemplate.postForObject(esHost+"/blog/_update_by_query?format=JSON&pretty", entity, String.class);
+            return Message.success("更新成功",data);
+        }catch (Exception e){
+            return Message.error(e.getMessage());
+        }
+    }
+
+    //删除数据
+    @NeedLogin
+    @ResponseBody
+    @PostMapping("delete")
+    public Message delete(String json) {
+        // post请求
+        HttpHeaders headers = new HttpHeaders();// 添加请求头
+        headers.add("Content-Type","application/json");
+        HttpEntity<String> entity = new HttpEntity<>(json, headers);
+        try {
+            String data = restTemplate.postForObject(esHost+"/blog/_delete_by_query?format=JSON&pretty", entity, String.class);
+            return Message.success("删除成功",data);
+        }catch (Exception e){
+            return Message.error(e.getMessage());
+        }
+    }
 }

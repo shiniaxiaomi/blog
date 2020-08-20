@@ -37,10 +37,15 @@
     </@left>
     <@right class="col-md-11 col-lg-10">
             <div class="overflow-auto">
-                <a class="m-2" href="javascript:void(0);" onclick="setValue('/_cat/indices?format=JSON','get')">查询所有index</a>
+                <a class="mr-2" href="javascript:void(0);" onclick="setValue('/_cat/indices?format=JSON','get')">查询所有index</a>
                 <a class="m-2" href="javascript:void(0);" onclick="setValue('/blog?format=JSON','get')">查询blog字段</a>
+                <a class="m-2" href="javascript:void(0);" onclick="deleteAllData()">删除所有数据</a>
+                <a class="m-2" href="javascript:void(0);" onclick="deleteDataByBlogId()">删除数据根据blogId</a>
+                <a class="m-2" href="javascript:void(0);" onclick="updateDataByBlogId()">更新数据根据BlogId</a>
                 <a class="m-2" href="javascript:void(0);" onclick="queryAllData()">分页查询所有内容</a>
                 <a class="m-2" href="javascript:void(0);" onclick="compoundQueries()">混合查询</a>
+                <a class="m-2" href="javascript:void(0);" onclick="searchHeadingName()">按照标题搜索</a>
+                <a class="m-2" href="javascript:void(0);" onclick="searchBlogName()">按照博客名称搜索</a>
                 <form id="form" onsubmit="return false;">
                     <textarea id="searchParam" name="json" style="height: 350px"></textarea>
                     <select id="method" name="method">
@@ -48,8 +53,11 @@
                         <option id="post" value ="post">post</option>
                     </select>
                     <button onclick="search();">搜索</button>
+                    <button onclick="update();">更新</button>
+                    <button onclick="deleteBtn();">删除</button>
                     <button onclick="$('#searchParam').val('')">清空</button>
                     <button onclick="beautifyClick()">格式化</button>
+                    <button onclick="serializeClick()">序列化</button>
                 </form>
             </div>
             搜索结果:
@@ -59,6 +67,93 @@
 </html>
 
 <script>
+    // 更新指定数据
+    function updateDataByBlogId() {
+        // 将blogId为130的公有数据修改为私有数据
+        setValue(`
+        {
+          "script": {
+            "source": "ctx._source.isPrivate=true",
+            "lang": "painless"
+          },
+          "query": {
+            "term": {
+              "blogId": "130"
+            }
+          }
+        }
+        `,"post");
+    }
+
+    // 删除所有数据
+    function deleteAllData() {
+        setValue(`
+        {
+          "query": {
+            "match_all": {  }
+          }
+        }
+        `,"post");
+    }
+
+    // 删除指定的数据
+    function deleteDataByBlogId() {
+        // 删除blogId为130的数据
+        setValue(`
+        {
+          "query": {
+            "term": {
+              "blogId": "130"
+            }
+          }
+        }
+        `,"post");
+    }
+
+    // 将json串序列化成一个行字符串
+    function serializeClick() {
+        // 校验json格式是否正确
+        let $searchParam = $("#searchParam");
+        try {
+            let parse = JSON.parse($searchParam.val());
+            $searchParam.val(JSON.stringify(parse))
+        } catch(e) {
+            layer.msg("json格式不正确");
+            return undefined;
+        }
+    }
+
+    // 按照标题名称搜索
+    function searchHeadingName() {
+        setValue(`
+        {
+          "query": {
+            "bool" : {
+              "should" : {
+                "match" : { "headingName" : "正则" }
+              },
+              "boost" : 1.0
+            }
+          }
+        }
+        `,"post");//match是模糊匹配，term是必须精准匹配
+    }
+
+    // 按照博客名称搜索
+    function searchBlogName() {
+        setValue(`
+        {
+          "query": {
+            "bool" : {
+              "should" : {
+                "match" : { "blogName" : "正则" }
+              },
+              "boost" : 1.0
+            }
+          }
+        }
+        `,"post");//match是模糊匹配，term是必须精准匹配
+    }
 
     // 混合查询
     function compoundQueries() {
@@ -131,6 +226,50 @@
     // 格式化按钮点击
     function beautifyClick() {
         setValue($("#searchParam").val(),"post");
+    }
+
+    // 删除事件
+    function deleteBtn() {
+        // 校验json格式是否正确
+        if($("#method").val()==="post"){
+            try {
+                JSON.parse($("#searchParam").val());
+            } catch(e) {
+                layer.msg("json格式不正确");
+                return;
+            }
+        }
+
+        $.post("/es/delete",$("#form").serialize(),function (data,status) {
+            if(status==="success" && data.code){
+                $("#searchResult").JSONView(data.data);
+            }else{
+                console.log(data.msg);
+            }
+            layer.msg(data.msg);
+        })
+    }
+
+    // 更新
+    function update() {
+        // 校验json格式是否正确
+        if($("#method").val()==="post"){
+            try {
+                JSON.parse($("#searchParam").val());
+            } catch(e) {
+                layer.msg("json格式不正确");
+                return;
+            }
+        }
+
+        $.post("/es/update",$("#form").serialize(),function (data,status) {
+            if(status==="success" && data.code){
+                $("#searchResult").JSONView(data.data);
+            }else{
+                console.log(data.msg);
+            }
+            layer.msg(data.msg);
+        })
     }
 
     // 查询

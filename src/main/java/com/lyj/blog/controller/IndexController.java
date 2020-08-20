@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /**
@@ -29,13 +30,17 @@ public class IndexController {
     @Autowired
     CommentService commentService;
 
+    @Autowired
+    HttpSession session;
+
     @RequestMapping("/")
     public ModelAndView index(){
         ModelAndView mav = new ModelAndView("index");
+        boolean isLogin=session.getAttribute("isLogin")!=null;
         // 查询置顶非私有博客列表
-        List<Blog> stickBlogList = blogService.selectIndexBlogs(true, false, 1, Constant.SIZE/2);
+        List<Blog> stickBlogList = blogService.selectIndexBlogs(true, isLogin, 1, Constant.SIZE/2);
         // 查询非置顶非私有博客列表
-        List<Blog> newestBlogList = blogService.selectIndexBlogs(false, false, 1, Constant.SIZE);
+        List<Blog> newestBlogList = blogService.selectIndexBlogs(false, isLogin, 1, Constant.SIZE);
         mav.addObject("stickBlogList",stickBlogList);
         mav.addObject("newestBlogList",newestBlogList);
         return mav;
