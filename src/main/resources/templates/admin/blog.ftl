@@ -61,7 +61,7 @@
                 </div>
             </div>
 
-            <div id="vditorDiv" class="col-12 col-md-9 order-1">
+            <div class="col-12 col-md-9 order-1">
                 <div id="vditor"></div>
             </div>
         </div>
