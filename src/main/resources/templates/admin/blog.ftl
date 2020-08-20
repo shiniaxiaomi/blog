@@ -61,7 +61,7 @@
                 </div>
             </div>
 
-            <div class="col-12 col-md-9 order-1">
+            <div id="vditorDiv" class="col-12 col-md-9 order-1">
                 <div id="vditor"></div>
             </div>
         </div>
@@ -149,19 +149,6 @@
 
     // 更新blog
     function updateBlog(tip){
-        // 延时500ms，保证input函数能够触发
-        setTimeout(function () {
-            _updateBlog(tip);
-        },500)
-    }
-
-    function _updateBlog(tip) {
-        // 如果没有修改，则不保存
-        if(!isEdit){
-            return;
-        }
-        // 如果修改了，将修改状态设置为false
-        isEdit=false;
         console.log("保存内容");
         let layerMsg = layer.msg("正在保存...",{time:0});
         // console.log(zTree.getSelectedNodes()[0]!==undefined && zTree.getSelectedNodes()[0].isFolder);
@@ -181,6 +168,8 @@
                 if(tip!==undefined){
                     layer.msg("保存成功",{time:1000});
                 }
+                // 保存完后，将修改状态设置为false
+                isEdit=false;
             }else{
                 layer.msg("保存失败");
             }
@@ -225,12 +214,15 @@
     //关闭和刷新页面时自动保存
     window.onbeforeunload = function (e) {
         window.localStorage.setItem("needReload","true");//设置为需要刷新页面
-        updateBlog();//自动保存
+        if(isEdit){
+            updateBlog();//自动保存
+        }
     };
 
     let isEdit=false;
     window.blogId=${blogId!0};
     let lute;
+    let isClick= true; //防多次点击
 
     // 打开或关闭大纲
     function toggleToc(){
@@ -242,13 +234,26 @@
         initTree(); // 初始化目录
         initTags(); // 初始化标签
 
+        // 绑定编辑框的编辑事件，修改是否编辑的状态
+        $("#vditor").keypress(function(e) {
+            isEdit=true;
+        });
+        // 当输入 删除，回车，tab键时，如果焦点在编辑框，则修改是否编辑的状态
+        $("#vditor").keyup(function(e) {
+            if(e.keyCode===8 || e.keyCode===9 || e.keyCode===13){
+                isEdit=true;
+            }
+        });
+
         // 工具栏
         let toolbar=[
             {
                 name: '返回', tip: '返回', icon: '<i class="iconfont icon-fanhui1"></i>',tipPosition: 's',
                 click: () => {
                     window.localStorage.setItem("needReload","true");//设置为需要刷新页面
-                    updateBlog();//自动保存
+                    if(isEdit){
+                        updateBlog();//自动保存
+                    }
                     setTimeout(function () {
                         window.history.back();
                     },250);
@@ -265,7 +270,14 @@
             {
                 name: '保存', tip: '保存', icon: '<i class="iconfont icon-baocun"></i>',tipPosition: 's',
                 click: () => {
-                    updateBlog("tip");
+                    // 如果点击保存按钮，则为强制保存（需要防止多次点击）
+                    if(isClick){
+                        isClick= false; //只能点击一次
+                        updateBlog("tip");
+                        setTimeout(function(){
+                            isClick = true; //1000ms后回复点击
+                        }, 1000);
+                    }
                 },
             },
             {
@@ -365,11 +377,6 @@
                         }
                     });
                 },
-            },
-            input(){ //每次输入都会触发
-                if(!isEdit){
-                    isEdit=true;
-                }
             },
             after(){
                 // 初始化后修改工具栏的提示位置

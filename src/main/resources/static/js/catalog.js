@@ -34,7 +34,9 @@ function beforeClick(treeId, treeNode, clickFlag) {
     }
     // 改变了选择节点
     else if(treeNode.id!==zTree.getSelectedNodes()[0].id){
-        updateBlog(); //保存
+        if(isEdit){
+            updateBlog(); //保存
+        }
         loadMD(treeNode); //加载
     }
 
