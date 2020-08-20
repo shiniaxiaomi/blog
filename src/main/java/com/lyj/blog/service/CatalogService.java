@@ -43,7 +43,7 @@ public class CatalogService {
 
     @Cacheable(value = "Catalog")
     public List<Catalog> selectCatalog() {
-        List<Catalog> list = catalogMapper.selectList(new QueryWrapper<>());
+        List<Catalog> list = catalogMapper.selectList(new QueryWrapper<Catalog>().orderByDesc("is_folder"));
         return list;
     }
 
