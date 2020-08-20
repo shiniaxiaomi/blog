@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,8 @@ public class BlogController {
     @Autowired
     EsService esService;
 
+    @Autowired
+    HttpSession session;
 
     @ResponseBody
     @GetMapping("md")
@@ -116,7 +119,7 @@ public class BlogController {
     @GetMapping("filing/{year}/{page}")
     public ModelAndView filing(@PathVariable("year") int year,@PathVariable("page") int page){
         ModelAndView mav = new ModelAndView("blog/more");
-        Page<Blog> blogPage = blogService.selectBlogItemsByYear(year, page, Constant.SIZE);
+        Page<Blog> blogPage = blogService.selectBlogItemsByYear(year,Util.getIsPrivate(session), page, Constant.SIZE);
         Util.renderPageParam(mav,blogPage,"/blog/filing/"+year+"/",year+" 归档");
         mav.addObject("moreBlogList",blogPage.getRecords());//分页数据
         return mav;
@@ -126,7 +129,7 @@ public class BlogController {
     @GetMapping("stick/{page}")
     public ModelAndView stick(@PathVariable("page") int page){
         ModelAndView mav = new ModelAndView("blog/more");
-        Page<Blog> blogPage =  blogService.selectBlogItemsPage(true,false,page,Constant.SIZE);
+        Page<Blog> blogPage =  blogService.selectBlogItemsPage(true,Util.getIsPrivate(session),page,Constant.SIZE);
         Util.renderPageParam(mav,blogPage,"/blog/stick/","置顶博客 分页");
         mav.addObject("moreBlogList",blogPage.getRecords());//分页数据
         return mav;
@@ -136,7 +139,7 @@ public class BlogController {
     @GetMapping("newest/{page}")
     public ModelAndView newest(@PathVariable("page") int page){
         ModelAndView mav = new ModelAndView("blog/more");
-        Page<Blog> blogPage =  blogService.selectBlogItemsPage(false,false,page,Constant.SIZE);
+        Page<Blog> blogPage =  blogService.selectBlogItemsPage(false,Util.getIsPrivate(session),page,Constant.SIZE);
         Util.renderPageParam(mav,blogPage,"/blog/newest/","最新博客 分页");
         mav.addObject("moreBlogList",blogPage.getRecords());//分页数据
         return mav;

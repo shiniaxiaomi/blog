@@ -133,15 +133,17 @@ public class BlogService {
     }
 
     @Cacheable(value = "BlogIndexPage",key = "#isStick + ',' + #isPrivate + ',' + #page + ',' + #size")
-    public List<Blog> selectIndexBlogs(boolean isStick, boolean isPrivate, int page, int size) {
+    public List<Blog> selectIndexBlogs(Boolean isStick, Boolean isPrivate, int page, int size) {
         QueryWrapper<Blog> queryWrapper = new QueryWrapper<Blog>()
                 .select("id", "name", "`desc`", "visit_count", "create_time", "update_time")
-                .eq("is_stick", isStick);//是否指定
-        if(!isPrivate){
-            queryWrapper.eq("is_private", false); //是否公有
-        }
-        queryWrapper.orderByDesc("update_time") //按照更新时间降序排列
+                .orderByDesc("update_time") //按照更新时间降序排列
                 .orderByDesc("create_time"); //按照创建时间降序排列
+        if(isStick!=null){
+            queryWrapper.eq("is_stick", isStick); //置顶
+        }
+        if(isPrivate!=null){
+            queryWrapper.eq("is_private", isPrivate); //公有
+        }
         Page<Blog> result = blogMapper.selectPage(new Page<>(page, size), queryWrapper);
 
         return renderBlogItems(result.getRecords());
@@ -185,20 +187,22 @@ public class BlogService {
 
     //分页查询在指定年份的blogItem
     @Cacheable(value = "BlogByYear",key = "#year + ',' + #page + ',' + #size")
-    public Page<Blog> selectBlogItemsByYear(int year,int page,int size) {
+    public Page<Blog> selectBlogItemsByYear(int year,Boolean isPrivate,int page,int size) {
         Date startYear=Date.from(LocalDate.of(year,1,1)
                 .atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
         Date endYear=Date.from(LocalDate.of(year+1,1,1)
                 .atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
 
-        Page<Blog> result = blogMapper.selectPage(new Page<>(page, size), new QueryWrapper<Blog>()
-                .select("id", "name", "`desc`","visit_count","create_time","update_time")
-                .eq("is_private", false) //公有
-                .between("create_time",startYear,endYear)
+        QueryWrapper<Blog> queryWrapper = new QueryWrapper<Blog>()
+                .select("id", "name", "`desc`", "visit_count", "create_time", "update_time")
+                .between("create_time", startYear, endYear)
                 .orderByDesc("update_time") //按照更新时间降序排列
-                .orderByDesc("create_time") //按照创建时间降序排列
-        );
+                .orderByDesc("create_time");//按照创建时间降序排列
+        if(isPrivate!=null){
+            queryWrapper.eq("is_private", isPrivate); //公有
+        }
 
+        Page<Blog> result = blogMapper.selectPage(new Page<>(page, size), queryWrapper);
         renderBlogItems(result.getRecords());
         return result;
     }
@@ -213,14 +217,18 @@ public class BlogService {
 
     // 分页查询：根据是否置顶和私有
     @Cacheable(value = "BlogPage",key = "#isStick + ',' + #isPrivate + ',' + #page + ',' + #size")
-    public Page<Blog> selectBlogItemsPage(boolean isStick, boolean isPrivate, int page, int size){
-        Page<Blog> result = blogMapper.selectPage(new Page<>(page, size), new QueryWrapper<Blog>()
-                .select("id", "name", "`desc`","visit_count","create_time","update_time")
-                .eq("is_private", isPrivate) //公有
-                .eq("is_stick",isStick) //置顶
-                .orderByDesc("update_time") //按照更新时间降序排列
-                .orderByDesc("create_time") //按照创建时间降序排列
-        );
+    public Page<Blog> selectBlogItemsPage(Boolean isStick, Boolean isPrivate, int page, int size){
+        QueryWrapper<Blog> queryWrapper = new QueryWrapper<Blog>()
+                .select("id", "name", "`desc`", "visit_count", "create_time", "update_time");
+        if(isStick!=null){
+            queryWrapper.eq("is_stick", isStick); //置顶
+        }
+        if(isPrivate!=null){
+            queryWrapper.eq("is_private", isPrivate); //公有
+        }
+        queryWrapper.orderByDesc("update_time") //按照更新时间降序排列
+                .orderByDesc("create_time");//按照创建时间降序排列
+        Page<Blog> result = blogMapper.selectPage(new Page<>(page, size), queryWrapper);
 
         renderBlogItems(result.getRecords());
         return result;

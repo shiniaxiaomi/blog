@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lyj.blog.config.Constant;
 import com.lyj.blog.handler.Util;
 import com.lyj.blog.interceptor.NeedLogin;
+import com.lyj.blog.model.Blog;
 import com.lyj.blog.model.File;
 import com.lyj.blog.service.BlogService;
 import com.lyj.blog.service.EsService;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpSession;
 
 /**
  * @author Yingjie.Lu
@@ -34,6 +37,9 @@ public class AdminController {
     @Autowired
     EsService esService;
 
+    @Autowired
+    HttpSession session;
+
     @NeedLogin
     @GetMapping({"","blog"})
     public String blog(){
@@ -45,6 +51,16 @@ public class AdminController {
     public ModelAndView editBlog(@PathVariable("id") int id){
         ModelAndView mav = new ModelAndView("admin/blog");
         mav.addObject("blogId",id);
+        return mav;
+    }
+
+    @NeedLogin
+    @GetMapping("blog/private/{page}")
+    public ModelAndView privateBlogList(@PathVariable("page") int page){
+        ModelAndView mav = new ModelAndView("blog/more");
+        Page<Blog> blogPage = blogService.selectBlogItemsPage(null, true, page, Constant.SIZE);
+        Util.renderPageParam(mav,blogPage,"/admin/blog/private/","私有博客 分页");
+        mav.addObject("moreBlogList",blogPage.getRecords());//分页数据
         return mav;
     }
 

@@ -1,6 +1,7 @@
 package com.lyj.blog.controller;
 
 import com.lyj.blog.config.Constant;
+import com.lyj.blog.handler.Util;
 import com.lyj.blog.model.Blog;
 import com.lyj.blog.model.req.Message;
 import com.lyj.blog.service.BlogService;
@@ -36,11 +37,10 @@ public class IndexController {
     @RequestMapping("/")
     public ModelAndView index(){
         ModelAndView mav = new ModelAndView("index");
-        boolean isLogin=session.getAttribute("isLogin")!=null;
         // 查询置顶非私有博客列表
-        List<Blog> stickBlogList = blogService.selectIndexBlogs(true, isLogin, 1, Constant.SIZE/2);
+        List<Blog> stickBlogList = blogService.selectIndexBlogs(true, Util.getIsPrivate(session), 1, Constant.SIZE/2);
         // 查询非置顶非私有博客列表
-        List<Blog> newestBlogList = blogService.selectIndexBlogs(false, isLogin, 1, Constant.SIZE);
+        List<Blog> newestBlogList = blogService.selectIndexBlogs(false, Util.getIsPrivate(session), 1, Constant.SIZE);
         mav.addObject("stickBlogList",stickBlogList);
         mav.addObject("newestBlogList",newestBlogList);
         return mav;
