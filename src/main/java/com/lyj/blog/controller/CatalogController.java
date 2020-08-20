@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -66,6 +67,12 @@ public class CatalogController {
     @GetMapping
     public Message selectCatalog(){
         List<Catalog> list= catalogService.selectCatalog();
+        if(list.size()==0){
+            // 如果没有目录，则创建默认目录
+            catalogService.insert(new Catalog().setId(1).setName("/").setIsFolder(true));
+            catalogService.insert(new Catalog().setId(2).setName("_待整理").setIsFolder(true).setPid(1));
+            list= catalogService.selectCatalog();
+        }
         return Message.success(null,list);
     }
 

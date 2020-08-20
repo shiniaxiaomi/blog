@@ -2,6 +2,7 @@ package com.lyj.blog.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.lyj.blog.exception.MessageException;
 import com.lyj.blog.mapper.CatalogMapper;
 import com.lyj.blog.model.Blog;
 import com.lyj.blog.model.Catalog;
@@ -73,6 +74,15 @@ public class CatalogService {
 
     @CacheEvict(value = "Catalog",allEntries=true)
     public void updatePid(Catalog catalog) {
+        // 判断校验pid是否为文件夹
+        Catalog pidCatalog = catalogMapper.selectOne(new QueryWrapper<Catalog>().select("is_folder").eq("id", catalog.getPid()));
+        if(pidCatalog==null){
+            throw new MessageException("没有对应的文件夹");
+        }else{
+            if(!pidCatalog.getIsFolder()){
+                throw new MessageException("移动失败，请选择对应的文件夹");
+            }
+        }
         catalogMapper.updateById(catalog);
     }
 }

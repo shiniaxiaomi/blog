@@ -61,6 +61,7 @@
                     <div class="col-sm-10">
                          <textarea id="content" name="content" class="gt-header-textarea form-control "
                                    placeholder="说点什么" style="overflow-wrap: break-word; resize: none; height: 300px;"></textarea>
+                        <small class="text-muted ml-2">可以是使用过程中出现的问题，改进建议 等等</small>
                     </div>
                 </div>
             </form>

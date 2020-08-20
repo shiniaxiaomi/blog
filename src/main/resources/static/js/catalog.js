@@ -91,34 +91,34 @@ function loadMD(treeNode) {
 // 拖入事件之前（只有文件夹才能拖入子节点）
 function beforeDrop(treeId, treeNodes, targetNode, moveType) {
     // 如果是文件夹
-    if(targetNode && targetNode.isFolder !== undefined){
-
+    if(targetNode && targetNode.isFolder !== undefined && targetNode.isFolder===true){
         console.log(treeId, treeNodes, targetNode)
 
-        let response =$.ajax({
-            type: "POST",//方法类型
-            url: "/catalog/move" ,//url
-            async:false,
-            data: {id:treeNodes[0].id,pid:targetNode.id},
-        });
-        if(response.status===200 && response.responseJSON.code){
-            layer.msg("移动成功");
-            return true;
-        }else{
-            layer.msg("移动失败");
-            return false;
+        if (window.confirm("确定要移动该文件吗？")) {
+            let response =$.ajax({
+                type: "POST",//方法类型
+                url: "/catalog/move" ,//url
+                async:false,
+                data: {id:treeNodes[0].id,pid:targetNode.id},
+            });
+            if(response.status===200 && response.responseJSON.code){
+                layer.msg("移动成功");
+                return true;
+            }else{
+                layer.msg("移动失败");
+            }
         }
     }else{
         layer.msg("不能拖入到文件中");
-        return false;
     }
+    return false;
 }
 // 右键菜单
 function OnRightClick(event, treeId, treeNode) {
     if(!treeNode){
         return;
     }
-    if (treeNode.level===0) {
+    if (treeNode.level===0 || treeNode.name==="_待整理") {
         zTree.selectNode(treeNode);
         showRMenu("root", event.clientX, event.clientY);
     } else if (treeNode.isFolder) {
@@ -162,13 +162,40 @@ function onBodyMouseDown(event){
     }
 }
 
+// 添加待整理的文件
+function quickNewFile() {
+    // 添加文件（默认添加以日期+时间为名称的文件）
+    let name=new Date().Format("yyyy-MM-dd hh:mm:ss");
+    let item={name: name,pid:2,isFolder:false,icon:"/ztree/img/file.png",checked:true};//这里的pid是待整理的文件夹的pid
+    $.post("/catalog/insert",item,function (data,status) {
+        if(status==="success" && data.code){
+            debugger
+            item.blogId=data.data.blogId; //添加返回的blogId值
+            item.id=data.data.id; //添加返回的目录itemId值
+            let newNode = item;
+            zTree.addNodes(zTree.getNodesByParam("id", 2, null)[0], newNode);// 默认添加到待整理文件夹
+            // 筛选刚添加的节点
+            console.log(newNode.id);
+            let node = zTree.getNodesByParam("id", newNode.id, null)[0];
+            // 设置选中节点
+            zTree.selectNode(node);
+            // 加载当前选中节点的md
+            loadMD(node);
+            // 默认重命名节点
+            editTreeNode();
+        }else{
+            layer.msg("接口调用失败");
+        }
+    })
+}
+
 // 添加file或文件夹
 function addNode(type) { //[file,folder]
     hideRMenu();
 
     // 添加文件（默认添加以日期+时间为名称的文件）
     let name=new Date().Format("yyyy-MM-dd hh:mm:ss");
-    var item={name: name,pid:zTree.getSelectedNodes()[0].id};
+    let item={name: name,pid:zTree.getSelectedNodes()[0].id};
     if(type==="file"){
         item.isFolder=false;
         item.icon="/ztree/img/file.png";
@@ -203,6 +230,19 @@ function addNode(type) { //[file,folder]
         }
     })
 }
+
+// 询问框工具方法
+function layerConfirm(msg,func) {
+    let index = layer.confirm(msg, {
+        btn: ['确定','取消'] //按钮
+    }, function(){
+        func();
+        layer.close(index); //如果设定了yes回调，需进行手工关闭
+    }, function(){
+        layer.close(index); //如果设定了yes回调，需进行手工关闭
+    });
+}
+
 // 删除节点
 function removeTreeNode() {
     hideRMenu();
@@ -212,17 +252,18 @@ function removeTreeNode() {
             layer.msg("文件夹下还有文件，不能删除");
             return;
         } else {
-            $.post("/catalog/delete",{id:nodes[0].id,isFolder:nodes[0].isFolder,blogId:nodes[0].blogId},function (data,status) {
-                if(status==="success" && data.code){
-                    zTree.removeNode(nodes[0]);
-                    window.vditor.setValue("", true);//清空编辑器数据
-                    window.vditor.disabled();//	禁用编辑器
-                    layer.msg("删除成功")
-                }else{
-                    layer.msg("删除失败");
-                }
+            layerConfirm("确定删除该文件吗？",function () {
+                $.post("/catalog/delete",{id:nodes[0].id,isFolder:nodes[0].isFolder,blogId:nodes[0].blogId},function (data,status) {
+                    if(status==="success" && data.code){
+                        zTree.removeNode(nodes[0]);
+                        window.vditor.setValue("", true);//清空编辑器数据
+                        window.vditor.disabled();//	禁用编辑器
+                        layer.msg("删除成功")
+                    }else{
+                        layer.msg("删除失败");
+                    }
+                })
             })
-
         }
     }
 }
@@ -230,7 +271,9 @@ function removeTreeNode() {
 function editTreeNode() {
     hideRMenu();
     let node = zTree.getSelectedNodes()[0];
-    zTree.editName(node);
+    layerConfirm("确定编辑该节点名称吗？",function () {
+        zTree.editName(node);
+    })
 }
 
 // 搜索节点

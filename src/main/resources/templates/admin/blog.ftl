@@ -52,9 +52,12 @@
     <@right class="col-md-11 col-lg-10">
         <div class="row">
             <div id="tocDiv" class="col-12 col-md-3 order-1">
-                <div class="form-inline">
+                <div>
                     <input class="mr-2" id="searchInput" autocomplete="off">
-                    <button type="button" class="btn btn-secondary btn-sm" onclick="searchNode()">搜索</button>
+                </div>
+                <div class="my-1">
+                    <button type="button" class="btn btn-secondary btn-sm mx-1" onclick="searchNode()">搜索</button>
+                    <button type="button" class="btn btn-secondary btn-sm mx-1" onclick="quickNewFile()">快速新建</button>
                 </div>
                 <div class="overflow-auto" style="height: 500px">
                     <ul id="treeDemo" class="ztree"></ul>
@@ -409,7 +412,7 @@
                         // 跳转到对应的锚点
                         setTimeout(function () {
                             if(location.hash!==""){
-                                let hash = "ir-"+decodeURI(location.hash).substr(1).replace(/[.*|+=\-()]/g,"-");
+                                let hash = "ir-"+decodeURI(location.hash).substr(1).replace(/[.*|+=\-()\s]/g,"-");
                                 $("#vditor .vditor-outline__content div[data-id^="+hash+"]").click();//刷新页面锚点
                                 toggleToc();//关闭大纲
                             }
