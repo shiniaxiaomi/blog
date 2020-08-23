@@ -8,6 +8,7 @@
         <nav class="navbar navbar-light">
         <span class="navbar-brand" >
             <a style="color: #3b86d8" class="font-weight-bold d-inline text-decoration-none" href="/user/login/form">是你啊小米</a>
+            <img style="width: 11%;margin-bottom: 3px;margin-left: 5px;" src="/img/online.png" <#if !isLogin>hidden</#if>>
         </span>
         </nav>
         <#--用于小屏幕-->

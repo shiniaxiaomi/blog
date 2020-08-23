@@ -3,6 +3,7 @@ package com.lyj.blog.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.lyj.blog.exception.MessageException;
+import com.lyj.blog.handler.Util;
 import com.lyj.blog.mapper.CatalogMapper;
 import com.lyj.blog.model.Blog;
 import com.lyj.blog.model.Catalog;
@@ -13,6 +14,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /**
@@ -29,9 +31,10 @@ public class CatalogService {
     @Autowired
     BlogService blogService;
 
+
     @Transactional
     @CacheEvict(value = "Catalog",allEntries=true)
-    public void insert(Catalog catalog){
+    public int insert(Catalog catalog){
         // 如果不是文件夹，则先添加blog，再添加目录item
         if(!catalog.getIsFolder()){
             Blog blog = new Blog().setName(catalog.getName());
@@ -39,12 +42,17 @@ public class CatalogService {
             catalog.setBlogId(blog.getId()); //将blog的id回写
         }
         catalogMapper.insert(catalog);
+        return catalog.getId();// 返回目录id
     }
 
+    // 根据是否登入查询对应的数据
     @Cacheable(value = "Catalog")
-    public List<Catalog> selectCatalog() {
-        List<Catalog> list = catalogMapper.selectList(new QueryWrapper<Catalog>().orderByDesc("is_folder"));
-        return list;
+    public List<Catalog> selectCatalog(Boolean isPrivate) {
+        QueryWrapper<Catalog> queryWrapper = new QueryWrapper<Catalog>().orderByDesc("is_folder");
+        if(isPrivate!=null){
+            queryWrapper.eq("is_private",isPrivate);
+        }
+        return catalogMapper.selectList(queryWrapper);
     }
 
     @Transactional
@@ -84,5 +92,23 @@ public class CatalogService {
             }
         }
         catalogMapper.updateById(catalog);
+    }
+
+    public void updateIsPrivateByBlogId(Blog blog) {
+        catalogMapper.update(new Catalog().setIsPrivate(blog.getIsPrivate()),
+                new QueryWrapper<Catalog>().eq("blog_id",blog.getId()));
+    }
+
+    public boolean selectIsPrivateById(int id) {
+        Catalog catalog = catalogMapper.selectOne(new QueryWrapper<Catalog>().select("is_private").eq("id", id));
+        if(catalog!=null){
+            return catalog.getIsPrivate();
+        }
+        return false;
+    }
+
+    @CacheEvict(value = "Catalog",allEntries=true)
+    public void updateIsPrivateById(int id, boolean isPrivate) {
+        catalogMapper.updateById(new Catalog().setId(id).setIsPrivate(isPrivate));
     }
 }

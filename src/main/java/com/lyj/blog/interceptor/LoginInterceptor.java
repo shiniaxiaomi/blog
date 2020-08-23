@@ -46,4 +46,11 @@ public class LoginInterceptor implements HandlerInterceptor {
         return false;
     }
 
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+        // 添加是否登入的状态信息
+        if(modelAndView!=null){
+            modelAndView.addObject("isLogin",request.getSession().getAttribute("isLogin")!=null);
+        }
+    }
 }

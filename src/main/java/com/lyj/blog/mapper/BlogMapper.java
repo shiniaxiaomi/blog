@@ -18,5 +18,5 @@ public interface BlogMapper extends BaseMapper<Blog> {
 
     Blog selectBlogByCommentId(@Param("commentId") int commentId);
 
-    int selectSum();
+    Integer selectSum();
 }

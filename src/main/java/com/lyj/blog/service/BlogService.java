@@ -4,16 +4,14 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lyj.blog.mapper.BlogMapper;
 import com.lyj.blog.model.Blog;
+import com.lyj.blog.model.Catalog;
 import com.lyj.blog.model.Tag;
 import com.lyj.blog.model.req.FilingResult;
 import com.lyj.blog.model.req.Message;
 import com.lyj.blog.parser.ParserUtil;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.update.UpdateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,6 +54,9 @@ public class BlogService {
 
     @Autowired
     BlogTagRelationService blogTagRelationService;
+
+    @Autowired
+    CatalogService catalogService;
 
     @Value("${file.location}/file")
     String filePath;
@@ -109,6 +110,9 @@ public class BlogService {
         // 更新blog的公开状态
         blogMapper.updateById(blog);
 
+        // 更新目录中的公开状态
+        catalogService.updateIsPrivateByBlogId(blog);
+
         // 全量的同步更新标签关联
         tagService.updateRelation(blog.getId(),tags);
 
@@ -135,7 +139,7 @@ public class BlogService {
     @Cacheable(value = "BlogIndexPage",key = "#isStick + ',' + #isPrivate + ',' + #page + ',' + #size")
     public List<Blog> selectIndexBlogs(Boolean isStick, Boolean isPrivate, int page, int size) {
         QueryWrapper<Blog> queryWrapper = new QueryWrapper<Blog>()
-                .select("id", "name", "`desc`", "visit_count", "create_time", "update_time")
+                .select("id", "name", "`desc`","is_private" ,"visit_count", "create_time", "update_time")
                 .orderByDesc("update_time") //按照更新时间降序排列
                 .orderByDesc("create_time"); //按照创建时间降序排列
         if(isStick!=null){
@@ -244,8 +248,9 @@ public class BlogService {
     }
 
     @Cacheable("VisitCount")
-    public int selectVisitCount() {
-        return blogMapper.selectSum();
+    public Integer selectVisitCount() {
+        Integer count = blogMapper.selectSum();
+        return count==null?0:count;
     }
 
     // 上传文件的处理

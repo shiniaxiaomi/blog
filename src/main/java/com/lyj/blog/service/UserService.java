@@ -26,7 +26,7 @@ public class UserService {
     @Autowired
     HttpSession session;
 
-    public int selectVisitCount() {
+    public Integer selectVisitCount() {
         return blogService.selectVisitCount();
     }
 

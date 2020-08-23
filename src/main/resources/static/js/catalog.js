@@ -23,11 +23,72 @@ function uuid() {
     return uuid.substr(uuid.lastIndexOf("/") + 1);
 }
 
+function updateFolderConfig() {
+    $.post("/catalog/status/folder",$("#configFolderForm").serialize()+"&id="+getSelectedFolderId(),function (data,status) {
+        if(status==="success" && data.code){
+            layer.msg("保存成功");
+            $("#configFolderModal").modal("hide");
+        }
+    })
+}
+
+function openFolderStatusModel() {
+    // 加载状态
+    loadFolderStatus();
+
+    // 显示弹框
+    $('#configFolderModal').modal("show");
+}
+
+function loadFolderStatus() {
+    // 清空选中
+    $("#f_radio1").prop('checked', false);
+    $("#f_radio2").prop('checked', false);
+
+    // 根据catalogId请求对应folder的共享信息
+    $.get("/catalog/status/folder/"+getSelectedFolderId(),function (data,status) {
+        if(status==="success" && data.code) {
+            // 设置私有选中
+            if(data.data){
+                $("#f_radio2").prop('checked', true);
+            }else{ //设置公有选中
+                $("#f_radio1").prop('checked', true);
+            }
+        }
+    })
+}
+
 // 搜索的样式使用
 function getFontCss(treeId, treeNode) {
     return  (!!treeNode.highlight) ? {color:"#A60000", "font-weight":"bold"} : {color:"#333", "font-weight":"normal"};
 }
+function hideBtn(treeNode) {
+    let $createFolderBtn = $("#createFolderBtn");
+    let $createNodeBtn = $("#createNodeBtn");
+    let $editNodeBtn = $("#editNodeBtn");
+    let $deleteNodeBtn = $("#deleteNodeBtn");
+    let $updateFolderStatusBtn = $("#updateFolderStatusBtn");
+
+    $createFolderBtn.show();
+    $createNodeBtn.show();
+    $editNodeBtn.show();
+    $deleteNodeBtn.show();
+    $updateFolderStatusBtn.show();
+
+    if(treeNode.name==="/" || treeNode.name==="_待整理"){
+        $editNodeBtn.hide();
+        $deleteNodeBtn.hide();
+        $updateFolderStatusBtn.hide();
+    }else if(!treeNode.isFolder){ //如果是文件
+        $createFolderBtn.hide();
+        $createNodeBtn.hide();
+        $updateFolderStatusBtn.hide();
+    }
+}
 function beforeClick(treeId, treeNode, clickFlag) {
+    // 控制每个节点的按钮权限
+    hideBtn(treeNode);
+
     // 首次加载
     if(zTree.getSelectedNodes().length===0){
         loadMD(treeNode);
@@ -113,67 +174,69 @@ function beforeDrop(treeId, treeNodes, targetNode, moveType) {
     }
     return false;
 }
-// 右键菜单
-function OnRightClick(event, treeId, treeNode) {
-    if(!treeNode){
-        return;
-    }
-    if (treeNode.level===0 || treeNode.name==="_待整理") {
-        zTree.selectNode(treeNode);
-        showRMenu("root", event.clientX, event.clientY);
-    } else if (treeNode.isFolder) {
-        zTree.selectNode(treeNode);
-        showRMenu("folder", event.clientX, event.clientY);
-    } else{
-        zTree.selectNode(treeNode);
-        showRMenu("file", event.clientX, event.clientY);
-    }
-}
-function showRMenu(type, x, y) {
-    // 显示全部
-    let childrens = $("#rMenu ul").children();
-    for(let i=0;i<childrens.length;i++){
-        $(childrens[i]).show();
-    }
-    // 对应的隐藏
-    if (type==="root") {
-        $("#m_remove").hide();
-        $("#m_edit").hide();
-    } else if(type==="folder"){
-    } else if(type==="file"){
-        // 文件下不能添加节点
-        $("#m_add_blog").hide();
-        $("#m_add_folder").hide();
-    }
-
-    y += document.body.scrollTop;
-    x += document.body.scrollLeft;
-    rMenu.css({"top":y+"px", "left":x+"px", "visibility":"visible"});
-
-    $("body").bind("mousedown", onBodyMouseDown);
-}
-function hideRMenu() {
-    if (rMenu) rMenu.css({"visibility": "hidden"});
-    $("body").unbind("mousedown", onBodyMouseDown);
-}
-function onBodyMouseDown(event){
-    if (!(event.target.id === "rMenu" || $(event.target).parents("#rMenu").length>0)) {
-        rMenu.css({"visibility" : "hidden"});
-    }
-}
+// 右键菜单`
+// function OnRightClick(event, treeId, treeNode) {
+//     if(!treeNode){
+//         return;
+//     }
+//     if (treeNode.name==="/" || treeNode.name==="_待整理") {
+//         zTree.selectNode(treeNode);
+//         showRMenu("root", event.clientX, event.clientY);
+//     } else if (treeNode.isFolder) {
+//         zTree.selectNode(treeNode);
+//         showRMenu("folder", event.clientX, event.clientY);
+//     } else{
+//         zTree.selectNode(treeNode);
+//         showRMenu("file", event.clientX, event.clientY);
+//     }
+// }
+// function showRMenu(type, x, y) {
+//     // 显示全部
+//     let childrens = $("#rMenu ul").children();
+//     for(let i=0;i<childrens.length;i++){
+//         $(childrens[i]).show();
+//     }
+//     // 对应的隐藏
+//     if (type==="root") {
+//         $("#m_remove").hide();
+//         $("#m_edit").hide();
+//     } else if(type==="folder"){
+//     } else if(type==="file"){
+//         // 文件下不能添加节点
+//         $("#m_add_blog").hide();
+//         $("#m_add_folder").hide();
+//     }
+//
+//     y += document.body.scrollTop;
+//     x += document.body.scrollLeft;
+//     rMenu.css({"top":y+"px", "left":x+"px", "visibility":"visible"});
+//
+//     $("body").bind("mousedown", onBodyMouseDown);
+// }
+// function hideRMenu() {
+//     if (rMenu) rMenu.css({"visibility": "hidden"});
+//     $("body").unbind("mousedown", onBodyMouseDown);
+// }
+// function onBodyMouseDown(event){
+//     if (!(event.target.id === "rMenu" || $(event.target).parents("#rMenu").length>0)) {
+//         rMenu.css({"visibility" : "hidden"});
+//     }
+// }
 
 // 添加待整理的文件
 function quickNewFile() {
     // 添加文件（默认添加以日期+时间为名称的文件）
     let name=new Date().Format("yyyy-MM-dd hh:mm:ss");
-    let item={name: name,pid:2,isFolder:false,icon:"/ztree/img/file.png",checked:true};//这里的pid是待整理的文件夹的pid
+    let pNode = zTree.getNodesByParam("name", "_待整理", null)[0];
+    let item={name: name,pid:pNode.id,isFolder:false,icon:"/ztree/img/file.png",checked:true};//这里的pid是待整理的文件夹的pid
     $.post("/catalog/insert",item,function (data,status) {
         if(status==="success" && data.code){
             debugger
             item.blogId=data.data.blogId; //添加返回的blogId值
             item.id=data.data.id; //添加返回的目录itemId值
+
             let newNode = item;
-            zTree.addNodes(zTree.getNodesByParam("id", 2, null)[0], newNode);// 默认添加到待整理文件夹
+            zTree.addNodes(pNode, newNode);// 默认添加到待整理文件夹
             // 筛选刚添加的节点
             console.log(newNode.id);
             let node = zTree.getNodesByParam("id", newNode.id, null)[0];
@@ -191,7 +254,7 @@ function quickNewFile() {
 
 // 添加file或文件夹
 function addNode(type) { //[file,folder]
-    hideRMenu();
+    // hideRMenu();
 
     // 添加文件（默认添加以日期+时间为名称的文件）
     let name=new Date().Format("yyyy-MM-dd hh:mm:ss");
@@ -245,7 +308,7 @@ function layerConfirm(msg,func) {
 
 // 删除节点
 function removeTreeNode() {
-    hideRMenu();
+    // hideRMenu();
     let nodes = zTree.getSelectedNodes();
     if (nodes && nodes.length>0) {
         if (nodes[0].children && nodes[0].children.length > 0) {
@@ -269,20 +332,23 @@ function removeTreeNode() {
 }
 // 编辑节点
 function editTreeNode() {
-    hideRMenu();
+    // hideRMenu();
     let node = zTree.getSelectedNodes()[0];
-    layerConfirm("确定编辑该节点名称吗？",function () {
+    layerConfirm("确定编辑名称吗？",function () {
         zTree.editName(node);
     })
 }
 
 // 搜索节点
 function searchNode() {
-    let value=$("#searchInput").val();
+    let $searchInput = $("#searchInput");
+    let value=$searchInput.val();
     updateNodes(false,nodeList);
     if (value === "") return;
     nodeList = zTree.getNodesByParamFuzzy("name", value);
     updateNodes(true,nodeList);
+    // 清空搜索内容
+    $searchInput.val('');
 }
 function updateNodes(highlight,nodeList){
     for( let i=0, l=nodeList.length; i<l; i++ ) {
@@ -321,7 +387,7 @@ let setting = {
         }
     },
     callback: {
-        onRightClick: OnRightClick,
+        // onRightClick: OnRightClick,
         beforeDrop: beforeDrop,
         beforeClick:beforeClick,//点击之前，如果点击了不是已经选中的节点，则自动保存右侧对应的内容
         beforeRename:beforeRename
@@ -384,6 +450,7 @@ function initTree(isLogin){
     });
 }
 
+// 返回选中的blogId
 function getSelectedBlogId() {
     // 判断选中的不是文件夹或者是否没有选择
     if(zTree.getSelectedNodes()===undefined || zTree.getSelectedNodes()[0]===undefined || zTree.getSelectedNodes()[0].isFolder){
@@ -391,4 +458,14 @@ function getSelectedBlogId() {
         throw new Error( '请选择对应的blog' );
     }
     return zTree.getSelectedNodes()[0].blogId;
+}
+
+// 返回选中的文件夹对应的catalogId
+function getSelectedFolderId() {
+    // 判断选中的不是文件夹或者是否没有选择
+    if(zTree.getSelectedNodes()===undefined || zTree.getSelectedNodes()[0]===undefined || !zTree.getSelectedNodes()[0].isFolder){
+        layer.msg('请选择对应的文件夹');
+        throw new Error( '请选择对应的文件夹' );
+    }
+    return zTree.getSelectedNodes()[0].id;
 }

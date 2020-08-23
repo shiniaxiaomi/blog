@@ -37,5 +37,10 @@ public class Catalog implements Serializable {
      */
     private Integer blogId;
 
+    /**
+     * 记录是否为私有
+     */
+    private Boolean isPrivate;
+
     private static final long serialVersionUID = 1L;
 }

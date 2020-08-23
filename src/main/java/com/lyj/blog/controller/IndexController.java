@@ -55,7 +55,11 @@ public class IndexController {
     @RequestMapping("index/about")
     public ModelAndView about(){
         ModelAndView mav = new ModelAndView("blog/index");
-        Blog blog = blogService.selectHTMLAndNameByName("关于");
+        Blog blog = null;
+        try {
+            blog = blogService.selectHTMLAndNameByName("关于");
+        }catch (Exception ignore){
+        }
         if(blog==null){
             mav.addObject("html","请先创建该博客");
             return mav;
@@ -71,7 +75,11 @@ public class IndexController {
     @RequestMapping("index/todo")
     public ModelAndView todo(){
         ModelAndView mav = new ModelAndView("blog/index");
-        Blog blog = blogService.selectHTMLAndNameByName("待办");
+        Blog blog = null;
+        try {
+            blog=blogService.selectHTMLAndNameByName("待办");
+        }catch (Exception ignore){
+        }
         if(blog==null){
             mav.addObject("html","请先创建该博客");
             return mav;
