@@ -164,7 +164,7 @@ public class EsService {
                 "    }\n" +
                 "}", headers);
         try {
-            restTemplate.postForObject("http://"+elasticsearchUrl+"/blog/_update_by_query?format=JSON&pretty", entity, String.class);
+            restTemplate.postForObject(elasticsearchUrl+"/blog/_update_by_query?format=JSON&pretty", entity, String.class);
         }catch (Exception e){
             throw new MessageException("es更新失败");
         }
