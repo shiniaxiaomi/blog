@@ -1,9 +1,8 @@
 appName="blog"
 projectPath=/root/code/$appName
-cd $projectPath
 
-bash pull.sh
+bash $projectPath/bash/pull.sh
 
-bash build.sh
+bash $projectPath/bash/build.sh
 
-bash run.sh
+bash $projectPath/bash/run.sh
