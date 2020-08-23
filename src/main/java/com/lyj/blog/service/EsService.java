@@ -18,6 +18,7 @@ import org.elasticsearch.index.query.*;
 import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
@@ -45,7 +46,11 @@ public class EsService {
     @Autowired
     RestTemplate restTemplate;
 
-    final String esHost="http://localhost:9200";
+    @Value("${myConfig.elasticsearch.host}")
+    String elasticSearchHost;
+    @Value("${myConfig.elasticsearch.port}")
+    String elasticSearchPort;
+    final String esUrl ="http://"+elasticSearchHost+":"+elasticSearchPort;
 
     //根据blogId删除es中的headings
     public void deleteHeadingByBlogIdInES(String index,String blogId){
@@ -162,7 +167,7 @@ public class EsService {
                 "    }\n" +
                 "}", headers);
         try {
-            restTemplate.postForObject(esHost+"/blog/_update_by_query?format=JSON&pretty", entity, String.class);
+            restTemplate.postForObject(esUrl+"/blog/_update_by_query?format=JSON&pretty", entity, String.class);
         }catch (Exception e){
             throw new MessageException("es更新失败");
         }

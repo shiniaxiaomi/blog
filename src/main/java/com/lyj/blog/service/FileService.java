@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class FileService {
 
-    @Value("${file.location}/file/")
+    @Value("${myConfig.file.location}/file/")
     String filePath;
 
     @Autowired

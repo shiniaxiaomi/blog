@@ -3,6 +3,7 @@ package com.lyj.blog.controller;
 import com.lyj.blog.interceptor.NeedLogin;
 import com.lyj.blog.model.req.Message;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Controller;
@@ -24,7 +25,11 @@ public class EsController {
     @Autowired
     RestTemplate restTemplate;
 
-    final String esHost="http://localhost:9200";
+    @Value("${myConfig.elasticsearch.host}")
+    String elasticSearchHost;
+    @Value("${myConfig.elasticsearch.port}")
+    String elasticSearchPort;
+    final String esUrl ="http://"+elasticSearchHost+":"+elasticSearchPort;
 
     @NeedLogin
     @GetMapping
@@ -39,7 +44,7 @@ public class EsController {
         // get请求
         if(method!=null && method.equals("get")){
             try {
-                String data = restTemplate.getForObject(esHost+json, String.class);
+                String data = restTemplate.getForObject(esUrl +json, String.class);
                 return Message.success(null,data);
             }catch (Exception e){
                 return Message.error("请确认是否是请求的方法不对:"+e.getMessage());
@@ -51,7 +56,7 @@ public class EsController {
         headers.add("Content-Type","application/json");
         HttpEntity<String> entity = new HttpEntity<>(json, headers);
         try {
-            String data = restTemplate.postForObject(esHost+"/_search?format=JSON&pretty", entity, String.class);
+            String data = restTemplate.postForObject(esUrl +"/_search?format=JSON&pretty", entity, String.class);
             return Message.success(null,data);
         }catch (Exception e){
             return Message.error(e.getMessage());
@@ -67,7 +72,7 @@ public class EsController {
         headers.add("Content-Type","application/json");
         HttpEntity<String> entity = new HttpEntity<>(json, headers);
         try {
-            String data = restTemplate.postForObject(esHost+"/blog/_update_by_query?format=JSON&pretty", entity, String.class);
+            String data = restTemplate.postForObject(esUrl +"/blog/_update_by_query?format=JSON&pretty", entity, String.class);
             return Message.success("更新成功",data);
         }catch (Exception e){
             return Message.error(e.getMessage());
@@ -84,7 +89,7 @@ public class EsController {
         headers.add("Content-Type","application/json");
         HttpEntity<String> entity = new HttpEntity<>(json, headers);
         try {
-            String data = restTemplate.postForObject(esHost+"/blog/_delete_by_query?format=JSON&pretty", entity, String.class);
+            String data = restTemplate.postForObject(esUrl +"/blog/_delete_by_query?format=JSON&pretty", entity, String.class);
             return Message.success("删除成功",data);
         }catch (Exception e){
             return Message.error(e.getMessage());

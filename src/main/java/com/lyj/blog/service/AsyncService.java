@@ -20,7 +20,7 @@ import java.util.Map;
 @Service
 public class AsyncService {
 
-    @Value("${host}")
+    @Value("${myConfig.host}")
     String host;
 
     @Autowired

@@ -29,7 +29,7 @@ import java.util.Map;
 @Service
 public class CommentService {
 
-    @Value("${host}")
+    @Value("${myConfig.host}")
     String host;
 
     @Autowired

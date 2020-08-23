@@ -22,15 +22,16 @@ spring:
     suffix: .ftl
     template-loader-path: classpath:templates
   resources:
-    static-locations: classpath:/static/,file:${file.location}
+    static-locations: classpath:/static/,file:${myConfig.file.location}
   redis:
     host: 127.0.0.1
     port: 6379
 
-file:
-  location: ./upload
 
-host: localhost:8080
-
-elasticsearch:
-  hostAndPort: localhost:9200
+myConfig:
+  file:
+    location: ./upload
+  host: localhost
+  elasticsearch:
+    host: localhost
+    port: 9200

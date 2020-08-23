@@ -58,7 +58,7 @@ public class BlogService {
     @Autowired
     CatalogService catalogService;
 
-    @Value("${file.location}/file")
+    @Value("${myConfig.file.location}/file")
     String filePath;
 
     @Autowired
