@@ -286,11 +286,13 @@
 
         // 绑定编辑框的编辑事件，修改是否编辑的状态
         $("#vditor").keypress(function(e) {
+            console.log("已编辑");
             isEdit=true;
         });
         // 当输入 删除，回车，tab键时，如果焦点在编辑框，则修改是否编辑的状态
         $("#vditor").keyup(function(e) {
             if(e.keyCode===8 || e.keyCode===9 || e.keyCode===13){
+                console.log("已编辑");
                 isEdit=true;
             }
         });

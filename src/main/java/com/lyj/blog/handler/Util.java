@@ -1,6 +1,8 @@
 package com.lyj.blog.handler;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
@@ -29,5 +31,10 @@ public class Util {
             // 如果未登入，则只查询非私有的数据，所以isPrivate=false
             return false;
         }
+    }
+
+    // 返回是否登入的判断
+    public static boolean isLogin(HttpSession session){
+        return session.getAttribute("isLogin")!=null;
     }
 }

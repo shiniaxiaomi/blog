@@ -75,6 +75,12 @@ public class IndexController {
     @RequestMapping("index/todo")
     public ModelAndView todo(){
         ModelAndView mav = new ModelAndView("blog/index");
+        // 如果未登入，直接返回没有权限
+        if(!Util.isLogin(session)){
+            mav.addObject("html","请先登入");
+            return mav;
+        }
+
         Blog blog = null;
         try {
             blog=blogService.selectHTMLAndNameByName("待办");
