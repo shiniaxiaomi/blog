@@ -61,9 +61,9 @@
                             搜索
                         </button>
                         <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                            <a id="createFolderBtn" class="dropdown-item btn-sm" href="javascript:void(0);" onclick="highlightSearch()">高亮搜索</a>
-                            <a id="updateFolderStatusBtn" class="dropdown-item btn-sm" href="javascript:void(0);" onclick="filterSearch();">过滤搜索</a>
-                            <a id="updateFolderStatusBtn" class="dropdown-item btn-sm" href="javascript:void(0);" onclick="cancelFilter();">取消过滤</a>
+                            <a class="dropdown-item btn-sm" href="javascript:void(0);" onclick="highlightSearch()">高亮搜索</a>
+                            <a class="dropdown-item btn-sm" href="javascript:void(0);" onclick="filterSearch();">过滤搜索</a>
+                            <a class="dropdown-item btn-sm" href="javascript:void(0);" onclick="cancelFilter();">取消过滤</a>
                         </div>
                     </div>
                     <div class="btn-group btn-group-sm" role="group">

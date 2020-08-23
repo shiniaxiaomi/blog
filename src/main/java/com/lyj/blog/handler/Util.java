@@ -24,7 +24,7 @@ public class Util {
     public static Boolean getIsPrivate(HttpSession session){
         // 如果登入，则查询所有数据，所以isPrivate=null
         if(session.getAttribute("isLogin")!=null){
-            return null;
+            return true;
         }else{
             // 如果未登入，则只查询非私有的数据，所以isPrivate=false
             return false;

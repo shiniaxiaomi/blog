@@ -46,11 +46,12 @@ public class CatalogService {
     }
 
     // 根据是否登入查询对应的数据
-    @Cacheable(value = "Catalog")
+    @Cacheable(value = "Catalog",key = "#isPrivate")
     public List<Catalog> selectCatalog(Boolean isPrivate) {
         QueryWrapper<Catalog> queryWrapper = new QueryWrapper<Catalog>().orderByDesc("is_folder");
-        if(isPrivate!=null){
-            queryWrapper.eq("is_private",isPrivate);
+        // 如果传入的是false，则用户未登入，查询公有内容（如果为true，则查询所有内容）
+        if(!isPrivate){
+            queryWrapper.eq("is_private", false);
         }
         return catalogMapper.selectList(queryWrapper);
     }
