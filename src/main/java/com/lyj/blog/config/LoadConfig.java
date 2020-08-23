@@ -13,7 +13,6 @@ import javax.annotation.PostConstruct;
  * @description
  * @date 2020/7/27 9:52 上午
  */
-@Order(1) //优先加载
 @Component
 public class LoadConfig {
 
