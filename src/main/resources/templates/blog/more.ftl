@@ -45,7 +45,7 @@
     <@right class="col-sm-12 col-md-10 col-lg-9">
         <div class="bg-white px-4 pt-4 shadow-lg rounded">
             <div>
-                <p class="h3">${title}</p>
+                <p class="h3">${title!}</p>
                 <hr/>
                 <@item moreBlogList/>
             </div>

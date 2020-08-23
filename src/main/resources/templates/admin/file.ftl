@@ -15,7 +15,7 @@
         <@sidebar></@sidebar>
     </@left>
     <@right class="col-md-11 col-lg-10">
-        <p class="h3">${title}</p>
+        <p class="h3">${title!}</p>
         <a href="javascript:void(0);" onclick="back(${blogId!})">返回</a>
         <table class="table table-hover">
             <thead>

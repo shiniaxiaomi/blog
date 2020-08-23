@@ -8,7 +8,7 @@
         <nav class="navbar navbar-light">
         <span class="navbar-brand" >
             <a style="color: #3b86d8" class="font-weight-bold d-inline text-decoration-none" href="/user/login/form">是你啊小米</a>
-            <img style="width: 11%;margin-bottom: 3px;margin-left: 5px;" src="/img/online.png" <#if !isLogin>hidden</#if>>
+            <img style="width: 11%;margin-bottom: 3px;margin-left: 5px;" src="/img/online.png" <#if isLogin?? && !isLogin>hidden</#if>>
         </span>
         </nav>
         <#--用于小屏幕-->
@@ -19,9 +19,9 @@
         <#--菜单按钮-->
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <div class="navbar-nav mr-auto">
-                <a class="<#if active=="首页">active</#if> nav-link" href="/">首页</a>
-                <a class="<#if active=="目录">active</#if> nav-link" href="/index/toc">目录</a>
-                <a class="<#if active=="标签">active</#if> nav-link" href="/index/tag">标签</a>
+                <a class="<#if active?? && active=="首页">active</#if> nav-link" href="/">首页</a>
+                <a class="<#if active?? && active=="目录">active</#if> nav-link" href="/index/toc">目录</a>
+                <a class="<#if active?? && active=="标签">active</#if> nav-link" href="/index/tag">标签</a>
                 <div class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="ToolMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         工具
@@ -42,7 +42,7 @@
                         <a class="dropdown-item" href="/admin">后台</a>
                     </div>
                 </div>
-                <a class="<#if active=="反馈">active</#if> nav-link" href="/index/feedback">反馈</a>
+                <a class="<#if active?? && active=="反馈">active</#if> nav-link" href="/index/feedback">反馈</a>
             </div>
 
             <#--搜索框-->
