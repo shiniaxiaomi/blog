@@ -145,8 +145,8 @@ public class BlogService {
         if(isStick!=null){
             queryWrapper.eq("is_stick", isStick); //置顶
         }
-        if(isPrivate!=null){
-            queryWrapper.eq("is_private", isPrivate); //公有
+        if(!isPrivate){
+            queryWrapper.eq("is_private", false); //公有
         }
         Page<Blog> result = blogMapper.selectPage(new Page<>(page, size), queryWrapper);
 

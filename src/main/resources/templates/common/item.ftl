@@ -3,8 +3,10 @@
         <#list blogList as blog>
             <p>
                 <a class="h4" href="/blog/${blog.id!}">${blog.name!}</a>
-                <#if blog.isPrivate ??>
-                    <#if blog.isPrivate>私有<#else>公有</#if>
+                <#if isLogin?? && isLogin>
+                    <#if blog.isPrivate ??>
+                        <#if blog.isPrivate>私有<#else>公有</#if>
+                    </#if>
                 </#if>
             </p>
             🕑&nbsp;${blog.createTime!?string("yyyy-MM")}&nbsp;&nbsp;
