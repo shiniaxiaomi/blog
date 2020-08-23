@@ -33,14 +33,4 @@ myConfig:
     location: /upload
   host: luyingjie.cn
   elasticsearch:
-    host: 47.105.165.211
-    port: 9200
-
-#file:
-#  location: /upload
-#
-#my:
-#  host: luyingjie.cn
-#
-#elasticsearch:
-#  hostAndPort: 47.105.165.211:9200
+    url: 47.105.165.211:9200

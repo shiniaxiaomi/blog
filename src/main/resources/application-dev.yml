@@ -33,5 +33,4 @@ myConfig:
     location: ./upload
   host: localhost
   elasticsearch:
-    host: localhost
-    port: 9200
+    url: localhost:9200

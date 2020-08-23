@@ -17,17 +17,14 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class ElasticSearchConfig {
 
-    @Value("${myConfig.elasticsearch.host}")
-    private String elasticsearchHost;
-
-    @Value("${myConfig.elasticsearch.port}")
-    private String elasticsearchPort;
+    @Value("${myConfig.elasticsearch.url}")
+    private String elasticsearchUrl;
 
     //配置client客户端
     @Bean
     public RestHighLevelClient client() {
         ClientConfiguration clientConfiguration = ClientConfiguration.builder()
-                .connectedTo(elasticsearchHost+":"+elasticsearchPort)
+                .connectedTo(elasticsearchUrl)
                 .build();
         return RestClients.create(clientConfiguration).rest();
     }

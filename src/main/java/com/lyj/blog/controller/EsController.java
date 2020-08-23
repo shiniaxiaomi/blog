@@ -25,11 +25,8 @@ public class EsController {
     @Autowired
     RestTemplate restTemplate;
 
-    @Value("${myConfig.elasticsearch.host}")
-    String elasticSearchHost;
-    @Value("${myConfig.elasticsearch.port}")
-    String elasticSearchPort;
-    final String esUrl ="http://"+elasticSearchHost+":"+elasticSearchPort;
+    @Value("http://${myConfig.elasticsearch.url}")
+    private String elasticsearchUrl;
 
     @NeedLogin
     @GetMapping
@@ -44,7 +41,7 @@ public class EsController {
         // get请求
         if(method!=null && method.equals("get")){
             try {
-                String data = restTemplate.getForObject(esUrl +json, String.class);
+                String data = restTemplate.getForObject(elasticsearchUrl +json, String.class);
                 return Message.success(null,data);
             }catch (Exception e){
                 return Message.error("请确认是否是请求的方法不对:"+e.getMessage());
@@ -56,7 +53,7 @@ public class EsController {
         headers.add("Content-Type","application/json");
         HttpEntity<String> entity = new HttpEntity<>(json, headers);
         try {
-            String data = restTemplate.postForObject(esUrl +"/_search?format=JSON&pretty", entity, String.class);
+            String data = restTemplate.postForObject(elasticsearchUrl +"/_search?format=JSON&pretty", entity, String.class);
             return Message.success(null,data);
         }catch (Exception e){
             return Message.error(e.getMessage());
@@ -72,7 +69,7 @@ public class EsController {
         headers.add("Content-Type","application/json");
         HttpEntity<String> entity = new HttpEntity<>(json, headers);
         try {
-            String data = restTemplate.postForObject(esUrl +"/blog/_update_by_query?format=JSON&pretty", entity, String.class);
+            String data = restTemplate.postForObject(elasticsearchUrl +"/blog/_update_by_query?format=JSON&pretty", entity, String.class);
             return Message.success("更新成功",data);
         }catch (Exception e){
             return Message.error(e.getMessage());
@@ -89,7 +86,7 @@ public class EsController {
         headers.add("Content-Type","application/json");
         HttpEntity<String> entity = new HttpEntity<>(json, headers);
         try {
-            String data = restTemplate.postForObject(esUrl +"/blog/_delete_by_query?format=JSON&pretty", entity, String.class);
+            String data = restTemplate.postForObject(elasticsearchUrl +"/blog/_delete_by_query?format=JSON&pretty", entity, String.class);
             return Message.success("删除成功",data);
         }catch (Exception e){
             return Message.error(e.getMessage());
