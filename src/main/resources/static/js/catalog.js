@@ -197,7 +197,7 @@ function quickNewFile() {
             // 加载当前选中节点的md
             loadMD(node);
             // 默认重命名节点
-            editTreeNode();
+            editTreeNode(false);//不询问是否编辑
         }else{
             layer.msg("接口调用失败");
         }
@@ -206,8 +206,6 @@ function quickNewFile() {
 
 // 添加file或文件夹
 function addNode(type) { //[file,folder]
-    // hideRMenu();
-
     // 添加文件（默认添加以日期+时间为名称的文件）
     let name=new Date().Format("yyyy-MM-dd hh:mm:ss");
     let item={name: name,pid:zTree.getSelectedNodes()[0].id};
@@ -239,7 +237,7 @@ function addNode(type) { //[file,folder]
             // 加载当前选中节点的md
             loadMD(node);
             // 默认重命名节点
-            editTreeNode();
+            editTreeNode(false);//不询问是否编辑
         }else{
             layer.msg("接口调用失败");
         }
@@ -260,7 +258,6 @@ function layerConfirm(msg,func) {
 
 // 删除节点
 function removeTreeNode() {
-    // hideRMenu();
     let nodes = zTree.getSelectedNodes();
     if (nodes && nodes.length>0) {
         if (nodes[0].children && nodes[0].children.length > 0) {
@@ -280,15 +277,24 @@ function removeTreeNode() {
                 })
             })
         }
+    }else{
+        layer.msg("请选择对应的节点");
     }
 }
 // 编辑节点
-function editTreeNode() {
-    // hideRMenu();
+function editTreeNode(isConfirm) {
     let node = zTree.getSelectedNodes()[0];
-    layerConfirm("确定编辑名称吗？",function () {
-        zTree.editName(node);
-    })
+    if (node) {
+        if(isConfirm){
+            layerConfirm("确定编辑名称吗？",function () {
+                zTree.editName(node);
+            })
+        }else{
+            zTree.editName(node);
+        }
+    }else{
+        layer.msg("请选择对应的节点");
+    }
 }
 
 // 过滤搜索节点

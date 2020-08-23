@@ -72,7 +72,7 @@
                         </button>
                         <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
                             <a id="createFolderBtn" class="dropdown-item btn-sm" href="javascript:void(0);" onclick="addNode('file');">增加节点</a>
-                            <a id="editNodeBtn" class="dropdown-item btn-sm" href="javascript:void(0);" onclick="editTreeNode();">编辑节点</a>
+                            <a id="editNodeBtn" class="dropdown-item btn-sm" href="javascript:void(0);" onclick="editTreeNode(true);">编辑节点</a>
                             <a id="deleteNodeBtn" class="dropdown-item btn-sm" href="javascript:void(0);" onclick="removeTreeNode();">删除节点</a>
                             <a id="createNodeBtn" class="dropdown-item btn-sm" href="javascript:void(0);" onclick="addNode('folder');">创建文件夹</a>
                             <a id="updateFolderStatusBtn" class="dropdown-item btn-sm" href="javascript:void(0);" onclick="openFolderStatusModel();">设置共享状态</a>
