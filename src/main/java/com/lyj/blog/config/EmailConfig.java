@@ -19,6 +19,7 @@ public class EmailConfig {
     public JavaMailSender javaMailSender(){
         JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
         javaMailSender.setHost("smtp.qq.com");
+        javaMailSender.setPort(465);//设置端口
         javaMailSender.setUsername(LoadConfig.getInstance().getEmail());
         javaMailSender.setPassword(LoadConfig.getInstance().getEmailPassword());
         javaMailSender.setDefaultEncoding("utf-8");
