@@ -27,8 +27,10 @@ function updateFolderConfig() {
     $.post("/catalog/status/folder",$("#configFolderForm").serialize()+"&id="+getSelectedFolderId(),function (data,status) {
         if(status==="success" && data.code){
             layer.msg("保存成功");
-            $("#configFolderModal").modal("hide");
+        }else{
+            layer.msg(data.msg);
         }
+        $("#configFolderModal").modal("hide");
     })
 }
 

@@ -192,8 +192,10 @@
         $.post("/blog/config",$("#configForm").serialize()+"&id="+getSelectedBlogId(),function (data,status) {
             if(status==="success" && data.code){
                 layer.msg("保存成功");
-                $("#configModal").modal("hide");
+            }else {
+                layer.msg(data.msg);
             }
+            $("#configModal").modal("hide");
         })
     }
 
