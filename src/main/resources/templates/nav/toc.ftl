@@ -19,7 +19,9 @@
     <@right class="col-sm-12 col-md-10 col-lg-9">
             <div class="form-inline">
                     <input class="mr-2" id="searchInput" autocomplete="off">
-                    <button type="button" class="btn btn-secondary btn-sm" onclick="searchNode()">搜索</button>
+                <button type="button" class="btn btn-secondary btn-sm m-1" onclick="highlightSearch()">高亮搜索</button>
+                <button type="button" class="btn btn-secondary btn-sm m-1" onclick="filterSearch()">过滤搜索</button>
+                <button type="button" class="btn btn-secondary btn-sm m-1" onclick="cancelFilter()">取消过滤</button>
             </div>
             <div class="overflow-auto" style="height: 500px">
                     <ul id="treeDemo" class="ztree"></ul>

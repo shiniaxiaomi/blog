@@ -56,7 +56,16 @@
                     <input class="mr-2" id="searchInput" autocomplete="off">
                 </div>
                 <div class="my-1">
-                    <button type="button" class="btn btn-secondary btn-sm mx-1" onclick="searchNode()">搜索</button>
+                    <div class="btn-group btn-group-sm" role="group">
+                        <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            搜索
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                            <a id="createFolderBtn" class="dropdown-item btn-sm" href="javascript:void(0);" onclick="highlightSearch()">高亮搜索</a>
+                            <a id="updateFolderStatusBtn" class="dropdown-item btn-sm" href="javascript:void(0);" onclick="filterSearch();">过滤搜索</a>
+                            <a id="updateFolderStatusBtn" class="dropdown-item btn-sm" href="javascript:void(0);" onclick="cancelFilter();">取消过滤</a>
+                        </div>
+                    </div>
                     <div class="btn-group btn-group-sm" role="group">
                         <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             操作
@@ -174,14 +183,6 @@
         </div>
     </div>
 </div>
-<#--<div id="rMenu">-->
-<#--    <ul>-->
-<#--        <li id="m_add_blog" onclick="addNode('file');">增加节点</li>-->
-<#--        <li id="m_add_folder" onclick="addNode('folder');">创建文件夹</li>-->
-<#--        <li id="m_edit" onclick="editTreeNode();">编辑节点</li>-->
-<#--        <li id="m_remove" onclick="removeTreeNode();">删除节点</li>-->
-<#--    </ul>-->
-<#--</div>-->
 </html>
 
 

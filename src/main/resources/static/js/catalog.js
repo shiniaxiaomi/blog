@@ -174,54 +174,7 @@ function beforeDrop(treeId, treeNodes, targetNode, moveType) {
     }
     return false;
 }
-// 右键菜单`
-// function OnRightClick(event, treeId, treeNode) {
-//     if(!treeNode){
-//         return;
-//     }
-//     if (treeNode.name==="/" || treeNode.name==="_待整理") {
-//         zTree.selectNode(treeNode);
-//         showRMenu("root", event.clientX, event.clientY);
-//     } else if (treeNode.isFolder) {
-//         zTree.selectNode(treeNode);
-//         showRMenu("folder", event.clientX, event.clientY);
-//     } else{
-//         zTree.selectNode(treeNode);
-//         showRMenu("file", event.clientX, event.clientY);
-//     }
-// }
-// function showRMenu(type, x, y) {
-//     // 显示全部
-//     let childrens = $("#rMenu ul").children();
-//     for(let i=0;i<childrens.length;i++){
-//         $(childrens[i]).show();
-//     }
-//     // 对应的隐藏
-//     if (type==="root") {
-//         $("#m_remove").hide();
-//         $("#m_edit").hide();
-//     } else if(type==="folder"){
-//     } else if(type==="file"){
-//         // 文件下不能添加节点
-//         $("#m_add_blog").hide();
-//         $("#m_add_folder").hide();
-//     }
-//
-//     y += document.body.scrollTop;
-//     x += document.body.scrollLeft;
-//     rMenu.css({"top":y+"px", "left":x+"px", "visibility":"visible"});
-//
-//     $("body").bind("mousedown", onBodyMouseDown);
-// }
-// function hideRMenu() {
-//     if (rMenu) rMenu.css({"visibility": "hidden"});
-//     $("body").unbind("mousedown", onBodyMouseDown);
-// }
-// function onBodyMouseDown(event){
-//     if (!(event.target.id === "rMenu" || $(event.target).parents("#rMenu").length>0)) {
-//         rMenu.css({"visibility" : "hidden"});
-//     }
-// }
+
 
 // 添加待整理的文件
 function quickNewFile() {
@@ -231,7 +184,6 @@ function quickNewFile() {
     let item={name: name,pid:pNode.id,isFolder:false,icon:"/ztree/img/file.png",checked:true};//这里的pid是待整理的文件夹的pid
     $.post("/catalog/insert",item,function (data,status) {
         if(status==="success" && data.code){
-            debugger
             item.blogId=data.data.blogId; //添加返回的blogId值
             item.id=data.data.id; //添加返回的目录itemId值
 
@@ -339,8 +291,39 @@ function editTreeNode() {
     })
 }
 
-// 搜索节点
-function searchNode() {
+// 过滤搜索节点
+function filterSearch() {
+    let $searchInput = $("#searchInput");
+    let value=$searchInput.val().toLocaleLowerCase();
+    if (value === "") return;
+    nodeList = zTree.getNodesByParamFuzzy("name", value);
+
+    let $treeDemo = $("#treeDemo li a");
+
+    // 隐藏所有节点
+    let filter = $treeDemo.filter((index,item)=>{
+        $(item).parent().hide();
+        return $(item).text().toLocaleLowerCase().indexOf(value)!==-1;
+    });
+
+    // 显示匹配节点
+    $("#treeDemo .level0").eq(0).show();
+    for(let i=0;i<filter.length;i++){
+        $(filter[i]).parent().show();
+    }
+}
+
+// 取消过滤
+function cancelFilter() {
+    let $treeDemo = $("#treeDemo li a");
+    $treeDemo.filter((index,item)=>{
+        $(item).parent().show();
+        return false;
+    });
+}
+
+// 高亮搜索节点
+function highlightSearch() {
     let $searchInput = $("#searchInput");
     let value=$searchInput.val();
     updateNodes(false,nodeList);
@@ -427,7 +410,7 @@ function initTree(isLogin){
     // 绑定搜索输入框的回车事件
     $("#searchInput").keypress(function(e) {
         if (e.keyCode === 13) {
-            searchNode();
+            highlightSearch();
         }
     });
 
