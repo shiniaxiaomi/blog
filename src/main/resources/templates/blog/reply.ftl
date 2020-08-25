@@ -36,7 +36,7 @@
     </script>
 </@head>
 <@body style="max-width: 1300px" active="博客">
-    <@left class="col-4" style="max-width: 300px">
+    <@left class="col-lg-4 d-none d-lg-block" style="max-width: 300px">
         <!--公共导航栏-->
         <div class="sticky-top" style="top: 100px;z-index: 1000">
             <div class=" input-group-sm">
@@ -45,7 +45,7 @@
             <div id="toc" class="overflow-auto" style="height: 545px;font-size: 14px"></div>
         </div>
     </@left>
-    <@right class="col-8 px-5" style="border-left: 2px solid #e9ecef">
+    <@right class="col-md-12 col-lg-8" style="border-left: 2px solid #e9ecef">
         <!--面包屑导航-->
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
