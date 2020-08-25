@@ -8,7 +8,7 @@
 <#include "../common/item.ftl">
 <#include "../common/page.ftl">
 <@head>
-    <link rel="stylesheet" href="/vditor/index.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.4.1/dist/index.css"/>
     <style>
         .vditor-reset {
             font-size: 10px;

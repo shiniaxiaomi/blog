@@ -6,12 +6,12 @@
 <#include "../common/right.ftl">
 <#include "../common/comment.ftl">
 <@head>
-    <script src="/vditor/js/lute/lute.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vditor@3.4.1/dist/js/lute/lute.min.js"></script>
     <!-- comment -->
     <link rel="stylesheet" href="/css/comment.css" />
     <script src="/js/comment.js"></script>
     <!-- layer -->
-    <script src="/layer/layer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/layer-v3.0.3@1.0.1/layer.min.js"></script>
     <style>
         .gt-avatar >img{
             border-radius: 50%!important;

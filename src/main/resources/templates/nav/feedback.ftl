@@ -7,7 +7,7 @@
 <#include "../common/info.ftl">
 <#include "../common/item.ftl">
 <@head>
-    <script src="/layer/layer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/layer-v3.0.3@1.0.1/layer.min.js"></script>
     <style>
         .gt-header-textarea {
             padding: 0.75em;

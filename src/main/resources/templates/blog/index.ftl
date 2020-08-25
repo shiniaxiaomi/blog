@@ -7,16 +7,14 @@
 <#include "../common/comment.ftl">
 <@head>
     <!-- vditor -->
-    <link rel="stylesheet" href="/vditor/index.css" />
-    <script src="/vditor/index.min.js" defer></script>
-    <script src="/vditor/js/lute/lute.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.4.1/dist/index.css" />
+    <script src="https://cdn.jsdelivr.net/npm/vditor@3.4.1/dist/index.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/vditor@3.4.1/dist/js/lute/lute.min.js"></script>
     <!-- comment -->
     <link rel="stylesheet" href="/css/comment.css" />
     <script src="/js/comment.js"></script>
-<#--    <link rel="stylesheet" href="https://cdn.bootcss.com/gitalk/1.5.0/gitalk.min.css"/>-->
-<#--    <script src="https://cdn.bootcss.com/gitalk/1.5.0/gitalk.min.js"></script>-->
     <!-- layer -->
-    <script src="/layer/layer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/layer-v3.0.3@1.0.1/layer.min.js"></script>
     <style>
         .fontRed{
             color: rgb(166, 0, 0);

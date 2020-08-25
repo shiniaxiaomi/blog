@@ -12,11 +12,12 @@
     <!--icons-->
     <link rel="stylesheet" href="http://at.alicdn.com/t/font_1990451_36hvvfymceu.css">
     <!--ztree-->
-    <link rel="stylesheet" href="/ztree/zTreeStyle.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ztree@3.5.24/css/zTreeStyle/zTreeStyle.css">
 
     <!--相关js-->
-    <script src="/layer/layer.js"></script>
-    <script src="/ztree/jquery.ztree.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/layer-v3.0.3@1.0.1/layer.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ztree@3.5.24/js/jquery.ztree.all.min.js"></script>
+<#--    <script src="/ztree/jquery.ztree.all.min.js"></script>-->
 
     <script src="/js/catalog.js"></script>
     <script src="/js/tag.js"></script>

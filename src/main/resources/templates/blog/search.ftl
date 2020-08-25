@@ -6,8 +6,8 @@
 <#include "../common/right.ftl">
 <#include "../common/info.ftl">
 <@head>
-    <script src="/vditor/js/lute/lute.min.js"></script>
-    <script src="/layer/layer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vditor@3.4.1/dist/js/lute/lute.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/layer-v3.0.3@1.0.1/layer.min.js"></script>
     <style>
         .vditor-reset {
             font-size: 10px;

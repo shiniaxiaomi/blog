@@ -7,8 +7,8 @@
 <#include "../common/info.ftl">
 <@head>
         <!--ztree-->
-        <link rel="stylesheet" href="/ztree/zTreeStyle.css" />
-        <script src="/ztree/jquery.ztree.all.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ztree@3.5.24/css/zTreeStyle/zTreeStyle.css">
+        <script src="https://cdn.jsdelivr.net/npm/ztree@3.5.24/js/jquery.ztree.all.min.js"></script>
         <script src="/js/catalog.js"></script>
 </@head>
 <@body active="目录">
