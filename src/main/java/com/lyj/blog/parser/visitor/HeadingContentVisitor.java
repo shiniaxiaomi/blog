@@ -37,7 +37,7 @@ public class HeadingContentVisitor extends AbstractVisitor {
 
     public static String HeadingSplitLine="=======------=======";//内容分割线
 
-    Pattern pattern = Pattern.compile("^.*\n");
+    Pattern pattern = Pattern.compile("^#+ .*\n");//用于匹配标题
 
 
     private StringBuilder sb=new StringBuilder();
