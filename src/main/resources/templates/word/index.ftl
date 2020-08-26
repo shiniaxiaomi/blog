@@ -62,6 +62,10 @@
 
     function deleteWord(id){
         $.post("/word/delete",{id:id},function (data,status) {
+            if(status==="success" && data.code){
+                //将当前的删除行清空
+                $("#"+id).remove();
+            }
             layer.msg(data.msg)
         })
     }
@@ -72,7 +76,7 @@
             let str="";
             for(let i=0;i<list.length;i++){
                 str+= `
-                    <div class="row justify-content-between">
+                    <div class="row justify-content-between" id="`+list[i].id+`">
                         <a class="col-auto" href='/word/detail/`+list[i].id+`'>`+list[i].name+`</a>
                         <a class="col-auto" href='#' onclick='deleteWord(`+list[i].id+`)'>删除</a>
                     </div>
