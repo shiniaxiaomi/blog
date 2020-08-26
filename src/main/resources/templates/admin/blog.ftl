@@ -474,6 +474,15 @@
             },
         })
 
+        // 5分钟维持一次心跳
+        setInterval(function () {
+            $.get("/admin/keepHeartbeat",function (data,status) {
+                if(status==="success" && data.code){
+                    console.log("心跳维持成功")
+                }
+            })
+        },5*60*1000)
+
     })
 
 </script>
