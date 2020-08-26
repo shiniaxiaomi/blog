@@ -68,12 +68,13 @@
 
     $(function () {
         $.get("/word/list",function (data,status) {
+            let list=data.data;
             let str="";
-            for(let i=0;i<data.length;i++){
+            for(let i=0;i<list.length;i++){
                 str+= `
                     <div class="row justify-content-between">
-                        <a class="col-auto" href='/word/detail/`+data[i].id+`'>`+data[i].name+`</a>
-                        <a class="col-auto" href='#' onclick='deleteWord(`+data[i].id+`)'>删除</a>
+                        <a class="col-auto" href='/word/detail/`+list[i].id+`'>`+list[i].name+`</a>
+                        <a class="col-auto" href='#' onclick='deleteWord(`+list[i].id+`)'>删除</a>
                     </div>
                 `;
             }
