@@ -409,7 +409,7 @@
                 handler(files){
                     let data = new FormData();
                     data.append('file', files[0]);
-                    debugger
+                    let layerMsg = layer.msg("正在上传...",{time:0}); //提示正在上传
                     $.ajax({
                         type: 'POST',
                         url: "/blog/upload/"+window.blogId,
@@ -432,11 +432,12 @@
                                 console.log(data.msg);
                                 window.vditor.tip(data.msg, 3000);
                             }
-
+                            layer.close(layerMsg);
                         },
                         error: function (data) {
                             console.log(data)
                             window.vditor.tip("上传失败", 3000);
+                            layer.close(layerMsg);
                         }
                     });
                 },
