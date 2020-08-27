@@ -5,6 +5,7 @@ import com.lyj.blog.model.req.Message;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MultipartException;
 
 /**
  * @author Yingjie.Lu
@@ -25,6 +26,12 @@ public class GlobelExceptionHandler {
         if(e.getMessage().contains("RedisCacheConfiguration")){
             log.error("redis不能存储null值，可忽略该报错");
         }
+    }
+
+    // 文件上传异常
+    @ExceptionHandler(MultipartException.class)
+    public Message handleFileUploadException(Throwable e){
+        return Message.error(e.getMessage());
     }
 
 

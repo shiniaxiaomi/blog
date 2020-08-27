@@ -418,17 +418,25 @@
                         processData: false,
                         contentType: false,
                         success: function (data) {
-                            window.vditor.tip(data.msg, 1000);
-                            if(data.data.isImg){
-                                // 插入图片链接
-                                vditor.insertValue("!["+data.data.fileName+"](/file/"+data.data.fileName+")\n");
+                            if(data.code){
+                                window.vditor.tip(data.msg, 1000);
+                                if(data.data.isImg){
+                                    // 插入图片链接
+                                    vditor.insertValue("!["+data.data.fileName+"](/file/"+data.data.fileName+")\n");
+                                }else{
+                                    // 插入超链接
+                                    vditor.insertValue("["+data.data.fileName+"](/file/"+data.data.fileName+")");
+                                }
+                                isEdit=true;//将编辑状态改为true
                             }else{
-                                // 插入超链接
-                                vditor.insertValue("["+data.data.fileName+"](/file/"+data.data.fileName+")");
+                                console.log(data.msg);
+                                window.vditor.tip(data.msg, 3000);
                             }
+
                         },
                         error: function (data) {
-                            window.vditor.tip(data, 3000);
+                            console.log(data)
+                            window.vditor.tip("上传失败", 3000);
                         }
                     });
                 },
