@@ -3,12 +3,8 @@ package com.lyj.blog.parser.visitor;
 import com.lyj.blog.parser.model.ESHeading;
 import com.lyj.blog.parser.render.HeadingRenderer;
 import org.commonmark.node.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.regex.Matcher;
