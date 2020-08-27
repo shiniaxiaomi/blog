@@ -70,10 +70,10 @@
                             md2HTML=md2HTML.replace(new RegExp(splits[j],"gi"),"<span style='color: red'>"+splits[j]+"</span>");
                         }
                         if(md2HTML.length>400){
-                            buffArr.push({headingId:result.headingId,content:md2HTML});//缓存更多的显示内容
+                            buffArr.push({id:i,content:md2HTML});//缓存更多的显示内容
                             md2HTML = md2HTML.substring(0,400);
                             md2HTML+="<br>...<br>";
-                            md2HTML+=`<button type="button" class="btn btn-outline-secondary btn-sm" onclick="showMore('`+result.headingId+`')">显示更多</button>`;
+                            md2HTML+=`<button type="button" class="btn btn-outline-secondary btn-sm" onclick="showMore(`+i+`)">显示更多</button>`;
                         }
                     }
                     // 高亮标题
@@ -87,7 +87,7 @@
                             <span style="font-size: 12px">📒`+result.blogName+`</span>
                             <span style="font-size: 12px">🔖`+result.tagName+`</span>
                             </h5>
-                            <div class="vditor-reset" id="`+result.headingId+`">`+md2HTML+`</div>
+                            <div class="vditor-reset" id="`+i+`">`+md2HTML+`</div>
                         </div><hr>
                     `;
                 }
@@ -138,7 +138,7 @@
     // 显示更多
     function showMore(id){
         for(let i=0;i<buffArr.length;i++){
-            if(buffArr[i].headingId===id){
+            if(buffArr[i].id===id){
                 $("#"+id).html(buffArr[i].content);
             }
         }
