@@ -90,7 +90,7 @@ public class HeadingContentVisitor extends AbstractVisitor {
         }
 
         //统一处理并获取标题，并返回标题名称（统一生成html和生成ES的标题是一致的）
-        String text = HeadingRenderer.handleHeading(heading);
+        String text = HeadingRenderer.handleHeadingForES(heading);
         if(text==null) return;
 
         sb.append(HeadingSplitLine);//添加内容分割线

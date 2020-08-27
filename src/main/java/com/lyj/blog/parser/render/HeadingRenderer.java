@@ -46,7 +46,7 @@ public class HeadingRenderer implements NodeRenderer {
     }
 
     // 处理heading，返回标题内容
-    public static String handleHeading(Heading heading){
+    public static String handleHeadingForES(Heading heading){
         String headingName=null;
         if(heading.getFirstChild()==null){
             return null;
@@ -72,5 +72,13 @@ public class HeadingRenderer implements NodeRenderer {
                 break;
         }
         return headingName;
+    }
+
+    // 处理heading，返回标题内容
+    public static String handleHeading(Heading heading){
+        if(heading.getFirstChild()==null){
+            return null;
+        }
+        return ((Text) heading.getFirstChild()).getLiteral();
     }
 }
