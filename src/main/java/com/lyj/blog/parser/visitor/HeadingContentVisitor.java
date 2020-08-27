@@ -78,13 +78,14 @@ public class HeadingContentVisitor extends AbstractVisitor {
         return list;//返回标题及内容的list
     }
 
-    //需要将左右尖括号进行转义
+    // 需要将左右尖括号进行转义(普通内容不会出现# 的情况，因为如果出现，那么就称为标题了)
     @Override
     public void visit(Text text) {
         sb.append(text.getLiteral());//添加普通文本内容
         sb.append("\n");
     }
 
+    // 标题
     @Override
     public void visit(Heading heading) {
         if(headingIdList==null){
@@ -104,15 +105,17 @@ public class HeadingContentVisitor extends AbstractVisitor {
         headingIdList.add(headingId);
     }
 
+    // 代码块
     @Override
     public void visit(FencedCodeBlock fencedCodeBlock) {
-        sb.append(fencedCodeBlock.getLiteral());//添加代码块
+        sb.append(fencedCodeBlock.getLiteral().replaceAll("#",""));//添加代码块，并去掉#
         sb.append("\n");
     }
 
+    // 内联代码块
     @Override
     public void visit(Code code) {
-        sb.append(code.getLiteral());//添加内联代码块
+        sb.append(code.getLiteral().replaceAll("#",""));//添加内联代码块，并去掉#
         sb.append("\n");
     }
 
