@@ -57,11 +57,15 @@
                 let str="";
                 for(let i=0;i<data.data.result.length;i++){
                     let result=data.data.result[i].sourceAsMap;
-                    // 过滤特殊符号
-                    let md2HTML = lute.Md2HTML(result.content.replace(/\</g,"&lt;").replace(/\>/g,"&gt;"));
-                    // 高亮内容
-                    for(let j=0;j<splits.length;j++){
-                        md2HTML=md2HTML.replace(new RegExp(splits[j],"gi"),"<span style='color: red'>"+splits[j]+"</span>");
+                    let md2HTML="";
+                    // 如果内容不为空
+                    if(result.content!=null){
+                        // 过滤特殊符号
+                        md2HTML = lute.Md2HTML(result.content.replace(/\</g,"&lt;").replace(/\>/g,"&gt;"));
+                        // 高亮内容
+                        for(let j=0;j<splits.length;j++){
+                            md2HTML=md2HTML.replace(new RegExp(splits[j],"gi"),"<span style='color: red'>"+splits[j]+"</span>");
+                        }
                     }
                     // 高亮标题
                     let highlightHeading=result.headingName;
