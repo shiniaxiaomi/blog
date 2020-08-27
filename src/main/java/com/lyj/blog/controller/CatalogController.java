@@ -2,15 +2,14 @@ package com.lyj.blog.controller;
 
 import com.lyj.blog.handler.Util;
 import com.lyj.blog.interceptor.NeedLogin;
-import com.lyj.blog.model.req.Message;
 import com.lyj.blog.model.Catalog;
+import com.lyj.blog.model.req.Message;
 import com.lyj.blog.service.CatalogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -73,7 +72,7 @@ public class CatalogController {
         if(list.size()==0){
             // 如果没有目录，则创建默认目录
             int catalogPid = catalogService.insert(new Catalog().setName("/").setIsFolder(true));
-            catalogService.insert(new Catalog().setName("_待整理").setIsFolder(true).setPid(catalogPid));
+            catalogService.insert(new Catalog().setName("-待整理").setIsFolder(true).setPid(catalogPid));
             list= catalogService.selectCatalog(isPrivate);
         }
         return Message.success(null,list);

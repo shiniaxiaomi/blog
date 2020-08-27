@@ -77,7 +77,7 @@ function hideBtn(treeNode) {
     $deleteNodeBtn.show();
     $updateFolderStatusBtn.show();
 
-    if(treeNode.name==="/" || treeNode.name==="_待整理"){
+    if(treeNode.name==="/" || treeNode.name==="-待整理"){
         $editNodeBtn.hide();
         $deleteNodeBtn.hide();
         $updateFolderStatusBtn.hide();
@@ -182,7 +182,7 @@ function beforeDrop(treeId, treeNodes, targetNode, moveType) {
 function quickNewFile() {
     // 添加文件（默认添加以日期+时间为名称的文件）
     let name=new Date().Format("yyyy-MM-dd hh:mm:ss");
-    let pNode = zTree.getNodesByParam("name", "_待整理", null)[0];
+    let pNode = zTree.getNodesByParam("name", "-待整理", null)[0];
     let item={name: name,pid:pNode.id,isFolder:false,icon:"/ztree/img/file.png",checked:true};//这里的pid是待整理的文件夹的pid
     $.post("/catalog/insert",item,function (data,status) {
         if(status==="success" && data.code){
