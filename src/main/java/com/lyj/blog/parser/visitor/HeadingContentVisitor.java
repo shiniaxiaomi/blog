@@ -59,9 +59,16 @@ public class HeadingContentVisitor extends AbstractVisitor {
                 String group = matcher.group();
                 esHeading.setHeadingName(group.substring(0,group.length()-1));//去掉回车换行
             }else{ //如果没找到标题，设置默认标题
-                esHeading.setHeadingName("默认标题");
+                esHeading.setHeadingName("# 默认标题");
             }
-            esHeading.setContent(split);
+
+            // es中的内容部分去掉标题
+            String[] arr = split.split("^#+ .*\n");
+            if(arr.length==2){
+                esHeading.setContent(arr[1]);
+            }else if(arr.length==1){
+                esHeading.setContent(arr[0]);
+            }
             esHeading.setBlogId(blogId);//设置标题所属的博客id
             esHeading.setHeadingId(headingIdList!=null?headingIdList.get(i-1):"");//设置标题id
 
@@ -76,7 +83,6 @@ public class HeadingContentVisitor extends AbstractVisitor {
     }
 
     //需要将左右尖括号进行转义
-
     @Override
     public void visit(Text text) {
         sb.append(text.getLiteral());//添加普通文本内容
