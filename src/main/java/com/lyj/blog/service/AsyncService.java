@@ -34,10 +34,10 @@ public class AsyncService {
     public void feedbackMail(String from,String content){
         try {
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mailSender.createMimeMessage(), false);
-            mimeMessageHelper.setFrom(from);
+            mimeMessageHelper.setFrom("lyj.8066@qq.com");
             mimeMessageHelper.setTo("lyj.8066@qq.com");
             mimeMessageHelper.setSubject("博客反馈意见");
-            mimeMessageHelper.setText("<html><div>"+content+"</div></html>",true);//邮件内容
+            mimeMessageHelper.setText("<html><div>反馈内容:<br>"+content+"</div><br><div>发送人:<br>"+from+"</div></html>",true);//邮件内容
             mailSender.send(mimeMessageHelper.getMimeMessage());//正式发送邮件
         } catch (Exception e) {
             throw new RuntimeException("邮件发送异常");
