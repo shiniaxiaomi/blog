@@ -43,8 +43,11 @@
 
 <script>
 
+    let buffArr=[];
+
     function searchInES(page){
         if(page===undefined) page=1;
+        buffArr=[];//清空缓存数据
         $.get("/blog/search/"+page,$("#form").serialize(),function (data,status) {
             if(status==="success" && data.code){
                 if(data.data.result.length===0){
@@ -66,6 +69,12 @@
                         for(let j=0;j<splits.length;j++){
                             md2HTML=md2HTML.replace(new RegExp(splits[j],"gi"),"<span style='color: red'>"+splits[j]+"</span>");
                         }
+                        if(md2HTML.length>400){
+                            buffArr.push({headingId:result.headingId,content:md2HTML});//缓存更多的显示内容
+                            md2HTML = md2HTML.substring(0,400);
+                            md2HTML+="<br>...<br>";
+                            md2HTML+=`<button type="button" class="btn btn-outline-secondary btn-sm" onclick="showMore('`+result.headingId+`')">显示更多</button>`;
+                        }
                     }
                     // 高亮标题
                     let highlightHeading=result.headingName;
@@ -78,7 +87,7 @@
                             <span style="font-size: 12px">📒`+result.blogName+`</span>
                             <span style="font-size: 12px">🔖`+result.tagName+`</span>
                             </h5>
-                            <div class="vditor-reset">`+md2HTML+`</div>
+                            <div class="vditor-reset" id="`+result.headingId+`">`+md2HTML+`</div>
                         </div><hr>
                     `;
                 }
@@ -124,6 +133,15 @@
                 $("#page").html(str);
             }
         })
+    }
+
+    // 显示更多
+    function showMore(id){
+        for(let i=0;i<buffArr.length;i++){
+            if(buffArr[i].headingId===id){
+                $("#"+id).html(buffArr[i].content);
+            }
+        }
     }
 
     let lute;
