@@ -7,8 +7,8 @@
 <#include "../common/sidebar.ftl">
 <@head>
     <!-- vditor -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.4.1/dist/index.css" />
-    <script src="https://cdn.jsdelivr.net/npm/vditor@3.4.1/dist/index.min.js" defer></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.3.5/dist/index.css" />
+    <script src="https://cdn.jsdelivr.net/npm/vditor@3.3.5/dist/index.min.js" defer></script>
     <!--icons-->
     <link rel="stylesheet" href="http://at.alicdn.com/t/font_1990451_36hvvfymceu.css">
     <!--ztree-->
@@ -17,7 +17,6 @@
     <!--相关js-->
     <script src="https://cdn.jsdelivr.net/npm/layer-v3.0.3@1.0.1/layer.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/ztree@3.5.24/js/jquery.ztree.all.min.js"></script>
-<#--    <script src="/ztree/jquery.ztree.all.min.js"></script>-->
 
     <script src="/js/catalog.js"></script>
     <script src="/js/tag.js"></script>
@@ -46,6 +45,25 @@
     </style>
 </@head>
 <#include "../common/body.ftl">
+
+
+<html>
+    <head>
+        <!-- vditor -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.3.5/dist/index.css" />
+        <script src="https://cdn.jsdelivr.net/npm/vditor@3.3.5/dist/index.min.js" defer></script>
+    </head>
+    <body>
+        <div id="vditor"></div>
+    </body>
+    <script>
+
+    </script>
+</html>
+
+
+
+
 <@body class="container-fluid">
     <@left class="col-md-1 col-lg-2" style="max-width: 150px">
         <@sidebar></@sidebar>

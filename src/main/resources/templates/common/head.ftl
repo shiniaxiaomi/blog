@@ -12,7 +12,7 @@
         <!-- Optional JavaScript -->
         <!-- jQuery first, then Popper.js, then Bootstrap JS -->
         <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
-        <script src="${host!}/js/popper.min.js"></script>
+        <script src="https://cdn.bootcdn.net/ajax/libs/popper.js/1.5.1/popper.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
 
         <#nested >

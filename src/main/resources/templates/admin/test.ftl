@@ -6,8 +6,8 @@
 <#include "../common/right.ftl">
 <@head>
     <!-- vditor -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.4.1/dist/index.css" />
-    <script src="https://cdn.jsdelivr.net/npm/vditor@3.4.1/dist/index.min.js" defer></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.3.5/dist/index.css" />
+    <script src="https://cdn.jsdelivr.net/npm/vditor@3.3.5/dist/index.min.js" defer></script>
     <!-- layer -->
     <script src="https://cdn.jsdelivr.net/npm/layer-v3.0.3@1.0.1/layer.min.js"></script>
     <style>

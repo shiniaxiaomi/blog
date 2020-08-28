@@ -7,9 +7,9 @@
 <#include "../common/comment.ftl">
 <@head>
     <!-- vditor -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.4.1/dist/index.css" />
-    <script src="https://cdn.jsdelivr.net/npm/vditor@3.4.1/dist/index.min.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/vditor@3.4.1/dist/js/lute/lute.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.3.5/dist/index.css" />
+    <script src="https://cdn.jsdelivr.net/npm/vditor@3.3.5/dist/index.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/vditor@3.3.5/dist/js/lute/lute.min.js"></script>
     <!-- comment -->
     <link rel="stylesheet" href="/css/comment.css" />
     <script src="/js/comment.js"></script>

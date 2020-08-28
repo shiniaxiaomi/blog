@@ -36,7 +36,10 @@
                         <td><#if file.type == 0>img<#else>file</#if></td>
                         <td>预览</td>
                         <td>${file.count!}</td>
-                        <td><button type="button" class="btn btn-primary btn-sm" onclick="deleteFile(${file.id!},${file_index+1})">删除</button></td>
+                        <td>
+                            <button type="button" class="btn btn-primary btn-sm" onclick="deleteFile(${file.id!},${file_index+1})">删除文件</button>
+                            <button type="button" class="btn btn-primary btn-sm" onclick="deleteFileRelation(${file.id!},${file_index+1})">删除引用</button>
+                        </td>
                     </tr>
                 </#list>
             </tbody>
@@ -48,20 +51,40 @@
 </html>
 
 <script>
+    // 删除文件引用
+    function deleteFileRelation() {
+        layerConfirm("确定删除该文件引用吗？",function () {
+            $.post("/file/deleteRelation",{id:fileId},function (data,status) {
+                if(status==="success" && data.code){
+                    layer.msg(data.msg);
+                    // 删除掉这一行记录
+                    $("#tr_"+tableIndex).eq(0).remove();
+                    // 总数-1
+                    let span = $("#totalSpan").eq(0);
+                    span.text(span.text()-1);
+                }else{
+                    layer.msg("删除失败");
+                }
+            })
+        })
+    }
+
 
     // 删除引用和文件
     function deleteFile(fileId,tableIndex) {
-        $.post("/file/delete",{id:fileId},function (data,status) {
-            if(status==="success" && data.code){
-                layer.msg(data.msg);
-                // 删除掉这一行记录
-                $("#tr_"+tableIndex).eq(0).remove();
-                // 总数-1
-                let span = $("#totalSpan").eq(0);
-                span.text(span.text()-1);
-            }else{
-                layer.msg("删除失败");
-            }
+        layerConfirm("确定删除该文件吗？",function () {
+            $.post("/file/delete",{id:fileId},function (data,status) {
+                if(status==="success" && data.code){
+                    layer.msg(data.msg);
+                    // 删除掉这一行记录
+                    $("#tr_"+tableIndex).eq(0).remove();
+                    // 总数-1
+                    let span = $("#totalSpan").eq(0);
+                    span.text(span.text()-1);
+                }else{
+                    layer.msg("删除失败");
+                }
+            })
         })
     }
 
@@ -71,6 +94,18 @@
         }else{
             window.location="/admin/blog/"+blogId;
         }
+    }
+
+    // 询问框工具方法
+    function layerConfirm(msg,func) {
+        let index = layer.confirm(msg, {
+            btn: ['确定','取消'] //按钮
+        }, function(){
+            func();
+            layer.close(index); //如果设定了yes回调，需进行手工关闭
+        }, function(){
+            layer.close(index); //如果设定了yes回调，需进行手工关闭
+        });
     }
 
     $(function () {
