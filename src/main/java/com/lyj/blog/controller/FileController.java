@@ -22,21 +22,31 @@ public class FileController {
     @Autowired
     FileService fileService;
 
+    // 删除blog和文件的关联关系，并将file被引用的总数-1，但不删除真实文件
     @NeedLogin
     @ResponseBody
-    @PostMapping("deleteRelation")
-    public Message deleteRelation(@RequestParam("name") String name,@RequestParam("blogId") int blogId){
+    @PostMapping("deleteRelationByFileName")
+    public Message deleteRelationByFileNameAndBlogId(@RequestParam("name") String name,@RequestParam("blogId") int blogId){
         fileService.deleteRelation(name,blogId);
         return Message.success("删除成功");
     }
 
+    // 删除blog和文件的关联关系，并将file被引用的总数-1，但不删除真实文件
     @NeedLogin
     @ResponseBody
-    @PostMapping("delete")
-    public Message delete(@RequestParam("id") int id){
-        fileService.delete(id);
+    @PostMapping("deleteRelationByFileId")
+    public Message deleteRelationByFileIdAndBlogId(@RequestParam("fileId") int fileId,@RequestParam("blogId") int blogId){
+        fileService.deleteRelation(fileId,blogId);
         return Message.success("删除成功");
     }
 
+    // 删除真实文件，并删除blog和文件的关联关系，并将file表中的记录删除
+    @NeedLogin
+    @ResponseBody
+    @PostMapping("delete")
+    public Message deleteFile(@RequestParam("id") int id){
+        fileService.delete(id);
+        return Message.success("删除成功");
+    }
 
 }

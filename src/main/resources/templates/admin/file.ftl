@@ -37,8 +37,11 @@
                         <td>预览</td>
                         <td>${file.count!}</td>
                         <td>
-                            <button type="button" class="btn btn-primary btn-sm" onclick="deleteFile(${file.id!},${file_index+1})">删除文件</button>
-                            <button type="button" class="btn btn-primary btn-sm" onclick="deleteFileRelation(${file.id!},${file_index+1})">删除引用</button>
+                            <#if blogId ??>
+                                <button type="button" class="btn btn-primary btn-sm" onclick="deleteRelation(${blogId!},${file.id!},${file_index+1})">删除文件记录</button>
+                            <#else >
+                                <button type="button" class="btn btn-primary btn-sm" onclick="deleteFile(${file.id!},${file_index+1})">删除文件</button>
+                            </#if>
                         </td>
                     </tr>
                 </#list>
@@ -51,10 +54,10 @@
 </html>
 
 <script>
-    // 删除文件引用
-    function deleteFileRelation() {
-        layerConfirm("确定删除该文件引用吗？",function () {
-            $.post("/file/deleteRelation",{id:fileId},function (data,status) {
+    // 删除文件和博客的关联关系，不删除文件
+    function deleteRelation(blogId,fileId,tableIndex) {
+        layerConfirm("确定删除该文件吗？",function () {
+            $.post("/file/deleteRelationByFileId",{fileId:fileId,blogId:blogId},function (data,status) {
                 if(status==="success" && data.code){
                     layer.msg(data.msg);
                     // 删除掉这一行记录
@@ -68,7 +71,6 @@
             })
         })
     }
-
 
     // 删除引用和文件
     function deleteFile(fileId,tableIndex) {

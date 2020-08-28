@@ -349,7 +349,7 @@
                         return;
                     }
                     // 当点击删除图片按钮时，将选中的图片链接内容删除，并且删除掉博客对该图片的引用
-                    $.post("/file/deleteRelation",{name: selection.substr(6),blogId:window.blogId},function (data,status) {
+                    $.post("/file/deleteRelationByFileName",{name: selection.substr(6),blogId:window.blogId},function (data,status) {
                         if(status==="success" && data.code){
                             window.vditor.tip(data.msg, 1000);
                             window.vditor.deleteValue();//删除选中的url

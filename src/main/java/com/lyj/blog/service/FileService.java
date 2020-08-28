@@ -48,20 +48,22 @@ public class FileService {
         // 删除博客和文件的关联关系
         blogFileRelationService.deleteRelationByBlogIdAndFileId(blogId,file.getId());
 
-        // 如果引用=1，则删除掉该文件
-        if(file.getCount()==1){
-            fileMapper.deleteById(file.getId());
-            // 删除真实文件
-            java.io.File ioFile = new java.io.File(filePath + file.getName());
-            if(ioFile.exists() && ioFile.delete()){
-                System.out.println("文件删除成功");
-            }else{
-                System.out.println("文件不存在或文件删除失败");
-            }
-        }else{ //更新引用的数量(原始引用数量-1)
-            File updateCount = new File().setId(file.getId()).setCount(file.getCount() - 1);
-            fileMapper.updateById(updateCount);
-        }
+        // 更新引用的数量(原始引用数量-1)
+        File updateCount = new File().setId(file.getId()).setCount(file.getCount() - 1);
+        fileMapper.updateById(updateCount);
+    }
+
+    @Transactional
+    public void deleteRelation(int fileId, int blogId) {
+
+        File file = fileMapper.selectById(fileId);
+
+        // 删除博客和文件的关联关系
+        blogFileRelationService.deleteRelationByBlogIdAndFileId(blogId,file.getId());
+
+        // 更新引用的数量(原始引用数量-1)
+        File updateCount = new File().setId(file.getId()).setCount(file.getCount() - 1);
+        fileMapper.updateById(updateCount);
     }
 
     @Transactional
