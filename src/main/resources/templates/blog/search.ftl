@@ -45,6 +45,17 @@
 
     let buffArr=[];
 
+    // content: 传入的要转换的md内容
+    function HandlerMd2Html(mdContent,keywords) {
+        // 过滤特殊符号
+        let md2HTML = lute.Md2HTML(mdContent.replace(/\</g,"&lt;").replace(/\>/g,"&gt;"));
+        // 高亮内容
+        for(let j=0;j<keywords.length;j++){
+            md2HTML=md2HTML.replace(new RegExp(keywords[j],"gi"),"<span style='color: red'>"+keywords[j]+"</span>");
+        }
+        return md2HTML;
+    }
+
     function searchInES(page){
         if(page===undefined) page=1;
         buffArr=[];//清空缓存数据
@@ -54,8 +65,8 @@
                     layer.msg("没有相应的结果");
                     return;
                 }
-                let splits = $("#keyword").val().match(/[\u4e00-\u9fa5]+|\w+/g);
-                if(splits==null) splits=[];
+                let keywords = $("#keyword").val().match(/[\u4e00-\u9fa5]+|\w+/g);
+                if(keywords===undefined) keywords=[];
                 // 构造搜索结果
                 let str="";
                 for(let i=0;i<data.data.result.length;i++){
@@ -63,23 +74,21 @@
                     let md2HTML="";
                     // 如果内容不为空
                     if(result.content!=null){
-                        // 过滤特殊符号
-                        md2HTML = lute.Md2HTML(result.content.replace(/\</g,"&lt;").replace(/\>/g,"&gt;"));
-                        // 高亮内容
-                        for(let j=0;j<splits.length;j++){
-                            md2HTML=md2HTML.replace(new RegExp(splits[j],"gi"),"<span style='color: red'>"+splits[j]+"</span>");
-                        }
-                        if(md2HTML.length>400){
-                            buffArr.push({id:i,content:md2HTML});//缓存更多的显示内容
-                            md2HTML = md2HTML.substring(0,400);
-                            md2HTML+="<br>...<br>";
+                        if(result.content.length>400){
+                            // 缓存被隐藏的原始内容
+                            buffArr.push({id:i,content:HandlerMd2Html(result.content,keywords)});
+                            // 显示被截取的内容
+                            md2HTML=HandlerMd2Html(result.content.substring(0,400),keywords);
+                            md2HTML+="...<br>";
                             md2HTML+=`<button type="button" class="btn btn-outline-secondary btn-sm" onclick="showMore(`+i+`)">显示更多</button>`;
+                        }else{
+                            md2HTML=HandlerMd2Html(result.content,keywords);
                         }
                     }
                     // 高亮标题
                     let highlightHeading=result.headingName;
-                    for(let j=0;j<splits.length;j++){
-                        highlightHeading=highlightHeading.replace(new RegExp(splits[j],"gi"),"<span style='color: red'>"+splits[j]+"</span>");
+                    for(let j=0;j<keywords.length;j++){
+                        highlightHeading=highlightHeading.replace(new RegExp(keywords[j],"gi"),"<span style='color: red'>"+keywords[j]+"</span>");
                     }
                     str+=`
                         <div>

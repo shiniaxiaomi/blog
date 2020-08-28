@@ -46,24 +46,6 @@
 </@head>
 <#include "../common/body.ftl">
 
-
-<html>
-    <head>
-        <!-- vditor -->
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.3.5/dist/index.css" />
-        <script src="https://cdn.jsdelivr.net/npm/vditor@3.3.5/dist/index.min.js" defer></script>
-    </head>
-    <body>
-        <div id="vditor"></div>
-    </body>
-    <script>
-
-    </script>
-</html>
-
-
-
-
 <@body class="container-fluid">
     <@left class="col-md-1 col-lg-2" style="max-width: 150px">
         <@sidebar></@sidebar>
