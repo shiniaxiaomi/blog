@@ -1,12 +1,11 @@
 package com.lyj.blog.model;
 
-import java.io.Serializable;
-
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
 
 /**
  * file
@@ -24,7 +23,7 @@ public class File implements Serializable {
     private String name;
 
     /**
-     * 文件类型
+     * 文件类型(0是图片，1是文件)
      */
     private Integer type;
 

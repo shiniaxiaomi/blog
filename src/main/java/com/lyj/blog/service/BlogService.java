@@ -2,12 +2,15 @@ package com.lyj.blog.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.lyj.blog.exception.MessageException;
+import com.lyj.blog.handler.FileUtil;
 import com.lyj.blog.mapper.BlogMapper;
 import com.lyj.blog.model.Blog;
 import com.lyj.blog.model.Tag;
 import com.lyj.blog.model.req.FilingResult;
 import com.lyj.blog.model.req.Message;
 import com.lyj.blog.parser.ParserUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
@@ -33,6 +36,7 @@ import java.util.stream.Collectors;
  * @description
  * @date 2020/7/27 7:27 下午
  */
+@Slf4j
 @Service
 public class BlogService {
 
@@ -314,6 +318,41 @@ public class BlogService {
         map.put("fileName",filename);
         map.put("isImg",isImg);
         return Message.success("上传成功",map);
+    }
+
+    // 备份文件
+    public void backups() {
+        File folder = new File(filePath + "/MdFolder");
+        // 文件夹存在，则删除文件夹
+        if(folder.exists()){
+            FileUtil.deleteFileOrDir(folder);
+        }
+
+        // 默认为文件夹不存在，创建文件夹
+        boolean mkdir = folder.mkdir();
+        if(!mkdir){
+            throw new MessageException("文件夹创建失败，备份失败");
+        }
+
+        // 查询blog表的name和md字段，并生成md文件
+        List<Blog> blogs = blogMapper.selectList(new QueryWrapper<Blog>().select("name", "md"));
+        for (Blog blog:blogs){
+            File mdFile = new File(folder.getAbsolutePath() + "/" + blog.getName()+".md");
+            try(BufferedWriter writer = new BufferedWriter(new FileWriter(mdFile));){
+                writer.write(blog.getMd()!=null?blog.getMd():"");
+            } catch (IOException e) {
+                log.error("备份过程中，"+blog.getName()+"文件备份失败",e);
+            }
+        }
+
+        // 创建zip压缩包文件
+        String zipFileName = FileUtil.createZipFile(folder, filePath);
+        // 将备份好的zip添加到file表中进行管理
+        if(zipFileName!=null){
+            com.lyj.blog.model.File backupFile = new com.lyj.blog.model.File();
+            backupFile.setName(zipFileName).setType(1).setCount(0);//设置名称，文件类型，引用数为0
+            fileService.insertFile(backupFile,-1);//blogId=-1的表示备份文件
+        }
     }
 
 }

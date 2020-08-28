@@ -12,7 +12,7 @@ spring:
 
 myConfig:
   file:
-    location: ./upload
+    location: upload
   host: localhost
   elasticsearch:
     url: localhost:9200

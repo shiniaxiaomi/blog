@@ -152,4 +152,12 @@ public class BlogController {
         return blogService.uploadFile(multipartFile,blogId);
     }
 
+    // 备份md文档
+    @NeedLogin
+    @ResponseBody
+    @GetMapping("backups")
+    public void backups(){
+        blogService.backups();
+    }
+
 }
