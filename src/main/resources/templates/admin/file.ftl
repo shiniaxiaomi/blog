@@ -34,7 +34,7 @@
                         <th scope="row">${file_index+1}</th>
                         <td>${file.name!}</td>
                         <td><#if file.type == 0>img<#else>file</#if></td>
-                        <td>预览</td>
+                        <td><a href="/file/${file.name!}">下载</a></td>
                         <td>${file.count!}</td>
                         <td>
                             <#if blogId ??>

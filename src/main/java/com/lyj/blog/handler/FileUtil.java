@@ -4,6 +4,7 @@ import com.lyj.blog.exception.MessageException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.zip.ZipEntry;
@@ -21,7 +22,7 @@ public class FileUtil {
                     DateTimeFormatter.ofPattern("yyyy-MM-dd&HH:mm:ss")
                             .format(LocalDateTime.now()) + ".zip");
             ZipOutputStream zipOutputStream = new ZipOutputStream(
-                    new BufferedOutputStream(new FileOutputStream(zipFile)));
+                    new BufferedOutputStream(new FileOutputStream(zipFile)), StandardCharsets.UTF_8);
             compressedFile(zipOutputStream,sourceFile);//file源文件
             zipOutputStream.close();
             return zipFile.getName();
@@ -38,15 +39,16 @@ public class FileUtil {
 
         boolean isFile = file.isFile();
         if(isFile){
-            try(BufferedInputStream reader = new BufferedInputStream(new FileInputStream(file))){
+            // 使用FileReader能够解决编码问题
+            try(BufferedReader reader = new BufferedReader(new FileReader(file))){
                 // 创建压缩包中的文件节点
                 zipOutputStream.putNextEntry(new ZipEntry(file.getName()));
-                byte[] buffer=new byte[100]; //缓冲区100字节
-
-                while(reader.read(buffer)!=-1){
-                    zipOutputStream.write(buffer);
+                String buff;
+                while((buff=reader.readLine())!=null){
+                    zipOutputStream.write(buff.getBytes());
+                    zipOutputStream.write(System.lineSeparator().getBytes());//换行符
                 }
-            } catch (IOException e) {
+            }catch (IOException e) {
                 log.error("压缩文件时，"+file.getAbsolutePath()+"文件压缩失败");
             }
         }
