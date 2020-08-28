@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lyj.blog.mapper.BlogMapper;
 import com.lyj.blog.model.Blog;
-import com.lyj.blog.model.Catalog;
 import com.lyj.blog.model.Tag;
 import com.lyj.blog.model.req.FilingResult;
 import com.lyj.blog.model.req.Message;
@@ -23,7 +22,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -202,8 +204,8 @@ public class BlogService {
                 .between("create_time", startYear, endYear)
                 .orderByDesc("update_time") //按照更新时间降序排列
                 .orderByDesc("create_time");//按照创建时间降序排列
-        if(isPrivate!=null){
-            queryWrapper.eq("is_private", isPrivate); //公有
+        if(!isPrivate){
+            queryWrapper.eq("is_private", false); //公有
         }
 
         Page<Blog> result = blogMapper.selectPage(new Page<>(page, size), queryWrapper);
@@ -227,8 +229,8 @@ public class BlogService {
         if(isStick!=null){
             queryWrapper.eq("is_stick", isStick); //置顶
         }
-        if(isPrivate!=null){
-            queryWrapper.eq("is_private", isPrivate); //公有
+        if(!isPrivate){
+            queryWrapper.eq("is_private", false); //公有
         }
         queryWrapper.orderByDesc("update_time") //按照更新时间降序排列
                 .orderByDesc("create_time");//按照创建时间降序排列
