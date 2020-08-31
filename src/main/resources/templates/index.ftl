@@ -13,6 +13,9 @@
             font-size: 10px;
             padding: 10px
         }
+        .vditor-reset hr{
+            margin: 4px 0 !important;
+        }
         .vditor-reset p, .vditor-reset pre {
             margin: 0 !important;
             color: #6c757d!important;
