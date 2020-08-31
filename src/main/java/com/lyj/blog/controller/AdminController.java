@@ -82,7 +82,7 @@ public class AdminController {
     public ModelAndView fileDashboard(@PathVariable("page") int page){
         ModelAndView mav = new ModelAndView("admin/file");
         Page<File> filePage = fileService.selectPageByBlogId(null,page, Constant.SIZE);
-        Util.renderPageParam(mav,filePage,"/file/","所有文件 分页");
+        Util.renderPageParam(mav,filePage,"/admin/file/","所有文件 分页");
         mav.addObject("fileList",filePage.getRecords());
         return mav;
     }
