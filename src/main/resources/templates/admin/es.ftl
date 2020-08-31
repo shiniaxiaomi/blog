@@ -29,6 +29,9 @@
             -webkit-transition: all 0.25s ease;
             transition: all 0.25s ease;
         }
+        .jsonview .string {
+            word-break: break-all; /*换行*/
+        }
     </style>
 </@head>
 <@body>
