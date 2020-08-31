@@ -12,6 +12,9 @@
         .vditor-reset {
             font-size: 10px;
         }
+        a{
+            word-break: break-all;/*换行，防止溢出*/
+        }
     </style>
 </@head>
 <@body>
