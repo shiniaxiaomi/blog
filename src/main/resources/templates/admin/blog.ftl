@@ -473,7 +473,8 @@
                         // 跳转到对应的锚点
                         setTimeout(function () {
                             if(location.hash!==""){
-                                let hash = "ir-"+decodeURI(location.hash).substr(1).replace(/[.*|+=\-()\s]/g,"-");
+                                //wysiwyg-更换镜像源_5
+                                let hash = "wysiwyg-"+decodeURI(location.hash).substr(1).replace(/[.*|+=\-()\s]/g,"-");
                                 $("#vditor .vditor-outline__content div[data-id^="+hash+"]").click();//刷新页面锚点
                                 toggleToc();//关闭大纲
                             }
