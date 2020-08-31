@@ -8,8 +8,8 @@
 <#include "../common/page.ftl">
 <@head>
     <script src="https://cdn.jsdelivr.net/npm/layer-v3.0.3@1.0.1/layer.min.js"></script>
-    <link href="https://cdn.bootcdn.net/ajax/libs/jquery-jsonview/1.2.3/jquery.jsonview.min.css" rel="stylesheet">
-    <script src="https://cdn.bootcdn.net/ajax/libs/jquery-jsonview/1.2.3/jquery.jsonview.min.js"></script>
+    <link href="/jsonview/jquery.jsonview.min.css" rel="stylesheet">
+    <script src="/jsonview/jquery.jsonview.min.js"></script>
     <style>
         textarea{
             padding: 0.75em;
