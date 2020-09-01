@@ -119,13 +119,17 @@ public class CatalogService {
             List<Integer> folderIds=new ArrayList<>();// 保存文件夹ids
             getFileAndFolderByCatalog(catalog,fileIds,folderIds);
             // 批量更新文件的私有状态（包括了blog中缓存的私有状态）
-            catalogMapper.update(new Catalog().setIsPrivate(catalog.getIsPrivate()),
-                    new UpdateWrapper<Catalog>().in("id",fileIds.toArray()));
-            blogMapper.update(new Blog().setIsPrivate(catalog.getIsPrivate()),
-                    new UpdateWrapper<Blog>().in("id",fileIds.toArray()));
+            if(fileIds.size()!=0){
+                catalogMapper.update(new Catalog().setIsPrivate(catalog.getIsPrivate()),
+                        new UpdateWrapper<Catalog>().in("id",fileIds.toArray()));
+                blogMapper.update(new Blog().setIsPrivate(catalog.getIsPrivate()),
+                        new UpdateWrapper<Blog>().in("id",fileIds.toArray()));
+            }
             // 批量更新文件夹的私有状态
-            catalogMapper.update(new Catalog().setIsPrivate(catalog.getIsPrivate()),
-                    new UpdateWrapper<Catalog>().in("id",folderIds.toArray()));
+            if(folderIds.size()!=0){
+                catalogMapper.update(new Catalog().setIsPrivate(catalog.getIsPrivate()),
+                        new UpdateWrapper<Catalog>().in("id",folderIds.toArray()));
+            }
             // 批量更新es中文件的私有状态
             esService.updateIsPrivateByBlogIds(fileIds,catalog.getIsPrivate());
         }

@@ -124,7 +124,7 @@ function beforeDrop(treeId, treeNodes, targetNode, moveType) {
                 layer.msg("移动成功");
                 return true;
             }else{
-                layer.msg(response.responseJSON.msg);
+                layer.msg(response.responseJSON===undefined?"移动失败":response.responseJSON.msg);
             }
         }
     }else{
