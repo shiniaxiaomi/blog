@@ -389,6 +389,12 @@ function highlightSearch() {
     // 清空搜索内容
     // $searchInput.val('');
 }
+
+// 取消高亮
+function cancelHighlight() {
+    updateNodes(false,nodeList);
+}
+
 function updateNodes(highlight,nodeList){
     for( let i=0, l=nodeList.length; i<l; i++ ) {
         nodeList[i].highlight = highlight;

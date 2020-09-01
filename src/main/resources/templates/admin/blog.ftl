@@ -63,6 +63,7 @@
                         </button>
                         <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
                             <a class="dropdown-item btn-sm" href="javascript:void(0);" onclick="highlightSearch()">高亮搜索</a>
+                            <a class="dropdown-item btn-sm" href="javascript:void(0);" onclick="cancelHighlight()">取消高亮</a>
                             <a class="dropdown-item btn-sm" href="javascript:void(0);" onclick="filterSearch();">过滤搜索</a>
                             <a class="dropdown-item btn-sm" href="javascript:void(0);" onclick="cancelFilter();">取消过滤</a>
                         </div>
