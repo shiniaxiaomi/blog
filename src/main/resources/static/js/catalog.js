@@ -290,7 +290,8 @@ function initTree(isLogin){
     // 绑定搜索输入框的回车事件
     $("#searchInput").keypress(function(e) {
         if (e.keyCode === 13) {
-            highlightSearch();
+            // highlightSearch();
+            filterSearch();
         }
     });
 
@@ -336,9 +337,14 @@ function layerConfirm(msg,func) {
 
 // 过滤搜索节点
 function filterSearch() {
+    // 节点全部展开
+    zTree.expandAll(true);
     let $searchInput = $("#searchInput");
     let value=$searchInput.val().toLocaleLowerCase();
-    if (value === "") return;
+    if (value === "") {
+        cancelFilter();
+        return;
+    }
     nodeList = zTree.getNodesByParamFuzzy("name", value);
 
     let $treeDemo = $("#treeDemo li a");
@@ -352,7 +358,12 @@ function filterSearch() {
     // 显示匹配节点
     $("#treeDemo .level0").eq(0).show();
     for(let i=0;i<filter.length;i++){
-        $(filter[i]).parent().show();
+        $(filter[i]).show();//自己显示
+        let buff=$(filter[i]).parent(); //父节点显示
+        while(buff.attr("class").indexOf("level0")!==0){
+            buff.show();// 父节点显示
+            buff=buff.parent();
+        }
     }
 }
 
@@ -367,6 +378,8 @@ function cancelFilter() {
 
 // 高亮搜索节点
 function highlightSearch() {
+    // 节点全部展开
+    zTree.expandAll(true);
     let $searchInput = $("#searchInput");
     let value=$searchInput.val();
     updateNodes(false,nodeList);
@@ -374,7 +387,7 @@ function highlightSearch() {
     nodeList = zTree.getNodesByParamFuzzy("name", value);
     updateNodes(true,nodeList);
     // 清空搜索内容
-    $searchInput.val('');
+    // $searchInput.val('');
 }
 function updateNodes(highlight,nodeList){
     for( let i=0, l=nodeList.length; i<l; i++ ) {
