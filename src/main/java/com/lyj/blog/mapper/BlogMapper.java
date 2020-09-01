@@ -6,6 +6,7 @@ import com.lyj.blog.model.Blog;
 import com.lyj.blog.model.req.FilingResult;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -19,4 +20,7 @@ public interface BlogMapper extends BaseMapper<Blog> {
     Blog selectBlogByCommentId(@Param("commentId") int commentId);
 
     Integer selectSum();
+
+    @Select("select is_private from blog where id = #{blogId}")
+    Boolean getIsPrivateByBlogId(Integer blogId);
 }

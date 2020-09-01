@@ -78,7 +78,9 @@ public class ParserUtil {
         esService.deleteHeadingByBlogIdInES("blog",String.valueOf(blog.getId()));//根据blogId字段进行删除数据
         //批量保存到ES中
         if(handledContent.size()!=0){
-            esService.insertHeadingToESBatch("blog",handledContent,false); //默认保存的都是非私有的内容，除非在config中配置为私有
+            Boolean isPrivate = blogService.getIsPrivateByBlogId(blog.getId());
+            // 将博客内容保存到es中
+            esService.insertHeadingToESBatch("blog",handledContent,isPrivate);
         }
 
         return html;

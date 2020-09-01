@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.3.5/dist/index.css"/>
     <style>
         .vditor-reset {
-            font-size: 10px;
+            font-size: 13px;
             padding: 10px
         }
         .vditor-reset hr{

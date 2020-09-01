@@ -3,7 +3,6 @@ package com.lyj.blog.service;
 import com.lyj.blog.exception.MessageException;
 import com.lyj.blog.model.req.EsResult;
 import com.lyj.blog.model.req.EsSearch;
-import com.lyj.blog.model.req.Message;
 import com.lyj.blog.parser.model.ESHeading;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.index.IndexRequest;
@@ -12,9 +11,10 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.GetIndexRequest;
-import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.common.xcontent.XContentType;
-import org.elasticsearch.index.query.*;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.TermQueryBuilder;
 import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +48,9 @@ public class EsService {
 
     @Value("http://${myConfig.elasticsearch.url}")
     private String elasticsearchUrl;
+
+    @Autowired
+    BlogService blogService;
 
     //根据blogId删除es中的headings
     public void deleteHeadingByBlogIdInES(String index,String blogId){
@@ -148,7 +151,7 @@ public class EsService {
     }
 
 
-    public void updateIsPrivateByBlogId(Integer blogId, Boolean isPrivate) {
+    private void updateIsPrivateByBlogId(Integer blogId, Boolean isPrivate) {
         // post请求
         HttpHeaders headers = new HttpHeaders();// 添加请求头
         headers.add("Content-Type","application/json");
@@ -166,7 +169,37 @@ public class EsService {
         try {
             restTemplate.postForObject(elasticsearchUrl+"/blog/_update_by_query?format=JSON&pretty", entity, String.class);
         }catch (Exception e){
-            throw new MessageException("es更新失败");
+            throw new MessageException("es的权限更新失败");
+        }
+    }
+
+    // 批量根据blogId更新私有状态
+    public void updateIsPrivateByBlogIds(List<Integer> blogIds,Boolean isPrivate){
+        for(Integer blogId:blogIds){
+            updateIsPrivateByBlogId(blogId,isPrivate);
+        }
+    }
+
+    // 根据blogId更新blogName
+    public void updateBlogNameByBlogId(Integer blogId,String blogName) {
+        // post请求
+        HttpHeaders headers = new HttpHeaders();// 添加请求头
+        headers.add("Content-Type","application/json");
+        HttpEntity<String> entity = new HttpEntity<>("{\n" +
+                "    \"script\": {\n" +
+                "        \"source\": \"ctx._source.blogName ='"+blogName+"'\",\n" +
+                "        \"lang\": \"painless\"\n" +
+                "    },\n" +
+                "    \"query\": {\n" +
+                "        \"term\": {\n" +
+                "            \"blogId\": \""+blogId+"\"\n" +
+                "        }\n" +
+                "    }\n" +
+                "}", headers);
+        try {
+            restTemplate.postForObject(elasticsearchUrl+"/blog/_update_by_query?format=JSON&pretty", entity, String.class);
+        }catch (Exception e){
+            throw new MessageException("es的权限更新失败");
         }
     }
 }

@@ -76,8 +76,8 @@ public class BlogController {
     @NeedLogin
     @ResponseBody
     @PostMapping("config")
-    public Message updateConfig(int id,boolean isPrivate,boolean isStick,Integer[] tags){
-        Blog blog = new Blog().setId(id).setIsPrivate(isPrivate).setIsStick(isStick);
+    public Message updateConfig(int id,boolean isStick,Integer[] tags){
+        Blog blog = new Blog().setId(id).setIsStick(isStick);
         blogService.updateConfig(blog,tags);
         return Message.success("更新成功");
     }
@@ -159,5 +159,7 @@ public class BlogController {
     public void backups(){
         blogService.backups();
     }
+
+    // TODO: 2020/8/31 提供一个批量导入的接口（上传功能），选择对应的文件夹进行上传，可以选择多个文件上传，然后创建对应的blog
 
 }

@@ -71,27 +71,11 @@ public class CatalogController {
         List<Catalog> list= catalogService.selectCatalog(isPrivate);
         if(list.size()==0){
             // 如果没有目录，则创建默认目录
-            int catalogPid = catalogService.insert(new Catalog().setName("/").setIsFolder(true));
-            catalogService.insert(new Catalog().setName("-待整理").setIsFolder(true).setPid(catalogPid));
+            catalogService.insert(new Catalog().setName("私有").setIsFolder(true));
+            catalogService.insert(new Catalog().setName("公有").setIsFolder(true));
             list= catalogService.selectCatalog(isPrivate);
         }
         return Message.success(null,list);
     }
-
-    // 查询文件夹的共享状态
-    @ResponseBody
-    @GetMapping("status/folder/{id}")
-    public Message selectFolderStatus(@PathVariable("id") int id){
-        boolean isPrivate = catalogService.selectIsPrivateById(id);
-        return Message.success(null,isPrivate);
-    }
-
-    @ResponseBody
-    @PostMapping("status/folder")
-    public Message updateFolderStatus(int id,boolean isPrivate){
-        catalogService.updateIsPrivateById(id,isPrivate);
-        return Message.success(null);
-    }
-
 
 }

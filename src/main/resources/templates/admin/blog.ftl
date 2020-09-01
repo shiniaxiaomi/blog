@@ -68,15 +68,17 @@
                         </div>
                     </div>
                     <div class="btn-group btn-group-sm" role="group">
-                        <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle"
+                                onclick="hideBtn(getSelectedNode())"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             操作
                         </button>
                         <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
                             <a id="createFolderBtn" class="dropdown-item btn-sm" href="javascript:void(0);" onclick="addNode('file');">增加节点</a>
-                            <a id="editNodeBtn" class="dropdown-item btn-sm" href="javascript:void(0);" onclick="editTreeNode(true);">编辑节点</a>
-                            <a id="deleteNodeBtn" class="dropdown-item btn-sm" href="javascript:void(0);" onclick="removeTreeNode();">删除节点</a>
+                            <a id="editNodeBtn" style="display: none" class="dropdown-item btn-sm" href="javascript:void(0);" onclick="editTreeNode(true);">编辑节点</a>
+                            <a id="deleteNodeBtn" style="display: none" class="dropdown-item btn-sm" href="javascript:void(0);" onclick="removeTreeNode();">删除节点</a>
                             <a id="createNodeBtn" class="dropdown-item btn-sm" href="javascript:void(0);" onclick="addNode('folder');">创建文件夹</a>
-                            <a id="updateFolderStatusBtn" class="dropdown-item btn-sm" href="javascript:void(0);" onclick="openFolderStatusModel();">设置共享状态</a>
+<#--                            <a id="updateFolderStatusBtn" class="dropdown-item btn-sm" href="javascript:void(0);" onclick="openFolderStatusModel();">设置共享状态</a>-->
                         </div>
                     </div>
                     <button type="button" class="btn btn-secondary btn-sm mx-1" onclick="quickNewFile()">快速新建</button>
@@ -118,19 +120,19 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-group row">
-                        <label for="recipient-name" class="col-2 col-form-label">共享</label>
-                        <div class="ml-3 form-check-inline col">
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="isPrivate" id="radio1" value="0">
-                                <label class="form-check-label" for="radio1">公有</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="isPrivate" id="radio2" value="1">
-                                <label class="form-check-label" for="radio2">私有</label>
-                            </div>
-                        </div>
-                    </div>
+<#--                    <div class="form-group row">-->
+<#--                        <label for="recipient-name" class="col-2 col-form-label">共享</label>-->
+<#--                        <div class="ml-3 form-check-inline col">-->
+<#--                            <div class="form-check form-check-inline">-->
+<#--                                <input class="form-check-input" type="radio" name="isPrivate" id="radio1" value="0">-->
+<#--                                <label class="form-check-label" for="radio1">公有</label>-->
+<#--                            </div>-->
+<#--                            <div class="form-check form-check-inline">-->
+<#--                                <input class="form-check-input" type="radio" name="isPrivate" id="radio2" value="1">-->
+<#--                                <label class="form-check-label" for="radio2">私有</label>-->
+<#--                            </div>-->
+<#--                        </div>-->
+<#--                    </div>-->
                     <div class="form-group row">
                         <label for="message-text" class="col-2 col-form-label">标签</label>
                         <div class="col">
@@ -151,39 +153,39 @@
     </div>
 </div>
 
-<div class="modal fade" id="configFolderModal" tabindex="-1" role="dialog" aria-labelledby="folderModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="folderModalLabel">更新文件夹的共享状态</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="configFolderForm" onsubmit="return false;">
-                    <div class="form-group row">
-                        <label for="recipient-name" class="col-2 col-form-label">共享</label>
-                        <div class="ml-3 form-check-inline col">
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="isPrivate" id="f_radio1" value="0">
-                                <label class="form-check-label" for="f_radio1">公有</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="isPrivate" id="f_radio2" value="1">
-                                <label class="form-check-label" for="f_radio2">私有</label>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-primary" onclick="updateFolderConfig()">保存</button>
-            </div>
-        </div>
-    </div>
-</div>
+<#--<div class="modal fade" id="configFolderModal" tabindex="-1" role="dialog" aria-labelledby="folderModalLabel" aria-hidden="true">-->
+<#--    <div class="modal-dialog" role="document">-->
+<#--        <div class="modal-content">-->
+<#--            <div class="modal-header">-->
+<#--                <h5 class="modal-title" id="folderModalLabel">更新文件夹的共享状态</h5>-->
+<#--                <button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
+<#--                    <span aria-hidden="true">&times;</span>-->
+<#--                </button>-->
+<#--            </div>-->
+<#--            <div class="modal-body">-->
+<#--                <form id="configFolderForm" onsubmit="return false;">-->
+<#--                    <div class="form-group row">-->
+<#--                        <label for="recipient-name" class="col-2 col-form-label">共享</label>-->
+<#--                        <div class="ml-3 form-check-inline col">-->
+<#--                            <div class="form-check form-check-inline">-->
+<#--                                <input class="form-check-input" type="radio" name="isPrivate" id="f_radio1" value="0">-->
+<#--                                <label class="form-check-label" for="f_radio1">公有</label>-->
+<#--                            </div>-->
+<#--                            <div class="form-check form-check-inline">-->
+<#--                                <input class="form-check-input" type="radio" name="isPrivate" id="f_radio2" value="1">-->
+<#--                                <label class="form-check-label" for="f_radio2">私有</label>-->
+<#--                            </div>-->
+<#--                        </div>-->
+<#--                    </div>-->
+<#--                </form>-->
+<#--            </div>-->
+<#--            <div class="modal-footer">-->
+<#--                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>-->
+<#--                <button type="button" class="btn btn-primary" onclick="updateFolderConfig()">保存</button>-->
+<#--            </div>-->
+<#--        </div>-->
+<#--    </div>-->
+<#--</div>-->
 </html>
 
 

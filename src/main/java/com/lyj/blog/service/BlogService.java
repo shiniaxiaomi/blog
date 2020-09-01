@@ -6,6 +6,7 @@ import com.lyj.blog.exception.MessageException;
 import com.lyj.blog.handler.FileUtil;
 import com.lyj.blog.mapper.BlogMapper;
 import com.lyj.blog.model.Blog;
+import com.lyj.blog.model.Catalog;
 import com.lyj.blog.model.Tag;
 import com.lyj.blog.model.req.FilingResult;
 import com.lyj.blog.model.req.Message;
@@ -88,6 +89,8 @@ public class BlogService {
     public void updateName(Integer blogId, String name) {
         Blog blog = new Blog().setId(blogId).setName(name);
         blogMapper.updateById(blog);
+        // 更新es对应的blog的名称
+        esService.updateBlogNameByBlogId(blogId,name);
     }
 
     public String getMD(int id) {
@@ -100,7 +103,7 @@ public class BlogService {
     @CacheEvict(value = "Blog",key = "#blog.id")
     public synchronized void update(Blog blog) {
 
-        // 解析md为html
+        // 解析md为html,并将heading批量保存到es中
         String html = parserUtil.parseMdToHtml(blog);
 
         // 保存blog
@@ -113,17 +116,11 @@ public class BlogService {
 
     @Transactional
     public void updateConfig(Blog blog, Integer[] tags) {
-        // 更新blog的公开状态
+        // 更新blog的置顶状态
         blogMapper.updateById(blog);
-
-        // 更新目录中的公开状态
-        catalogService.updateIsPrivateByBlogId(blog);
 
         // 全量的同步更新标签关联
         tagService.updateRelation(blog.getId(),tags);
-
-        // 同步更新es中的指定的blogId的isPrivate字段
-        esService.updateIsPrivateByBlogId(blog.getId(),blog.getIsPrivate());
     }
 
     public String selectNameById(Integer blogId) {
@@ -355,4 +352,65 @@ public class BlogService {
         }
     }
 
+    // 通过blogId和文件夹的私有情况，综合得出该blog是否为私有
+    public boolean mergeAndGetBlogIsPrivate(int blogId){
+        Catalog blog = catalogService.selectIsPrivateByBlogId(blogId);
+        List<Catalog> folders = catalogService.selectFolder();
+
+        // 首先先看blog，如果是私有的，则直接返回私有，如果是公有的，则继续查看他的父级，直到父级的pid为null
+        if(blog.getIsPrivate()){
+            return true;
+        }
+
+        // ========以下情况blog都是公有的，然后就接着判断他的父级的私有状态========
+        // 如果文件夹个数为0，则直接返回公有
+        if(folders.size()==0){
+            return false;
+        }
+
+        // 如果folders个数不为0,则先找到一个父级节点
+        Catalog folder=null;
+        for (Catalog tempFolder : folders) {
+            if (blog.getPid().equals(tempFolder.getId())) {
+                // 如果父级直接是私有的，则直接返回私有
+                if (tempFolder.getIsPrivate()) {
+                    return true;
+                } else {
+                    // 保存父级节点
+                    folder = tempFolder;
+                    break;
+                }
+            }
+        }
+
+        // 如果没找到父节点，则直接返回公有
+        if(folder==null){
+            return false;
+        }
+
+        // 如果找到了父节点，在递归遍历其父节点，直到父级的pid为null
+        while(folder.getPid()!=null){
+            for (Catalog tempFolder : folders) {
+                // 如果找到了父级
+                if (blog.getPid().equals(tempFolder.getId())) {
+                    // 如果父级直接是私有的，则直接返回私有
+                    if (tempFolder.getIsPrivate()) {
+                        return true;
+                    }
+                    // 如果父级为公有，则保存父级，且继续递归遍历
+                    folder = tempFolder;
+                    break;
+                }
+            }
+        }
+
+        // 如果都不是私有，则最终返回公有状态
+        return false;
+    }
+
+
+    // 根据blogId查询该blog是否为私有状态
+    public Boolean getIsPrivateByBlogId(Integer blogId) {
+        return blogMapper.getIsPrivateByBlogId(blogId);
+    }
 }
