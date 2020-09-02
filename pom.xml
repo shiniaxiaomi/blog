@@ -77,7 +77,7 @@
             <version>1.2.58</version>
         </dependency>
 
-        <!--freemarker-->
+        <!--lombok-->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>

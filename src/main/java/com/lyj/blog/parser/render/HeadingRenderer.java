@@ -23,6 +23,7 @@ public class HeadingRenderer implements NodeRenderer {
 
     public HeadingRenderer(HtmlNodeRendererContext context) {
         this.html = context.getWriter();
+
     }
 
     @Override

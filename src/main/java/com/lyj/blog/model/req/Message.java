@@ -10,6 +10,9 @@ import lombok.Data;
  */
 @Data
 public class Message {
+    boolean code;// true为成功，false为失败
+    Object data;// 数据对象
+    String msg;
 
     public Message() {
     }
@@ -19,12 +22,6 @@ public class Message {
         this.data = data;
         this.msg = msg;
     }
-
-    boolean code;// true为成功，false为失败
-
-    Object data;// 数据对象
-
-    String msg;
 
     public static Message success(String msg,Object data){
         return new Message(true,msg,data);

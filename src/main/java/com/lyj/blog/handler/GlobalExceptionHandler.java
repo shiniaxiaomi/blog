@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MultipartException;
 
+import java.util.Arrays;
+
 /**
  * @author Yingjie.Lu
  * @description
@@ -14,10 +16,18 @@ import org.springframework.web.multipart.MultipartException;
  */
 @Slf4j
 @RestControllerAdvice
-public class GlobelExceptionHandler {
+public class GlobalExceptionHandler {
+
+    // 捕获所有异常(兜底的异常处理)
+    @ExceptionHandler(Exception.class)
+    public Message handleException(Throwable e){
+        log.error(e.getMessage());
+        return Message.error(e.getMessage());
+    }
 
     @ExceptionHandler(MessageException.class)
     public Message handleMessageException(Throwable e){
+        log.error(e.getMessage());
         return Message.error(e.getMessage());
     }
 
@@ -31,6 +41,7 @@ public class GlobelExceptionHandler {
     // 文件上传异常
     @ExceptionHandler(MultipartException.class)
     public Message handleFileUploadException(Throwable e){
+        log.error(e.getMessage());
         return Message.error(e.getMessage());
     }
 

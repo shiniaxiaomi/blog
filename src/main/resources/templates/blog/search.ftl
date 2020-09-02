@@ -180,7 +180,9 @@
             }
         });
 
-
-        searchInES();//默认搜索第一页
+        // 延时100ms
+        setTimeout(function () {
+            searchInES();//默认搜索第一页
+        },100)
     })
 </script>
