@@ -57,27 +57,27 @@ public class CoverPropertiesListener implements SpringApplicationRunListener {
             return null;
         }
 
-        // 从数据库获取配置
-        Config config=null;
-        try(Connection connection = DriverManager.getConnection(
-                (String)jdbcProperty.get("url"),
-                (String)jdbcProperty.get("username"),
-                (String)jdbcProperty.get("password"))){
-            // 查询数据
-            ResultSet resultSet = connection
-                    .prepareStatement("select * from config where id = 1").executeQuery();
-            if(resultSet.next() && resultSet.getRow()==1){
-                config=new Config();
-                config.setSecretId(resultSet.getString("secret_id"));
-                config.setSecretKey(resultSet.getString("secret_key"));
-                config.setEmail(resultSet.getString("email"));
-                config.setEmailPassword(resultSet.getString("email_password"));
-                config.setRedisPassword(resultSet.getString("redis_password"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+    // 从数据库获取配置
+    Config config=null;
+    try(Connection connection = DriverManager.getConnection(
+            (String)jdbcProperty.get("url"),
+            (String)jdbcProperty.get("username"),
+            (String)jdbcProperty.get("password"))){
+        // 查询数据
+        ResultSet resultSet = connection
+                .prepareStatement("select * from config where id = 1").executeQuery();
+        if(resultSet.next() && resultSet.getRow()==1){
+            config=new Config();
+            config.setSecretId(resultSet.getString("secret_id"));
+            config.setSecretKey(resultSet.getString("secret_key"));
+            config.setEmail(resultSet.getString("email"));
+            config.setEmailPassword(resultSet.getString("email_password"));
+            config.setRedisPassword(resultSet.getString("redis_password"));
         }
-        return config;
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return config;
     }
 
     // 根据优先级加载配置文件中关于jdbc的配置
