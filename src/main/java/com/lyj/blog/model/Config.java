@@ -35,6 +35,10 @@ public class Config implements Serializable {
      */
     private String emailPassword;
 
+    /**
+     * 生产环境redis密码
+     */
+    private String redisPassword;
 
     private static final long serialVersionUID = 1L;
 }

@@ -8,8 +8,6 @@ logging:
 spring:
   freemarker:
     cache: true
-  redis:
-    password: 12345678
 
 myConfig:
   file:

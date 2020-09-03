@@ -33,7 +33,7 @@ public class RedisConfig {
         // 创建缓存注解管理对立
         return new RedisCacheManager(
                 RedisCacheWriter.nonLockingRedisCacheWriter(redisConnectionFactory),
-                creatRedisCacheConfiguration(Duration.ofMinutes(5)), //默认缓存配置(过期时间1小时)
+                creatRedisCacheConfiguration(Duration.ofHours(1)), //默认缓存配置(过期时间1小时)
                 entryTtlMap //特殊key的过期配置
         );
     }
