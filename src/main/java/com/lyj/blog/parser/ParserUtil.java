@@ -65,22 +65,28 @@ public class ParserUtil {
         String html = renderer.render(document);
 
         //获取已经解析好的标题
-        List<ESHeading> handledContent = headingContentVisitor.getHandledContent();
+        List<ESHeading> headingList = headingContentVisitor.getHandledContent();
         //组装blogName和tagName
-        String blogName = blogService.selectNameById(blog.getId());
-        String tagName = tagService.selectTagNameByBlogId(blog.getId());
-        handledContent.forEach(esHeading -> {
-            esHeading.setBlogName(blogName);
-            esHeading.setTagName(tagName);
-        });
+        if(headingList.size()!=0){
+            String blogName = blogService.selectNameById(blog.getId());
+            String tagName = tagService.selectTagNameByBlogId(blog.getId());
+            headingList.forEach(esHeading -> {
+                // 如果标题为默认标题，则使用博客名称作为标题
+                if(esHeading.getHeadingName().equals("# 默认标题")){
+                    esHeading.setHeadingName(blogName);
+                }
+                esHeading.setBlogName(blogName);
+                esHeading.setTagName(tagName);
+            });
+        }
 
         //清除es中blogId对应的数据
         esService.deleteHeadingByBlogIdInES("blog",String.valueOf(blog.getId()));//根据blogId字段进行删除数据
         //批量保存到ES中
-        if(handledContent.size()!=0){
+        if(headingList.size()!=0){
             Boolean isPrivate = blogService.getIsPrivateByBlogId(blog.getId());
             // 将博客内容保存到es中
-            esService.insertHeadingToESBatch("blog",handledContent,isPrivate);
+            esService.insertHeadingToESBatch("blog",headingList,isPrivate);
         }
 
         return html;

@@ -24,21 +24,25 @@ public class CoverPropertiesListener implements SpringApplicationRunListener {
 
     @Override
     public void environmentPrepared(ConfigurableEnvironment environment) {
-        Config config = loadConfigFromDB(environment);
-        if(config==null){
-            log.error("从数据库加载配置文件失败");
-            return;
-        }
-
         String[] activeProfiles = environment.getActiveProfiles();
-        // 如果是生产环境,则添加覆盖配置
+
+        // 如果是生产环境
         if(activeProfiles.length==1 && "prod".equals(activeProfiles[0])){
+            // 从数据库加载配置
+            Config config = loadConfigFromDB(environment);
+            if(config==null){
+                log.error("从数据库加载配置文件失败");
+                return;
+            }
+
+            // 覆盖配置
             MutablePropertySources propertySources = environment.getPropertySources();
             HashMap<String, String> propertyMap = new HashMap<>();
             propertyMap.put("spring.redis.password",config.getRedisPassword());//从数据库加载
             propertySources.addFirst(new OriginTrackedMapPropertySource("coverPropertiesMap",propertyMap));
+            log.info("配置文件覆盖成功");
         }
-        log.info("配置文件覆盖成功");
+
     }
 
     // 从数据库加载配置
