@@ -59,12 +59,10 @@ public class CoverPropertiesListener implements SpringApplicationRunListener {
 
         // 从数据库获取配置
         Config config=null;
-        try {
-            Connection connection = DriverManager.getConnection(
-                    (String)jdbcProperty.get("url"),
-                    (String)jdbcProperty.get("username"),
-                    (String)jdbcProperty.get("password"));
-
+        try(Connection connection = DriverManager.getConnection(
+                (String)jdbcProperty.get("url"),
+                (String)jdbcProperty.get("username"),
+                (String)jdbcProperty.get("password"))){
             // 查询数据
             ResultSet resultSet = connection
                     .prepareStatement("select * from config where id = 1").executeQuery();
@@ -79,7 +77,6 @@ public class CoverPropertiesListener implements SpringApplicationRunListener {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return config;
     }
 
