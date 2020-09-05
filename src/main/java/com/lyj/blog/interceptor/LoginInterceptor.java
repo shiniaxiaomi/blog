@@ -34,6 +34,10 @@ public class LoginInterceptor implements HandlerInterceptor {
         }
 
         String accept = request.getHeader("Accept");
+        if(accept==null){ // 防止空指针
+            return false;
+        }
+
         if(accept.equals("*/*")){ //当请求json对象时
             response.setCharacterEncoding("UTF-8");
             response.setContentType("application/json; charset=utf-8");
