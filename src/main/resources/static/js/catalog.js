@@ -74,11 +74,11 @@ function beforeClick(treeId, treeNode, clickFlag) {
     // 改变了选择节点
     else if(treeNode.id!==zTree.getSelectedNodes()[0].id){
         if(isEdit){
-            updateBlog(); //保存
+            updateBlog(true); //自动保存
         }
         loadMD(treeNode); //加载
     }
-
+    isEdit=false;//将编辑状态置为false
     return true;
 }
 // 修改名称保存之前
