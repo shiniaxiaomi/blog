@@ -20,7 +20,7 @@
             <div class="form-inline">
                     <input class="mr-2" id="searchInput" autocomplete="off">
                 <button type="button" class="btn btn-secondary btn-sm m-1" onclick="highlightSearch()">高亮搜索</button>
-                <button type="button" class="btn btn-secondary btn-sm m-1" onclick="cancelHighlight()">取消过滤</button>
+                <button type="button" class="btn btn-secondary btn-sm m-1" onclick="cancelHighlight()">取消高亮</button>
                 <button type="button" class="btn btn-secondary btn-sm m-1" onclick="filterSearch()">过滤搜索</button>
                 <button type="button" class="btn btn-secondary btn-sm m-1" onclick="cancelFilter()">取消过滤</button>
             </div>
