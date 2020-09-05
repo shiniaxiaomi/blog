@@ -109,6 +109,7 @@ public class BlogService {
         // 保存blog
         blog.setMdHtml(html);
         blog.setDesc(blog.getDesc());
+        blog.setUpdateTime(new Date());
 
         blogMapper.updateById(blog);
 
