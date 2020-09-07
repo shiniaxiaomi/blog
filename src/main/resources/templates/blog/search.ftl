@@ -62,6 +62,7 @@
     function searchInES(page){
         if(page===undefined) page=1;
         buffArr=[];//清空缓存数据
+        console.log($("#form").serialize())
         $.get("/blog/search/"+page,$("#form").serialize(),function (data,status) {
             if(status==="success" && data.code){
                 if(data.data.result.length===0){
@@ -180,9 +181,6 @@
             }
         });
 
-        // 延时100ms
-        setTimeout(function () {
-            searchInES();//默认搜索第一页
-        },100)
+        searchInES();//默认搜索第一页
     })
 </script>
