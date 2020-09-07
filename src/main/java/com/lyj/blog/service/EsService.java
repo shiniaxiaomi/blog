@@ -4,6 +4,7 @@ import com.lyj.blog.exception.MessageException;
 import com.lyj.blog.model.req.EsResult;
 import com.lyj.blog.model.req.EsSearch;
 import com.lyj.blog.parser.model.ESHeading;
+import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
@@ -34,6 +35,7 @@ import java.util.stream.Collectors;
  * @description
  * @date 2020/8/4 11:35 上午
  */
+@Slf4j
 @Service
 public class EsService {
 
@@ -96,7 +98,6 @@ public class EsService {
 
     // 搜索关键字
     public Map search(EsSearch esSearch, int page) {
-//        page--;//前端的页数从1开始，es的页数从0开始，在这里做一下转化
         HashMap<String, Object> map = new HashMap<>();
         map.put("result",Collections.emptyList());
         map.put("pages",1);
@@ -132,7 +133,7 @@ public class EsService {
         try {
             searchResponse=elasticClient.search(searchRequest, RequestOptions.DEFAULT);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("ES搜索错误",e);
             return map;
         }
 

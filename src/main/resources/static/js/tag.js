@@ -60,6 +60,7 @@ function updateTag() {
                 // 回显数据
                 $("#label_"+checkedTags[0].value).text(val);
                 layer.msg("更改成功")
+                initTags();
             }else{
                 layer.msg("更改失败")
             }
@@ -72,7 +73,7 @@ function openTag() {
     // 只能勾选一个tag，然后再添加
     let checkedTags = $("#tags").serializeArray();
     if(checkedTags.length!==1){
-        layer.msg("至少选择一个进行删除");
+        layer.msg("至少选择一个进行打开");
         return;
     }
 
@@ -84,6 +85,7 @@ function initTags(){
     $.get("/tag",function (data,status) {
         if(status==="success" && data.code){
             originalTagData=data.data;
+            debugger
             let tagData=data.data;
             let str="";
             for(let i=0;i<tagData.length;i++){
@@ -115,7 +117,7 @@ function resetTags() {
 // 搜索标签
 function searchTag(tags){
     let searchTagInput = $("#searchTagInput");
-    let value=$(searchTagInput).val();
+    let value=$(searchTagInput).val().toLocaleLowerCase();
     $(searchTagInput).val("");//清空输入框
     if(value===""){
         resetTags();// 重制标签样式
@@ -123,7 +125,7 @@ function searchTag(tags){
     }
     // 返回需要渲染的标签id
     let result = tags.filter(item=>{
-        return item.name.indexOf(value)!==-1;
+        return item.name.toLocaleLowerCase().indexOf(value)!==-1;
     });
     renderTags(result);
 }
