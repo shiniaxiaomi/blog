@@ -3,10 +3,13 @@ package com.lyj.blog.handler;
 import com.lyj.blog.exception.MessageException;
 import com.lyj.blog.model.req.Message;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MultipartException;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 
 /**
@@ -16,6 +19,7 @@ import java.util.Arrays;
  */
 @Slf4j
 @RestControllerAdvice
+@Component
 public class GlobalExceptionHandler {
 
     // 捕获所有异常(兜底的异常处理)
