@@ -21,27 +21,27 @@ public class GlobalExceptionHandler {
     // 捕获所有异常(兜底的异常处理)
     @ExceptionHandler(Exception.class)
     public Message handleException(Throwable e){
-        log.error(e.getMessage());
+        log.error("Exception异常",e);
         return Message.error(e.getMessage());
     }
 
     @ExceptionHandler(MessageException.class)
     public Message handleMessageException(Throwable e){
-        log.error(e.getMessage());
+        log.error("自定义异常",e);
         return Message.error(e.getMessage());
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public void handleIllegalArgumentException(Throwable e){
         if(e.getMessage().contains("RedisCacheConfiguration")){
-            log.error("redis不能存储null值，可忽略该报错");
+            log.error("redis不能存储null值，可忽略该报错",e);
         }
     }
 
     // 文件上传异常
     @ExceptionHandler(MultipartException.class)
     public Message handleFileUploadException(Throwable e){
-        log.error(e.getMessage());
+        log.error("文件上传异常",e);
         return Message.error(e.getMessage());
     }
 
