@@ -85,7 +85,6 @@ function initTags(){
     $.get("/tag",function (data,status) {
         if(status==="success" && data.code){
             originalTagData=data.data;
-            debugger
             let tagData=data.data;
             let str="";
             for(let i=0;i<tagData.length;i++){

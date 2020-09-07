@@ -42,7 +42,7 @@
                 }
             });
             // 获取总访问量
-            $.get("/user/visitCount",function (data,status) {
+            $.get("/blog/visitCountAll",function (data,status) {
                 if(status==="success" && data.code){
                     $("#visitCount").text(data.data);
                 }

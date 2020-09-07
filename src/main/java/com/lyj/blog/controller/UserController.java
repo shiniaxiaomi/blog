@@ -51,12 +51,5 @@ public class UserController {
         return Message.success("退出成功");
     }
 
-    @ResponseBody
-    @RequestMapping("visitCount")
-    public Message visitCount(){
-        return Message.success(null,userService.selectVisitCount());
-    }
-
-
 
 }

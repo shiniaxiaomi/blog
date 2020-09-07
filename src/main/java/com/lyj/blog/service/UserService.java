@@ -21,14 +21,7 @@ public class UserService {
     UserMapper userMapper;
 
     @Autowired
-    BlogService blogService;
-
-    @Autowired
     HttpSession session;
-
-    public Integer selectVisitCount() {
-        return blogService.selectVisitCount();
-    }
 
     public boolean login(User user) {
         User dbUser = userMapper.selectOne(new QueryWrapper<User>().select("password").eq("user_name", user.getUserName()));

@@ -6,6 +6,7 @@ import com.lyj.blog.model.Blog;
 import com.lyj.blog.model.req.Message;
 import com.lyj.blog.service.BlogService;
 import com.lyj.blog.service.CommentService;
+import com.lyj.blog.service.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,6 +34,9 @@ public class IndexController {
 
     @Autowired
     HttpSession session;
+
+    @Autowired
+    RedisService redisService;
 
     @RequestMapping("/")
     public ModelAndView index(){
@@ -64,7 +68,7 @@ public class IndexController {
             mav.addObject("html","请先创建该博客");
             return mav;
         }
-        blogService.countIncr(blog.getId());//自增blog的访问次数
+        redisService.incrVisitCountByBlogId(blog.getId());//自增blog的访问次数
         mav.addObject("html",blog.getMdHtml());
         mav.addObject("blogId",blog.getId());
         mav.addObject("blogName",blog.getName());
@@ -90,7 +94,7 @@ public class IndexController {
             mav.addObject("html","请先创建该博客");
             return mav;
         }
-        blogService.countIncr(blog.getId());//自增blog的访问次数
+        redisService.incrVisitCountByBlogId(blog.getId());//自增blog的访问次数
         mav.addObject("html",blog.getMdHtml());
         mav.addObject("blogId",blog.getId());
         mav.addObject("blogName",blog.getName());

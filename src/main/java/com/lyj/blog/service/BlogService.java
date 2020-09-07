@@ -15,7 +15,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -71,6 +74,9 @@ public class BlogService {
     @Autowired
     HttpSession session;
 
+    @Autowired
+    RedisService redisService;
+
     // 添加blog
     public void insert(Blog blog) {
         blogMapper.insert(blog);
@@ -94,8 +100,8 @@ public class BlogService {
     }
 
     public String getMD(int id) {
-        Blog blog = blogMapper.selectOne(new QueryWrapper<Blog>().select("md").eq("id", id));
-        return blog==null?"":blog.getMd();
+        String md=blogMapper.selectMdByBlogId(id);
+        return md==null?"":md;
     }
 
     // 保存在渲染md的时候的线程安全
@@ -125,8 +131,7 @@ public class BlogService {
     }
 
     public String selectNameById(Integer blogId) {
-        Blog blog = blogMapper.selectOne(new QueryWrapper<Blog>().select("name").eq("id", blogId));
-        return blog.getName();
+        return blogMapper.selectNameByBlogId(blogId);
     }
 
     @Cacheable(value = "Blog",key = "#id")
@@ -143,7 +148,8 @@ public class BlogService {
     @Cacheable(value = "BlogIndexPage",key = "#isStick + ',' + #isPrivate + ',' + #page + ',' + #size")
     public List<Blog> selectIndexBlogs(Boolean isStick, Boolean isPrivate, int page, int size) {
         QueryWrapper<Blog> queryWrapper = new QueryWrapper<Blog>()
-                .select("id", "name", "`desc`","is_private" ,"visit_count", "create_time", "update_time")
+                .select("id", "name", "`desc`","is_private"
+                        ,"visit_count", "create_time", "update_time")
                 .orderByDesc("update_time") //按照更新时间降序排列
                 .orderByDesc("create_time"); //按照创建时间降序排列
         if(isStick!=null){
@@ -176,17 +182,13 @@ public class BlogService {
     }
 
     public Blog getBlogConfig(int id) {
-        return blogMapper.selectOne(new QueryWrapper<Blog>().select("is_private", "is_stick").eq("id", id));
+        return blogMapper.selectOne(new QueryWrapper<Blog>()
+                .select("is_private", "is_stick").eq("id", id));
     }
 
-    // 自增博客的访问次数
-    public void countIncr(int id) {
-        Blog blog = blogMapper.selectOne(new QueryWrapper<Blog>().select("visit_count").eq("id", id));
-        blog.setId(id);
-        Integer visitCount = blog.getVisitCount();
-        blog.setVisitCount(++visitCount);
-        blogMapper.updateById(blog);
-    }
+
+
+
 
     @Cacheable(value = "Filing",cacheManager = "cacheManager") //归档数据
     public List<FilingResult> filing() {
@@ -249,12 +251,6 @@ public class BlogService {
 
     public Blog selectBlogByCommentId(int commentId) {
         return blogMapper.selectBlogByCommentId(commentId);
-    }
-
-    @Cacheable("VisitCount")
-    public Integer selectVisitCount() {
-        Integer count = blogMapper.selectSum();
-        return count==null?0:count;
     }
 
     // 上传文件的处理

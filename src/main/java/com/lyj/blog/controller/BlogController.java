@@ -11,6 +11,7 @@ import com.lyj.blog.model.req.EsSearch;
 import com.lyj.blog.service.BlogService;
 import com.lyj.blog.service.BlogTagRelationService;
 import com.lyj.blog.service.EsService;
+import com.lyj.blog.service.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -42,6 +43,9 @@ public class BlogController {
 
     @Autowired
     HttpSession session;
+
+    @Autowired
+    RedisService redisService;
 
     @ResponseBody
     @GetMapping("md")
@@ -100,7 +104,7 @@ public class BlogController {
     public ModelAndView blog(@PathVariable("id") int id){
         ModelAndView mav = new ModelAndView("blog/index");
         Blog blog = blogService.selectHTMLAndName(id);
-        blogService.countIncr(id);//自增blog的访问次数
+        redisService.incrVisitCountByBlogId(id);// 手动自增访问次数
         mav.addObject("html",blog.getMdHtml());
         mav.addObject("blogId",id);
         mav.addObject("blogName",blog.getName());
@@ -161,5 +165,12 @@ public class BlogController {
     }
 
     // TODO: 2020/8/31 提供一个批量导入的接口（上传功能），选择对应的文件夹进行上传，可以选择多个文件上传，然后创建对应的blog
+
+    // 获取博客的访问总数
+    @ResponseBody
+    @RequestMapping("visitCountAll")
+    public Message visitCountAll(){
+        return Message.success(null,redisService.selectVisitCountAll());
+    }
 
 }
