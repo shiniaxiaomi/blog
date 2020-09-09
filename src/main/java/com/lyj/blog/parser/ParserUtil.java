@@ -52,10 +52,18 @@ public class ParserUtil {
                 }
             }).build();//创建html渲染器
 
-    // 将md转换成html
+    /**
+     * 将md转换成html（需要使用到id，md字段）
+     * @param blog
+     * @return
+     */
     public String parseMdToHtml(Blog blog){
+        if(blog.getId()==null){
+            throw new RuntimeException("blog的id不能为空");
+        }
+
         //解析md，转换为语法树
-        Node document = parser.parse(blog.getMd());
+        Node document = parser.parse(blog.getMd()==null?"":blog.getMd());
         //创建标题内容的处理器
         HeadingContentVisitor headingContentVisitor = new HeadingContentVisitor();
         headingContentVisitor.setBlogId(blog.getId());//设置blogId

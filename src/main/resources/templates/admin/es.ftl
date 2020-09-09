@@ -60,7 +60,8 @@
                     <button onclick="deleteBtn();">删除</button>
                     <button onclick="$('#searchParam').val('')">清空</button>
                     <button onclick="beautifyClick()">格式化</button>
-                    <button onclick="serializeClick()">序列化</button>
+                    <button onclick="serializeClick()">序列化</button> |
+                    <button onclick="initEsData()">初始化es数据</button>
                 </form>
             </div>
             搜索结果:
@@ -70,6 +71,34 @@
 </html>
 
 <script>
+
+    // 询问框工具方法
+    function layerConfirm(msg,func) {
+        let index = layer.confirm(msg, {
+            btn: ['确定','取消'] //按钮
+        }, function(){
+            func();
+            layer.close(index); //如果设定了yes回调，需进行手工关闭
+        }, function(){
+            layer.close(index); //如果设定了yes回调，需进行手工关闭
+        });
+    }
+
+    // 初始化es中的数据
+    function initEsData() {
+        layerConfirm("是否需要将es数据初始化？",function () {
+            let layerMsg = layer.msg("数据正在初始化，请稍后...",{time:0});
+            $.get("/admin/initEsData",function (data,status) {
+                layer.close(layerMsg);
+                if(status==="success" && data.code){
+                    layer.msg("数据初始化成功");
+                }else{
+                    layer.msg("数据初始化失败");
+                }
+            })
+        });
+    }
+
     // 更新指定数据
     function updateDataByBlogId() {
         // 将blogId为130的公有数据修改为私有数据

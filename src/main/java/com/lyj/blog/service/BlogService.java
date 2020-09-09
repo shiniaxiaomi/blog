@@ -15,10 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.redis.connection.RedisConnection;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -409,5 +406,9 @@ public class BlogService {
     // 根据blogId查询该blog是否为私有状态
     public Boolean getIsPrivateByBlogId(Integer blogId) {
         return blogMapper.getIsPrivateByBlogId(blogId);
+    }
+
+    public List<Blog> selectIdAndMdList() {
+        return blogMapper.selectList(new QueryWrapper<Blog>().select("id","md"));
     }
 }

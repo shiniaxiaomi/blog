@@ -2,6 +2,7 @@ package com.lyj.blog.controller;
 
 import com.lyj.blog.interceptor.NeedLogin;
 import com.lyj.blog.model.req.Message;
+import com.lyj.blog.service.EsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -23,10 +24,7 @@ import org.springframework.web.client.RestTemplate;
 public class EsController {
 
     @Autowired
-    RestTemplate restTemplate;
-
-    @Value("http://${myConfig.elasticsearch.url}")
-    private String elasticsearchUrl;
+    EsService esService;
 
     @NeedLogin
     @GetMapping
@@ -40,40 +38,16 @@ public class EsController {
     public Message search(String json,String method) {
         // get请求
         if(method!=null && method.equals("get")){
-            try {
-                String data = restTemplate.getForObject(elasticsearchUrl +json, String.class);
-                return Message.success(null,data);
-            }catch (Exception e){
-                return Message.error("请确认是否是请求的方法不对:"+e.getMessage());
-            }
+            return esService.searchDataByGet(json);
         }
-
-        // post请求
-        HttpHeaders headers = new HttpHeaders();// 添加请求头
-        headers.add("Content-Type","application/json");
-        HttpEntity<String> entity = new HttpEntity<>(json, headers);
-        try {
-            String data = restTemplate.postForObject(elasticsearchUrl +"/_search?format=JSON&pretty", entity, String.class);
-            return Message.success(null,data);
-        }catch (Exception e){
-            return Message.error(e.getMessage());
-        }
+        return esService.searchDataByPost(json);
     }
 
     @NeedLogin
     @ResponseBody
     @PostMapping("update")
     public Message update(String json) {
-        // post请求
-        HttpHeaders headers = new HttpHeaders();// 添加请求头
-        headers.add("Content-Type","application/json");
-        HttpEntity<String> entity = new HttpEntity<>(json, headers);
-        try {
-            String data = restTemplate.postForObject(elasticsearchUrl +"/blog/_update_by_query?format=JSON&pretty", entity, String.class);
-            return Message.success("更新成功",data);
-        }catch (Exception e){
-            return Message.error(e.getMessage());
-        }
+        return esService.updateData(json);
     }
 
     //删除数据
@@ -81,15 +55,6 @@ public class EsController {
     @ResponseBody
     @PostMapping("delete")
     public Message delete(String json) {
-        // post请求
-        HttpHeaders headers = new HttpHeaders();// 添加请求头
-        headers.add("Content-Type","application/json");
-        HttpEntity<String> entity = new HttpEntity<>(json, headers);
-        try {
-            String data = restTemplate.postForObject(elasticsearchUrl +"/blog/_delete_by_query?format=JSON&pretty", entity, String.class);
-            return Message.success("删除成功",data);
-        }catch (Exception e){
-            return Message.error(e.getMessage());
-        }
+        return esService.deleteData(json);
     }
 }

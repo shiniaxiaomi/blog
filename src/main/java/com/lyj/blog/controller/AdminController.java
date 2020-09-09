@@ -7,6 +7,7 @@ import com.lyj.blog.interceptor.NeedLogin;
 import com.lyj.blog.model.Blog;
 import com.lyj.blog.model.File;
 import com.lyj.blog.model.req.Message;
+import com.lyj.blog.parser.ParserUtil;
 import com.lyj.blog.service.BlogService;
 import com.lyj.blog.service.EsService;
 import com.lyj.blog.service.FileService;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 /**
  * @author Yingjie.Lu
@@ -37,6 +39,9 @@ public class AdminController {
 
     @Autowired
     HttpSession session;
+
+    @Autowired
+    ParserUtil parserUtil;
 
     // 在编辑页面时保持心跳
     @ResponseBody
@@ -98,6 +103,29 @@ public class AdminController {
         mav.addObject("fileList",filePage.getRecords());
         mav.addObject("blogId",blogId);
         return mav;
+    }
+
+
+    // 重新生成es中的搜索数据
+    @NeedLogin
+    @ResponseBody
+    @GetMapping("initEsData")
+    public Message initEsData(){
+        // 先删除掉所有数据
+        esService.deleteData("{\"query\":{\"match_all\":{}}}");
+
+        // 将数据库中的blog查询出来，然后通过解析后保存到es中
+        List<Blog> blogs = blogService.selectIdAndMdList();
+        try{
+            for(Blog blog:blogs){
+                parserUtil.parseMdToHtml(blog);
+            }
+        }catch (Exception e){
+            // 回滚数据
+            esService.deleteData("{\"query\":{\"match_all\":{}}}");
+        }
+
+        return Message.success("搜索数据初始化成功");
     }
 
 }

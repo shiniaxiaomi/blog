@@ -3,6 +3,7 @@ package com.lyj.blog.service;
 import com.lyj.blog.exception.MessageException;
 import com.lyj.blog.model.req.EsResult;
 import com.lyj.blog.model.req.EsSearch;
+import com.lyj.blog.model.req.Message;
 import com.lyj.blog.parser.model.ESHeading;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.bulk.BulkRequest;
@@ -201,6 +202,73 @@ public class EsService {
             restTemplate.postForObject(elasticsearchUrl+"/blog/_update_by_query?format=JSON&pretty", entity, String.class);
         }catch (Exception e){
             throw new MessageException("es的权限更新失败");
+        }
+    }
+
+    /**
+     * 通过json并发送Get请求搜索数据
+     * @param json
+     * @return
+     */
+    public Message searchDataByGet(String json){
+        try {
+            String data = restTemplate.getForObject(elasticsearchUrl +json, String.class);
+            return Message.success(null,data);
+        }catch (Exception e){
+            return Message.error("请确认是否是请求的方法不对:"+e.getMessage());
+        }
+    }
+
+    /**
+     * 通过json并发送Post请求搜索数据
+     * @param json
+     * @return
+     */
+    public Message searchDataByPost(String json){
+        HttpHeaders headers = new HttpHeaders();// 添加请求头
+        headers.add("Content-Type","application/json");
+        HttpEntity<String> entity = new HttpEntity<>(json, headers);
+        try {
+            String data = restTemplate.postForObject(elasticsearchUrl +"/_search?format=JSON&pretty", entity, String.class);
+            return Message.success(null,data);
+        }catch (Exception e){
+            return Message.error(e.getMessage());
+        }
+    }
+
+    /**
+     * 通过传入的json来更新ES中的数据
+     * @param json
+     * @return
+     */
+    public Message updateData(String json){
+        // post请求
+        HttpHeaders headers = new HttpHeaders();// 添加请求头
+        headers.add("Content-Type","application/json");
+        HttpEntity<String> entity = new HttpEntity<>(json, headers);
+        try {
+            String data = restTemplate.postForObject(elasticsearchUrl +"/blog/_update_by_query?format=JSON&pretty", entity, String.class);
+            return Message.success("更新成功",data);
+        }catch (Exception e){
+            return Message.error(e.getMessage());
+        }
+    }
+
+    /**
+     * 通过传入的json来删除ES中的数据
+     * @param json
+     * @return
+     */
+    public Message deleteData(String json){
+        // post请求
+        HttpHeaders headers = new HttpHeaders();// 添加请求头
+        headers.add("Content-Type","application/json");
+        HttpEntity<String> entity = new HttpEntity<>(json, headers);
+        try {
+            String data = restTemplate.postForObject(elasticsearchUrl +"/blog/_delete_by_query?format=JSON&pretty", entity, String.class);
+            return Message.success("删除成功",data);
+        }catch (Exception e){
+            return Message.error(e.getMessage());
         }
     }
 }
