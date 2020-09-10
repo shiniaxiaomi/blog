@@ -1,5 +1,6 @@
 package com.lyj.blog.parser.render;
 
+import com.lyj.blog.parser.Parser;
 import com.lyj.blog.parser.visitor.HeadingContentVisitor;
 import org.commonmark.node.Heading;
 import org.commonmark.node.Node;
@@ -40,7 +41,7 @@ public class HeadingRenderer implements NodeRenderer {
 
         HashMap<String, String> map = new HashMap<>();
         map.put("text",text);
-        map.put("id", HeadingContentVisitor.getHeadingId());
+        map.put("id", Parser.getHeadingId());
         html.tag("h"+heading.getLevel(),map);
         html.text(text);
         html.tag("/h"+heading.getLevel());

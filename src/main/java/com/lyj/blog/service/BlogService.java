@@ -10,7 +10,7 @@ import com.lyj.blog.model.Catalog;
 import com.lyj.blog.model.Tag;
 import com.lyj.blog.model.req.FilingResult;
 import com.lyj.blog.model.req.Message;
-import com.lyj.blog.parser.ParserUtil;
+import com.lyj.blog.parser.Parser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,9 +51,6 @@ public class BlogService {
     TagService tagService;
 
     @Autowired
-    ParserUtil parserUtil;
-
-    @Autowired
     EsService esService;
 
     @Autowired
@@ -73,6 +70,9 @@ public class BlogService {
 
     @Autowired
     RedisService redisService;
+
+    @Autowired
+    Parser parser;
 
     // 添加blog
     public void insert(Blog blog) {
@@ -106,8 +106,14 @@ public class BlogService {
     @CacheEvict(value = "Blog",key = "#blog.id")
     public synchronized void update(Blog blog) {
 
+        // 从数据库查询并组装完整的blog信息
+        Blog dbBlog = blogMapper.selectById(blog.getId());
+        blog.setIsPrivate(dbBlog.getIsPrivate());
+        blog.setName(dbBlog.getName());
+        blog.setTags(dbBlog.getTags());
+
         // 解析md为html,并将heading批量保存到es中
-        String html = parserUtil.parseMdToHtml(blog);
+        String html = parser.parse(blog);
 
         // 保存blog
         blog.setMdHtml(html);
@@ -402,13 +408,12 @@ public class BlogService {
         return false;
     }
 
-
-    // 根据blogId查询该blog是否为私有状态
-    public Boolean getIsPrivateByBlogId(Integer blogId) {
-        return blogMapper.getIsPrivateByBlogId(blogId);
+    public List<Blog> selectBlogList(){
+        return blogMapper.selectList(new QueryWrapper<>());
     }
 
-    public List<Blog> selectIdAndMdList() {
-        return blogMapper.selectList(new QueryWrapper<Blog>().select("id","md"));
+    @CacheEvict(value = "Blog",key = "#id")
+    public void updateHtmlById(String html, Integer id) {
+        blogMapper.updateHtmlById(html,id);
     }
 }

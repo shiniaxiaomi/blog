@@ -36,4 +36,7 @@ public interface BlogMapper extends BaseMapper<Blog> {
 
     @Update("update blog set visit_count = #{visitCount} where id = #{blogId}")
     void updateVisitCountByBlogId(Integer blogId, Integer visitCount);
+
+    @Update("update blog set md_html = #{html} where id = #{BlogId}")
+    void updateHtmlById(String html, Integer BlogId);
 }

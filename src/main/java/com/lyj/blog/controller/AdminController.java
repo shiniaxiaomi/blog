@@ -4,10 +4,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lyj.blog.config.Constant;
 import com.lyj.blog.handler.Util;
 import com.lyj.blog.interceptor.NeedLogin;
+import com.lyj.blog.mapper.BlogMapper;
 import com.lyj.blog.model.Blog;
 import com.lyj.blog.model.File;
 import com.lyj.blog.model.req.Message;
-import com.lyj.blog.parser.ParserUtil;
+import com.lyj.blog.parser.Parser;
 import com.lyj.blog.service.BlogService;
 import com.lyj.blog.service.EsService;
 import com.lyj.blog.service.FileService;
@@ -41,7 +42,10 @@ public class AdminController {
     HttpSession session;
 
     @Autowired
-    ParserUtil parserUtil;
+    Parser parser;
+
+    @Autowired
+    BlogMapper blogMapper;
 
     // 在编辑页面时保持心跳
     @ResponseBody
@@ -115,14 +119,17 @@ public class AdminController {
         esService.deleteData("{\"query\":{\"match_all\":{}}}");
 
         // 将数据库中的blog查询出来，然后通过解析后保存到es中
-        List<Blog> blogs = blogService.selectIdAndMdList();
+        List<Blog> blogs = blogService.selectBlogList();
         try{
             for(Blog blog:blogs){
-                parserUtil.parseMdToHtml(blog);
+                String html = parser.parse(blog);
+                // 将html更新会数据库
+                blogService.updateHtmlById(html,blog.getId());
             }
         }catch (Exception e){
             // 回滚数据
             esService.deleteData("{\"query\":{\"match_all\":{}}}");
+            e.printStackTrace();
         }
 
         return Message.success("搜索数据初始化成功");

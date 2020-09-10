@@ -10,7 +10,7 @@ import lombok.experimental.Accessors;
  */
 @Accessors(chain = true)
 @Data
-public class ESHeading {
+public class EsHeading {
 
     String headingId;
     int blogId;
@@ -18,5 +18,6 @@ public class ESHeading {
     String headingName;
     String tagName;
     String content;
+    boolean isPrivate;// 是否私有
 
 }

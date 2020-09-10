@@ -54,6 +54,11 @@ public class BlogController {
         return Message.success(null,md);
     }
 
+    /**
+     * 更新blog内容
+     * @param blog id，md
+     * @return
+     */
     @NeedLogin
     @ResponseBody
     @PostMapping("update")

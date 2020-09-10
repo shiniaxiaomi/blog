@@ -4,7 +4,7 @@ import com.lyj.blog.exception.MessageException;
 import com.lyj.blog.model.req.EsResult;
 import com.lyj.blog.model.req.EsSearch;
 import com.lyj.blog.model.req.Message;
-import com.lyj.blog.parser.model.ESHeading;
+import com.lyj.blog.parser.model.EsHeading;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.index.IndexRequest;
@@ -73,10 +73,10 @@ public class EsService {
     }
 
     //批量插入headings到es中
-    public void insertHeadingToESBatch(String index, List<ESHeading> handledContent, Boolean isPrivate){
+    public void insertHeadingToESBatch(String index, List<EsHeading> esHeadings){
         BulkRequest request = new BulkRequest();
 
-        for (ESHeading esHeading : handledContent) {
+        for (EsHeading esHeading : esHeadings) {
             request.add(new IndexRequest(index).id(esHeading.getHeadingId())
                     .source(XContentType.JSON,
                             "headingId", esHeading.getHeadingId(),
@@ -85,7 +85,7 @@ public class EsService {
                             "tagName",esHeading.getTagName(),
                             "headingName",esHeading.getHeadingName(),
                             "content",esHeading.getContent(),
-                            "isPrivate",isPrivate  //标记为是否私有
+                            "isPrivate",esHeading.isPrivate()  //标记为是否私有
                     ));
         }
 
