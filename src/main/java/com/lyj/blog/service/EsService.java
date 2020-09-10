@@ -131,12 +131,17 @@ public class EsService {
         searchSourceBuilder.query(queryBuilder).size(size).from((page-1)*size);
         searchRequest.source(searchSourceBuilder);
         SearchResponse searchResponse = null;
-        try {
-            searchResponse=elasticClient.search(searchRequest, RequestOptions.DEFAULT);
-        } catch (IOException e) {
-            log.error("ES搜索错误",e);
-            return map;
-        }
+
+        int i=2;// 重试两次（避免为查询数据为空）
+        do {
+            try {
+                searchResponse=elasticClient.search(searchRequest, RequestOptions.DEFAULT);
+            } catch (IOException e) {
+                log.error("ES搜索错误",e);
+                return map;
+            }
+            i--;
+        }while(!(searchResponse!=null && searchResponse.getHits().getHits().length!=0) && i>0 );
 
         List<EsResult> collect = Arrays.stream(searchResponse.getHits().getHits()).map(searchHit -> {
             return new EsResult().setScore(searchHit.getScore()).setSourceAsMap(searchHit.getSourceAsMap());
