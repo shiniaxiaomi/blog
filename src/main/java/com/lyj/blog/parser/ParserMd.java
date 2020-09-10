@@ -1,8 +1,10 @@
 package com.lyj.blog.parser;
 
 import com.lyj.blog.model.Blog;
+import com.lyj.blog.model.Tag;
 import com.lyj.blog.parser.model.EsHeading;
 import com.lyj.blog.service.EsService;
+import com.lyj.blog.service.TagService;
 import org.commonmark.node.Node;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -21,6 +23,22 @@ public class ParserMd extends Parser{
     @Autowired
     EsService esService;
 
+    @Autowired
+    TagService tagService;
+
+    // 制造EsHeading
+    public EsHeading createHeading(Blog blog,String content,String headingName){
+        EsHeading esHeading = new EsHeading();
+        esHeading.setBlogId(blog.getId());
+        esHeading.setBlogName(blog.getName());
+        esHeading.setPrivate(blog.getIsPrivate());
+        esHeading.setContent(content);
+        esHeading.setTagName(blog.getTagNames());
+        esHeading.setHeadingName( // 如果没有headingName，则使用blogName
+                headingName==null||headingName.equals("")?"# "+blog.getName():headingName);
+        return esHeading;
+    }
+
     @Override
     protected List<EsHeading> buildEsHeading(StringBuilder sb, List<String> headingIdList, Blog blog) {
         ArrayList<EsHeading> list = new ArrayList<>();
@@ -31,11 +49,8 @@ public class ParserMd extends Parser{
             if("".equals(splits[0])){
                 return Collections.emptyList();
             }else{
-                EsHeading esHeading = new EsHeading();
-                esHeading.setBlogId(blog.getId());
-                esHeading.setContent(splits[0]);
-                esHeading.setHeadingName("# 默认标题");
-                list.add(esHeading);
+                EsHeading heading = createHeading(blog, splits[0], null);
+                list.add(heading);
                 return list;
             }
         }
@@ -43,54 +58,37 @@ public class ParserMd extends Parser{
         // 如果第一个没有标题
         int i=0;
         if(!headingPattern.matcher(splits[0]).find()){
-            EsHeading esHeading = new EsHeading();
-            esHeading.setBlogId(blog.getId());
-            esHeading.setContent(splits[0]);
-            esHeading.setHeadingName("# 默认标题");
-            list.add(esHeading);
+            EsHeading heading = createHeading(blog, splits[0], null);
+            list.add(heading);
             i=1;// 如果第一个没有标题，则下面从第二个开始处理
         }
 
         for(;i<splits.length;i++){
             String split = splits[i];
-
-            EsHeading esHeading = new EsHeading();
+            EsHeading heading = createHeading(blog, "", null);
             // 匹配并设置标题
             Matcher matcher = headingPattern.matcher(split);
             if (matcher.find()) {
                 String group = matcher.group();
-                esHeading.setHeadingName(group.substring(0, group.length() - 1));//去掉回车换行
-            } else { //如果没找到标题，设置默认标题
-                esHeading.setHeadingName("# 默认标题");
+                heading.setHeadingName(group.substring(0, group.length() - 1));//去掉回车换行
             }
             // 设置标题uuid
-            esHeading.setHeadingId(headingIdList!=null?headingIdList.get(i-1):"");
+            heading.setHeadingId(headingIdList!=null?headingIdList.get(i-1):"");
             // 设置内容（去掉标题部分）
             String[] arr = split.split("^#+ .*\n");
             if (arr.length == 2) {
-                esHeading.setContent(arr[1]);
+                heading.setContent(arr[1]);
             } else if (arr.length == 1) {
-                esHeading.setContent(arr[0]);
+                heading.setContent(arr[0]);
             }
-            // 设置标题所属的博客id
-            esHeading.setBlogId(blog.getId());
-            list.add(esHeading);
+            list.add(heading);
         }
 
         //组装blogName和tagName
         if(list.size()!=0){
             list.forEach(esHeading -> {
-                // 如果标题为默认标题，则使用博客名称作为标题
-                if(esHeading.getHeadingName().equals("# 默认标题")){
-                    esHeading.setHeadingName(blog.getName());
-                }
                 esHeading.setBlogName(blog.getName());
-                // 组装tagName
-                if(blog.getTags()!=null){
-                    StringBuilder tagNames = new StringBuilder();
-                    blog.getTags().forEach(tag -> tagNames.append(tag.getName()).append(","));
-                    esHeading.setTagName(tagNames.toString());
-                }
+                esHeading.setTagName(blog.getTagNames());// 组装tagName
             });
         }
         return list;//返回标题及内容的list

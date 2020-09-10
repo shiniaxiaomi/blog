@@ -72,7 +72,11 @@ public class EsService {
         }
     }
 
-    //批量插入headings到es中
+    /**
+     * 批量插入headings到es中
+     * @param index
+     * @param esHeadings
+     */
     public void insertHeadingToESBatch(String index, List<EsHeading> esHeadings){
         BulkRequest request = new BulkRequest();
 
@@ -96,8 +100,12 @@ public class EsService {
         }
     }
 
-
-    // 搜索关键字
+    /**
+     * 搜索关键字
+     * @param esSearch
+     * @param page
+     * @return
+     */
     public Map search(EsSearch esSearch, int page) {
         HashMap<String, Object> map = new HashMap<>();
         map.put("result",Collections.emptyList());
@@ -158,6 +166,11 @@ public class EsService {
     }
 
 
+    /**
+     * 根据blogId更新是否私有
+     * @param blogId
+     * @param isPrivate
+     */
     private void updateIsPrivateByBlogId(Integer blogId, Boolean isPrivate) {
         // post请求
         HttpHeaders headers = new HttpHeaders();// 添加请求头
@@ -187,7 +200,11 @@ public class EsService {
         }
     }
 
-    // 根据blogId更新blogName
+    /**
+     * 根据blogId更新blogName
+     * @param blogId
+     * @param blogName
+     */
     public void updateBlogNameByBlogId(Integer blogId,String blogName) {
         // post请求
         HttpHeaders headers = new HttpHeaders();// 添加请求头
@@ -195,6 +212,33 @@ public class EsService {
         HttpEntity<String> entity = new HttpEntity<>("{\n" +
                 "    \"script\": {\n" +
                 "        \"source\": \"ctx._source.blogName ='"+blogName+"'\",\n" +
+                "        \"lang\": \"painless\"\n" +
+                "    },\n" +
+                "    \"query\": {\n" +
+                "        \"term\": {\n" +
+                "            \"blogId\": \""+blogId+"\"\n" +
+                "        }\n" +
+                "    }\n" +
+                "}", headers);
+        try {
+            restTemplate.postForObject(elasticsearchUrl+"/blog/_update_by_query?format=JSON&pretty", entity, String.class);
+        }catch (Exception e){
+            throw new MessageException("es的权限更新失败");
+        }
+    }
+
+    /**
+     * 根据blogId更新tagNames
+     * @param blogId
+     * @param tagNames
+     */
+    public void updateTagNameByBlogId(int blogId, String tagNames) {
+        // post请求
+        HttpHeaders headers = new HttpHeaders();// 添加请求头
+        headers.add("Content-Type","application/json");
+        HttpEntity<String> entity = new HttpEntity<>("{\n" +
+                "    \"script\": {\n" +
+                "        \"source\": \"ctx._source.tagName ='"+tagNames+"'\",\n" +
                 "        \"lang\": \"painless\"\n" +
                 "    },\n" +
                 "    \"query\": {\n" +
@@ -276,4 +320,5 @@ public class EsService {
             return Message.error(e.getMessage());
         }
     }
+
 }

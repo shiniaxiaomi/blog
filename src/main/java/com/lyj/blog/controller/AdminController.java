@@ -12,6 +12,7 @@ import com.lyj.blog.parser.Parser;
 import com.lyj.blog.service.BlogService;
 import com.lyj.blog.service.EsService;
 import com.lyj.blog.service.FileService;
+import com.lyj.blog.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -46,6 +47,9 @@ public class AdminController {
 
     @Autowired
     BlogMapper blogMapper;
+
+    @Autowired
+    TagService tagService;
 
     // 在编辑页面时保持心跳
     @ResponseBody
@@ -122,6 +126,7 @@ public class AdminController {
         List<Blog> blogs = blogService.selectBlogList();
         try{
             for(Blog blog:blogs){
+                blog.setTagNames(tagService.selectTagNameByBlogId(blog.getId()));//组装tag
                 String html = parser.parse(blog);
                 // 将html更新会数据库
                 blogService.updateHtmlById(html,blog.getId());

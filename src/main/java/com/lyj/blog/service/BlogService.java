@@ -110,7 +110,7 @@ public class BlogService {
         Blog dbBlog = blogMapper.selectById(blog.getId());
         blog.setIsPrivate(dbBlog.getIsPrivate());
         blog.setName(dbBlog.getName());
-        blog.setTags(dbBlog.getTags());
+        blog.setTagNames(tagService.selectTagNameByBlogId(blog.getId()));//组装tag
 
         // 解析md为html,并将heading批量保存到es中
         String html = parser.parse(blog);

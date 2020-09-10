@@ -13,4 +13,5 @@ public interface TagMapper extends BaseMapper<Tag> {
     List<String> selectTagNameByBlogId(@Param("blogId") Integer blogId);
 
     List<Tag> selectTagByBlogIds(@Param("blogIds") List<Integer> blogIds);
+
 }

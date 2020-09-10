@@ -33,6 +33,9 @@ public class TagService {
     @Autowired
     BlogTagRelationService blogTagRelationService;
 
+    @Autowired
+    EsService esService;
+
 
     @CacheEvict(value = "Tag",allEntries = true)
     public void update(Tag tag){
@@ -98,16 +101,19 @@ public class TagService {
         // 批量新增标签关系
         blogTagRelationService.insertBatch(blogId,insertList);
 
+        // 更新ES中的tagName（以参数参入的为准）
+        List<Tag> tagList = tagMapper.selectList(new QueryWrapper<Tag>().select("name").in("id", tags));
+        StringBuilder sb = new StringBuilder();
+        tagList.forEach(tag -> sb.append(tag.getName()).append(","));
+        esService.updateTagNameByBlogId(blogId,sb.toString());
+
     }
 
 
     public String selectTagNameByBlogId(Integer blogId) {
         List<String> tagNames = tagMapper.selectTagNameByBlogId(blogId);
         StringBuilder sb = new StringBuilder();
-        for (String tagName : tagNames) {
-            sb.append(tagName);
-            sb.append(",");
-        }
+        tagNames.forEach(tagName-> sb.append(tagName).append(","));
         return sb.toString();
     }
 
