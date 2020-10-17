@@ -3,13 +3,11 @@ package com.lyj.blog.handler;
 import com.lyj.blog.exception.MessageException;
 import com.lyj.blog.model.req.Message;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MultipartException;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 
 /**
@@ -25,27 +23,27 @@ public class GlobalExceptionHandler {
     // 捕获所有异常(兜底的异常处理)
     @ExceptionHandler(Exception.class)
     public Message handleException(Throwable e){
-        log.error("Exception异常",e);
+        log.error("Exception异常:"+Arrays.toString(e.getStackTrace()));
         return Message.error(e.getMessage());
     }
 
     @ExceptionHandler(MessageException.class)
     public Message handleMessageException(Throwable e){
-        log.error("自定义异常",e);
+        log.error("自定义异常:"+Arrays.toString(e.getStackTrace()));
         return Message.error(e.getMessage());
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public void handleIllegalArgumentException(Throwable e){
         if(e.getMessage().contains("RedisCacheConfiguration")){
-            log.error("redis不能存储null值，可忽略该报错",e);
+            log.error("redis不能存储null值，可忽略该报错");
         }
     }
 
     // 文件上传异常
     @ExceptionHandler(MultipartException.class)
     public Message handleFileUploadException(Throwable e){
-        log.error("文件上传异常",e);
+        log.error("文件上传异常:"+Arrays.toString(e.getStackTrace()));
         return Message.error(e.getMessage());
     }
 

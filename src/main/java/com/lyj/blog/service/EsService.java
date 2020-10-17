@@ -314,10 +314,11 @@ public class EsService {
         headers.add("Content-Type","application/json");
         HttpEntity<String> entity = new HttpEntity<>(json, headers);
         try {
+            log.info("ES删除数据操作:"+json);
             String data = restTemplate.postForObject(elasticsearchUrl +"/blog/_delete_by_query?format=JSON&pretty", entity, String.class);
             return Message.success("删除成功",data);
         }catch (Exception e){
-            return Message.error(e.getMessage());
+            throw new MessageException("ES数据删除失败："+json);
         }
     }
 

@@ -132,9 +132,10 @@ public class AdminController {
                 blogService.updateHtmlById(html,blog.getId());
             }
         }catch (Exception e){
+            e.printStackTrace();
             // 回滚数据
             esService.deleteData("{\"query\":{\"match_all\":{}}}");
-            e.printStackTrace();
+            return Message.error("搜索数据初始化失败！");
         }
 
         return Message.success("搜索数据初始化成功");
