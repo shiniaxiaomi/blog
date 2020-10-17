@@ -23,13 +23,13 @@ public class GlobalExceptionHandler {
     // 捕获所有异常(兜底的异常处理)
     @ExceptionHandler(Exception.class)
     public Message handleException(Throwable e){
-        log.error("Exception异常:"+Arrays.toString(e.getStackTrace()));
+        log.error("Exception异常:"+e.getStackTrace()[0],e);
         return Message.error(e.getMessage());
     }
 
     @ExceptionHandler(MessageException.class)
     public Message handleMessageException(Throwable e){
-        log.error("自定义异常:"+Arrays.toString(e.getStackTrace()));
+        log.error("自定义异常:"+e.getStackTrace()[0],e);
         return Message.error(e.getMessage());
     }
 
@@ -43,7 +43,7 @@ public class GlobalExceptionHandler {
     // 文件上传异常
     @ExceptionHandler(MultipartException.class)
     public Message handleFileUploadException(Throwable e){
-        log.error("文件上传异常:"+Arrays.toString(e.getStackTrace()));
+        log.error("文件上传异常:"+e.getStackTrace()[0],e);
         return Message.error(e.getMessage());
     }
 
