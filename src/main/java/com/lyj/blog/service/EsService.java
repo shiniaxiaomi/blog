@@ -322,7 +322,31 @@ public class EsService {
             return Message.success("删除成功",data);
         }catch (Exception e){
             log.error("ES异常:"+e);
-            throw new MessageException("ES数据删除失败："+json);
+            throw e;
+        }
+    }
+
+    // 创建索引
+    public Message createIndex(){
+        try {
+            // put请求
+            restTemplate.put(elasticsearchUrl +"/blog?pretty",new HttpHeaders());
+            return Message.success("索引创建成功");
+        }catch (Exception e){
+            log.error("ES异常:"+e);
+            throw e;
+        }
+    }
+
+    // 判断索引是否存在
+    public Message existIndex(){
+        try {
+            // head请求
+            restTemplate.headForHeaders(elasticsearchUrl + "/blog");
+            return Message.success("索引创建成功");
+        }catch (Exception e){
+            log.error("判断索引是否存在",e);
+            throw e;
         }
     }
 

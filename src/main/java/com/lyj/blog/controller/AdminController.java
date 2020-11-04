@@ -120,7 +120,16 @@ public class AdminController {
     @GetMapping("initEsData")
     public Message initEsData(){
         // 先删除掉所有数据
-        esService.deleteData("{\"query\":{\"match_all\":{}}}");
+        try {
+            esService.deleteData("{\"query\":{\"match_all\":{}}}");
+        }catch (Exception e){
+            // 如果删除失败，判断是否无索引，是，则创建索引
+            try {
+                esService.existIndex();
+            }catch (Exception e1){
+                esService.createIndex();
+            }
+        }
 
         // 将数据库中的blog查询出来，然后通过解析后保存到es中
         List<Blog> blogs = blogService.selectBlogList();

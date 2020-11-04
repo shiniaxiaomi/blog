@@ -113,7 +113,13 @@ public class BlogService {
         blog.setTagNames(tagService.selectTagNameByBlogId(blog.getId()));//组装tag
 
         // 解析md为html,并将heading批量保存到es中
-        String html = parser.parse(blog);
+        String html = "";
+        try {
+            html = parser.parse(blog);
+        }catch (Exception e){
+            // 保证blog更新不会因为ES报错导致不能继续往下执行
+            log.error("ES报错",e);
+        }
 
         // 保存blog
         blog.setMdHtml(html);
