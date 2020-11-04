@@ -144,9 +144,12 @@ public class EsService {
         do {
             try {
                 searchResponse=elasticClient.search(searchRequest, RequestOptions.DEFAULT);
+                Thread.sleep(100);
             } catch (IOException e) {
                 log.error("ES搜索错误",e);
                 return map;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
             i--;
         }while(!(searchResponse!=null && searchResponse.getHits().getHits().length!=0) && i>0 );
@@ -318,6 +321,7 @@ public class EsService {
             String data = restTemplate.postForObject(elasticsearchUrl +"/blog/_delete_by_query?format=JSON&pretty", entity, String.class);
             return Message.success("删除成功",data);
         }catch (Exception e){
+            log.error("ES异常:"+e);
             throw new MessageException("ES数据删除失败："+json);
         }
     }
