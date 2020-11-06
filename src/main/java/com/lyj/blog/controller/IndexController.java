@@ -42,9 +42,9 @@ public class IndexController {
     public ModelAndView index(){
         ModelAndView mav = new ModelAndView("index");
         // 查询置顶非私有博客列表
-        List<Blog> stickBlogList = blogService.selectIndexBlogs(true, Util.getIsPrivate(session), 1, Constant.SIZE/2);
+        List<Blog> stickBlogList = blogService.selectIndexBlogs(true, Util.getIsPrivate(session), 1, Constant.SIZE+5);
         // 查询非置顶非私有博客列表
-        List<Blog> newestBlogList = blogService.selectIndexBlogs(false, Util.getIsPrivate(session), 1, Constant.SIZE);
+        List<Blog> newestBlogList = blogService.selectIndexBlogs(false, Util.getIsPrivate(session), 1, Constant.SIZE+5);
         mav.addObject("stickBlogList",stickBlogList);
         mav.addObject("newestBlogList",newestBlogList);
         return mav;
