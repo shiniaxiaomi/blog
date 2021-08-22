@@ -25,7 +25,7 @@ public class MvcConfig implements WebMvcConfigurer {
                 .addPathPatterns("/**");//拦截所有路径
         //排除静态资源文件(排除的要根据请求频率从高到低排，底层实现实际上就是循环进行正则校验，如果匹配，则返回false，不继续下一个拦截器)
         registration.excludePathPatterns(
-                "**/*.html",
+                "/**/*.html",
                 "/**/*.js","/**/*.css","/favicon.ico","/**/*.png","/**/*.jpg",
                 "/**/*.gif","/**/*.map","/file/**","/**/*.ttf",
                 "/**/*.woff","/**/*.woff2","/**/*.svg");
