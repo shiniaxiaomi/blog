@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <!-- import CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+</head>
+
+<body>
+<div id="app">
+    <el-row>
+        <el-col :span="12">
+            <div>
+                <el-input placeholder="请输入内容" v-model="input_p" clearable>
+                    <template slot="prepend">p:</template>
+                </el-input>
+                <el-input placeholder="请输入内容" v-model="input_i" clearable>
+                    <template slot="prepend">i :</template>
+                </el-input>
+                <el-input placeholder="请输入内容" v-model="input_d" clearable>
+                    <template slot="prepend">d:</template>
+                </el-input>
+                <el-input placeholder="请输入内容" v-model="size" clearable>
+                    <template slot="prepend">点数:</template>
+                </el-input>
+            </div>
+
+            <el-button @click="pid([100])">生成</el-button>
+            <el-button @click="pid([100, 400, 200])">批量</el-button>
+        </el-col>
+    </el-row>
+</div>
+
+<div id="main" style="width: 1500px;height:500px;"></div>
+
+</body>
+<!-- import Vue before Element -->
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<!-- import JavaScript -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<!-- 引入 ECharts 文件 -->
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.1.2/dist/echarts.min.js"></script>
+<script>
+    var err = 0;
+    var lastErr = 0;
+    var sumErr = 0;
+
+    var out = 0;
+    var now = 0;
+
+    var myChart;
+
+    // 指定图表的配置项和数据
+    var option = {
+        xAxis: {
+            type: 'category'
+        },
+        yAxis: {
+            type: 'value'
+        },
+        series: []
+    };
+
+    new Vue({
+        el: '#app',
+        data: function () {
+            return {
+                input_p: 0.3,
+                input_i: 0,
+                input_d: 0,
+                size: 5
+            }
+        },
+        //钩子
+        created: function () {
+            // 基于准备好的dom，初始化echarts实例
+            myChart = echarts.init(document.getElementById('main'));
+        },
+        methods: {
+            // 检测滞后
+            _pid: function (now, target) {
+                lastErr = err;
+                err = target - now;
+                sumErr += err;
+                out = this.input_p * err + this.input_i * sumErr + this.input_d * (err - lastErr);
+                return out;
+            },
+            pid_compute: function (target) {
+                // 计算
+                var dataArr = {
+                    aimData: [],
+                    nowData: []
+                };
+                // 数值
+                var i = this.size;
+                while (i-- > 0) {
+                    // 给out添加扰动(0.9~1)
+                    out *= 0.9 + Math.random() * 0.1;
+                    now += out;
+                    dataArr.nowData.push(now);
+                    dataArr.aimData.push(target);
+                    out = this._pid(now, target);
+                }
+                return dataArr;
+            },
+            pid: function (target) {
+                // 清空旧数据
+                err = 0;
+                lastErr = 0;
+                sumErr = 0;
+                out = 0;
+                now = 0;
+
+                // 计算
+                option.series = [];
+                var aimData = [];
+                var nowData = [];
+                for (var i = 0; i < target.length; i++) {
+                    var dataArr = this.pid_compute(target[i]);
+                    for (var j = 0; j < dataArr.aimData.length; j++) {
+                        aimData.push(dataArr.aimData[j]);
+                        nowData.push(dataArr.nowData[j]);
+                    }
+                }
+                option.series.push({
+                    data: aimData,
+                    type: 'line',
+                    smooth: true
+                });
+                option.series.push({
+                    data: nowData,
+                    type: 'line',
+                    smooth: true
+                });
+                // 使用刚指定的配置项和数据显示图表。
+                myChart.setOption(option);
+            }
+        }
+    })
+</script>
+
+</html>
