@@ -44,6 +44,7 @@
 <script>
     var err = 0;
     var lastErr = 0;
+    var preErr = 0;
     var sumErr = 0;
 
     var out = 0;
@@ -80,13 +81,14 @@
         methods: {
             // 检测滞后
             _pid: function (now, target) {
+                preErr = lastErr;
                 lastErr = err;
                 err = target - now;
                 sumErr += err;
-                out = this.input_p * err + this.input_i * sumErr + this.input_d * (err - lastErr);
+                out = this.input_p * err + this.input_i * sumErr + this.input_d * ((err - lastErr) - (lastErr - preErr));
                 return out;
             },
-            pid_compute: function (target) {
+            pid_compute: function(target) {
                 // 计算
                 var dataArr = {
                     aimData: [],
@@ -118,7 +120,7 @@
                 var nowData = [];
                 for (var i = 0; i < target.length; i++) {
                     var dataArr = this.pid_compute(target[i]);
-                    for (var j = 0; j < dataArr.aimData.length; j++) {
+                    for (var j = 0; j < dataArr.aimData.length; j ++) {
                         aimData.push(dataArr.aimData[j]);
                         nowData.push(dataArr.nowData[j]);
                     }
