@@ -49,6 +49,7 @@
 
     var out = 0;
     var now = 0;
+    var lastNow = 0;
 
     var myChart;
 
@@ -70,7 +71,7 @@
                 input_p: 0.3,
                 input_i: 0,
                 input_d: 0,
-                size: 5
+                size: 100
             }
         },
         //钩子
@@ -79,13 +80,14 @@
             myChart = echarts.init(document.getElementById('main'));
         },
         methods: {
-            // 检测滞后
             _pid: function (now, target) {
                 preErr = lastErr;
                 lastErr = err;
-                err = target - now;
+                err = target - lastNow;
                 sumErr += err;
                 out = this.input_p * err + this.input_i * sumErr + this.input_d * ((err - lastErr) - (lastErr - preErr));
+                // 模拟硬件检测滞后
+                lastNow = now;
                 return out;
             },
             pid_compute: function(target) {
@@ -113,6 +115,7 @@
                 sumErr = 0;
                 out = 0;
                 now = 0;
+                lastNow = 0;
 
                 // 计算
                 option.series = [];
