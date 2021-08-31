@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.3.5/dist/index.css" />
     <script src="https://cdn.jsdelivr.net/npm/vditor@3.3.5/dist/index.min.js" defer></script>
     <!--icons-->
-    <link rel="stylesheet" href="http://at.alicdn.com/t/font_1990451_36hvvfymceu.css">
+    <link rel="stylesheet" href="http://at.alicdn.com/t/font_1990451_7h3xgxts4oe.css">
     <!--ztree-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ztree@3.5.24/css/zTreeStyle/zTreeStyle.css">
 
@@ -323,6 +323,26 @@
                         return;
                     }
                     window.location="/admin/file/"+blogId+"/1";
+                },
+            },
+            {
+                name: '置顶', tip: '置顶', icon: '<i class="iconfont icon-zhiding"></i>',tipPosition: 's',
+                click: () => {
+                    $.get("/blog/stickBlog?id="+blogId+"&isStick=true",function (data,status) {
+                        if(status==="success" && data.code){
+                            layer.msg(data.msg);
+                        }
+                    });
+                },
+            },
+            {
+                name: '取消置顶', tip: '取消置顶', icon: '<i class="iconfont icon-quxiaozhiding"></i>',tipPosition: 's',
+                click: () => {
+                    $.get("/blog/stickBlog?id="+blogId+"&isStick=false",function (data,status) {
+                        if(status==="success" && data.code){
+                            layer.msg(data.msg);
+                        }
+                    });
                 },
             },
             "|","outline", "insert-before","insert-after",'headings', 'link', '|',

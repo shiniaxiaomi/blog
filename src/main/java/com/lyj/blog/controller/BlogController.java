@@ -179,4 +179,15 @@ public class BlogController {
         return Message.success(null, redisService.selectVisitCountAll());
     }
 
+    @ResponseBody
+    @RequestMapping("stickBlog")
+    public Message stickBlog(int id, boolean isStick) {
+        blogService.stickBlog(id, isStick);
+        String msg = "置顶成功";
+        if (!isStick) {
+            msg = "取消置顶成功";
+        }
+        return Message.success(msg);
+    }
+
 }

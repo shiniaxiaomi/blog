@@ -90,7 +90,8 @@ create table config
     secret_id      varchar(40) null comment '腾讯翻译secretId',
     secret_key     varchar(40) null comment '腾讯翻译secretKey',
     email          varchar(40) null comment 'blog发送邮箱',
-    email_password varchar(40) null
+    email_password varchar(40) null,
+    redis_password varchar(40) null
 )
     comment '配置信息';
 

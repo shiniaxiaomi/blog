@@ -419,4 +419,8 @@ public class BlogService {
     public void updateHtmlById(String html, Integer id) {
         blogMapper.updateHtmlById(html, id);
     }
+
+    public void stickBlog(int id, boolean isStick) {
+        blogMapper.updateById(new Blog().setId(id).setIsStick(isStick));
+    }
 }
