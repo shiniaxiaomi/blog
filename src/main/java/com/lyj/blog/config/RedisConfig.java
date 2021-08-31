@@ -30,8 +30,8 @@ public class RedisConfig {
     public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
         // 设置特殊的key过期时间
         HashMap<String, RedisCacheConfiguration> entryTtlMap = new HashMap<>();
-        entryTtlMap.put("VisitCount",creatRedisCacheConfiguration(Duration.ZERO));//将VisitCount设置为不过期
-        entryTtlMap.put("VisitCountAll",creatRedisCacheConfiguration(Duration.ofHours(1)));//将VisitCountAll设置为1小时过期
+        entryTtlMap.put("VisitCount", creatRedisCacheConfiguration(Duration.ZERO));//将VisitCount设置为不过期
+        entryTtlMap.put("VisitCountAll", creatRedisCacheConfiguration(Duration.ofHours(1)));//将VisitCountAll设置为1小时过期
 
         // 创建缓存注解管理对立
         return new RedisCacheManager(
@@ -42,7 +42,7 @@ public class RedisConfig {
     }
 
     // 创建redis缓存配置
-    public RedisCacheConfiguration creatRedisCacheConfiguration(@NotNull Duration duration){
+    public RedisCacheConfiguration creatRedisCacheConfiguration(@NotNull Duration duration) {
         return RedisCacheConfiguration
                 .defaultCacheConfig()
                 .entryTtl(duration) // 设置key的过期时间

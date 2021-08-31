@@ -16,16 +16,16 @@ public class BlogFileRelationService {
     @Autowired
     BlogFileRelationMapper blogFileRelationMapper;
 
-    public void insert(BlogFileRelation blogFileRelation){
+    public void insert(BlogFileRelation blogFileRelation) {
         blogFileRelationMapper.insert(blogFileRelation);
     }
 
     public void deleteRelationByBlogIdAndFileId(int blogId, int fileId) {
         blogFileRelationMapper.delete(new QueryWrapper<BlogFileRelation>()
-                .eq("blog_id",blogId).eq("file_id",fileId));
+                .eq("blog_id", blogId).eq("file_id", fileId));
     }
 
     public void deleteRelationByFileId(int fileId) {
-        blogFileRelationMapper.delete(new QueryWrapper<BlogFileRelation>().eq("file_id",fileId));
+        blogFileRelationMapper.delete(new QueryWrapper<BlogFileRelation>().eq("file_id", fileId));
     }
 }

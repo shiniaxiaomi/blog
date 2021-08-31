@@ -18,7 +18,7 @@ public class ErrorPageController implements ErrorController {
     }
 
     @RequestMapping("error")
-    public String error(){
+    public String error() {
         return "common/error";
     }
 }

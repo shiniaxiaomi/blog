@@ -12,27 +12,27 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class ViewController {
 
     @GetMapping("word")
-    public String word(){
+    public String word() {
         return "word/index";
     }
 
     @GetMapping("tool/regular")
-    public String regular(){
+    public String regular() {
         return "tool/regular";
     }
 
     @GetMapping("index/toc")
-    public String toc(){
+    public String toc() {
         return "nav/toc";
     }
 
     @GetMapping("index/tag")
-    public String tag(){
+    public String tag() {
         return "nav/tag";
     }
 
     @GetMapping("index/feedback")
-    public String feedback(){
+    public String feedback() {
         return "nav/feedback";
     }
 

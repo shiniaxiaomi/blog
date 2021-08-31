@@ -23,11 +23,11 @@ public class LoadConfig {
 
     // 加载配置
     @PostConstruct
-    public void loadConfig(){
+    public void loadConfig() {
         config = configMapper.selectById(1);
     }
 
-    public static Config getInstance(){
+    public static Config getInstance() {
         return config;
     }
 

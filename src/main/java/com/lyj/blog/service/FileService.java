@@ -33,7 +33,7 @@ public class FileService {
     }
 
     @Transactional
-    public void insertFile(File file,int blogId) {
+    public void insertFile(File file, int blogId) {
         fileMapper.insert(file);
         //维护blog_file关系表
         BlogFileRelation blogFileRelation = new BlogFileRelation().setBlogId(blogId).setFileId(file.getId());
@@ -46,7 +46,7 @@ public class FileService {
         File file = fileMapper.selectOne(new QueryWrapper<File>().eq("name", name));
 
         // 删除博客和文件的关联关系
-        blogFileRelationService.deleteRelationByBlogIdAndFileId(blogId,file.getId());
+        blogFileRelationService.deleteRelationByBlogIdAndFileId(blogId, file.getId());
 
         // 更新引用的数量(原始引用数量-1)
         File updateCount = new File().setId(file.getId()).setCount(file.getCount() - 1);
@@ -59,7 +59,7 @@ public class FileService {
         File file = fileMapper.selectById(fileId);
 
         // 删除博客和文件的关联关系
-        blogFileRelationService.deleteRelationByBlogIdAndFileId(blogId,file.getId());
+        blogFileRelationService.deleteRelationByBlogIdAndFileId(blogId, file.getId());
 
         // 更新引用的数量(原始引用数量-1)
         File updateCount = new File().setId(file.getId()).setCount(file.getCount() - 1);
@@ -77,9 +77,9 @@ public class FileService {
 
         // 删除真实文件
         java.io.File ioFile = new java.io.File(filePath + file.getName());
-        if(ioFile.exists() && ioFile.delete()){
+        if (ioFile.exists() && ioFile.delete()) {
             System.out.println("文件删除成功");
-        }else{
+        } else {
             System.out.println("文件不存在或文件删除失败");
         }
     }

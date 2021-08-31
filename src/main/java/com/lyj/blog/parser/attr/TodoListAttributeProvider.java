@@ -15,8 +15,8 @@ public class TodoListAttributeProvider implements AttributeProvider { //Attribut
     @Override
     public void setAttributes(Node node, String s, Map<String, String> map) {
 
-        if(node.getFirstChild() instanceof TaskListItemMarker){
-            map.put("class","vditor-task");
+        if (node.getFirstChild() instanceof TaskListItemMarker) {
+            map.put("class", "vditor-task");
         }
     }
 }

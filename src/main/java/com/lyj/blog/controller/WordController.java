@@ -26,48 +26,47 @@ public class WordController {
     @NeedLogin
     @ResponseBody
     @PostMapping("/analyze")
-    public Message analyze(String name, String content){
+    public Message analyze(String name, String content) {
         Integer id = wordService.analyze(name, content);
-        return Message.success(null,id);//返回id
+        return Message.success(null, id);//返回id
     }
 
     @GetMapping("/detail/{id}")
-    public ModelAndView detail(@PathVariable int id){
-        ModelAndView mav=new ModelAndView("word/detail");
-        mav.addObject("id",id);
+    public ModelAndView detail(@PathVariable int id) {
+        ModelAndView mav = new ModelAndView("word/detail");
+        mav.addObject("id", id);
         return mav; //返回单词详情页
     }
 
     @ResponseBody
     @GetMapping("/content/{id}")
-    public Message content(@PathVariable int id){
+    public Message content(@PathVariable int id) {
         Word word = wordService.content(id);
-        return Message.success(null,word);
+        return Message.success(null, word);
     }
 
     @ResponseBody
     @GetMapping("/list")
-    public Message list(){
+    public Message list() {
         List<Word> list = wordService.list();//返回id和名称
-        return Message.success(null,list);
+        return Message.success(null, list);
     }
 
     @NeedLogin
     @ResponseBody
     @PostMapping("/saveIndex")
-    public Message saveIndex(int id,Integer[] index){
-        wordService.save(id,index);
+    public Message saveIndex(int id, Integer[] index) {
+        wordService.save(id, index);
         return Message.success("保存成功");
     }
 
     @NeedLogin
     @ResponseBody
     @PostMapping("/delete")
-    public Message delete(int id){
+    public Message delete(int id) {
         wordService.delete(id);
         return Message.success("删除成功");
     }
-
 
 
 }

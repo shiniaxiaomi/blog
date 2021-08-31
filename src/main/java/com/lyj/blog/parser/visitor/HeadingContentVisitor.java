@@ -25,7 +25,7 @@ public class HeadingContentVisitor extends AbstractVisitor {
     public void visit(Heading heading) {
         //统一处理并获取标题，并返回标题名称（统一生成html和生成ES的标题是一致的）
         String text = HeadingRenderer.handleHeadingForES(heading);
-        if(text==null) return;
+        if (text == null) return;
 
         Parser.appendEsText(Parser.HeadingSplitLine);//添加普通文本内容
         Parser.appendEsText(text);//添加标题
@@ -38,17 +38,16 @@ public class HeadingContentVisitor extends AbstractVisitor {
     // 代码块
     @Override
     public void visit(FencedCodeBlock fencedCodeBlock) {
-        Parser.appendEsText(fencedCodeBlock.getLiteral().replaceAll("#",""));//添加代码块，并去掉#
+        Parser.appendEsText(fencedCodeBlock.getLiteral().replaceAll("#", ""));//添加代码块，并去掉#
         Parser.appendEsText("\n");
     }
 
     // 内联代码块
     @Override
     public void visit(Code code) {
-        Parser.appendEsText(code.getLiteral().replaceAll("#",""));//添加内联代码块，并去掉#
+        Parser.appendEsText(code.getLiteral().replaceAll("#", ""));//添加内联代码块，并去掉#
         Parser.appendEsText("\n");
     }
-
 
 
 }

@@ -9,7 +9,8 @@ import lombok.experimental.Accessors;
 
 /**
  * blog_file_relation
- * @author 
+ *
+ * @author
  */
 @Accessors(chain = true)
 @Data

@@ -34,7 +34,7 @@ public class TagController {
     @NeedLogin
     @ResponseBody
     @PostMapping("update")
-    public Message update(Tag tag){
+    public Message update(Tag tag) {
         tagService.update(tag);
         return Message.success("更新成功");
     }
@@ -42,35 +42,35 @@ public class TagController {
     @NeedLogin
     @ResponseBody
     @PostMapping("insert")
-    public Message insert(Tag tag){
+    public Message insert(Tag tag) {
         tagService.insert(tag);
         return Message.success("添加成功");
     }
 
     @ResponseBody
     @GetMapping
-    public Message select(){
-        List<Tag> tags=tagService.select();
-        return Message.success(null,tags);
+    public Message select() {
+        List<Tag> tags = tagService.select();
+        return Message.success(null, tags);
     }
 
     // 支持批量删除
     @NeedLogin
     @ResponseBody
     @PostMapping("delete")
-    public Message deleteBatch(@RequestParam("tags") Integer[] tagIds){
+    public Message deleteBatch(@RequestParam("tags") Integer[] tagIds) {
         tagService.deleteBatch(tagIds);
         return Message.success("删除成功");
     }
 
     // 查询归档数据
     @GetMapping("{id}/{page}")
-    public ModelAndView selectBlogItemByTagId(@PathVariable("id") int id, @PathVariable("page") int page){
+    public ModelAndView selectBlogItemByTagId(@PathVariable("id") int id, @PathVariable("page") int page) {
         ModelAndView mav = new ModelAndView("blog/more");
         Page<Blog> blogPage = blogService.selectBlogItemsByTagId(id, page, Constant.SIZE);
         String tagName = tagService.selectTagNameById(id);
-        Util.renderPageParam(mav,blogPage,"/tag/"+id+"/",tagName+"标签 分页");
-        mav.addObject("moreBlogList",blogPage.getRecords());//分页数据
+        Util.renderPageParam(mav, blogPage, "/tag/" + id + "/", tagName + "标签 分页");
+        mav.addObject("moreBlogList", blogPage.getRecords());//分页数据
         return mav;
     }
 

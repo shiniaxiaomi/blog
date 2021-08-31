@@ -39,14 +39,14 @@ public class IndexController {
     RedisService redisService;
 
     @RequestMapping("/")
-    public ModelAndView index(){
+    public ModelAndView index() {
         ModelAndView mav = new ModelAndView("index");
         // 查询置顶非私有博客列表
-        List<Blog> stickBlogList = blogService.selectIndexBlogs(true, Util.getIsPrivate(session), 1, Constant.SIZE+5);
+        List<Blog> stickBlogList = blogService.selectIndexBlogs(true, Util.getIsPrivate(session), 1, Constant.SIZE + 5);
         // 查询非置顶非私有博客列表
-        List<Blog> newestBlogList = blogService.selectIndexBlogs(false, Util.getIsPrivate(session), 1, Constant.SIZE+5);
-        mav.addObject("stickBlogList",stickBlogList);
-        mav.addObject("newestBlogList",newestBlogList);
+        List<Blog> newestBlogList = blogService.selectIndexBlogs(false, Util.getIsPrivate(session), 1, Constant.SIZE + 5);
+        mav.addObject("stickBlogList", stickBlogList);
+        mav.addObject("newestBlogList", newestBlogList);
         return mav;
     }
 
@@ -57,55 +57,55 @@ public class IndexController {
     }
 
     @RequestMapping("index/about")
-    public ModelAndView about(){
+    public ModelAndView about() {
         ModelAndView mav = new ModelAndView("blog/index");
         Blog blog = null;
         try {
             blog = blogService.selectHTMLAndNameByName("关于");
-        }catch (Exception ignore){
+        } catch (Exception ignore) {
         }
-        if(blog==null){
-            mav.addObject("html","请先创建该博客");
+        if (blog == null) {
+            mav.addObject("html", "请先创建该博客");
             return mav;
         }
         redisService.incrVisitCountByBlogId(blog.getId());//自增blog的访问次数
-        mav.addObject("html",blog.getMdHtml());
-        mav.addObject("blogId",blog.getId());
-        mav.addObject("blogName",blog.getName());
+        mav.addObject("html", blog.getMdHtml());
+        mav.addObject("blogId", blog.getId());
+        mav.addObject("blogName", blog.getName());
 
         return mav;
     }
 
     @RequestMapping("index/todo")
-    public ModelAndView todo(){
+    public ModelAndView todo() {
         ModelAndView mav = new ModelAndView("blog/index");
         // 如果未登入，直接返回没有权限
-        if(!Util.isLogin(session)){
-            mav.addObject("html","请先登入");
+        if (!Util.isLogin(session)) {
+            mav.addObject("html", "请先登入");
             return mav;
         }
 
         Blog blog = null;
         try {
-            blog=blogService.selectHTMLAndNameByName("待办");
-        }catch (Exception ignore){
+            blog = blogService.selectHTMLAndNameByName("待办");
+        } catch (Exception ignore) {
         }
-        if(blog==null){
-            mav.addObject("html","请先创建该博客");
+        if (blog == null) {
+            mav.addObject("html", "请先创建该博客");
             return mav;
         }
         redisService.incrVisitCountByBlogId(blog.getId());//自增blog的访问次数
-        mav.addObject("html",blog.getMdHtml());
-        mav.addObject("blogId",blog.getId());
-        mav.addObject("blogName",blog.getName());
+        mav.addObject("html", blog.getMdHtml());
+        mav.addObject("blogId", blog.getId());
+        mav.addObject("blogName", blog.getName());
 
         return mav;
     }
 
     @ResponseBody
     @PostMapping("feedback")
-    public Message feedback(String email,String content){
-        commentService.feedback(email,content);
+    public Message feedback(String email, String content) {
+        commentService.feedback(email, content);
         return Message.success("反馈成功");
     }
 }

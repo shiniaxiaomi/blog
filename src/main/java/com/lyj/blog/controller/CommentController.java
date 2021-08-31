@@ -32,39 +32,39 @@ public class CommentController {
 
     @ResponseBody
     @GetMapping("{blogId}/{page}")
-    public Message list(@PathVariable("blogId") int blogId, @PathVariable("page") int page){
+    public Message list(@PathVariable("blogId") int blogId, @PathVariable("page") int page) {
         Page<Comment> commentPage = commentService.selectByBlogId(blogId, page, Constant.SIZE);
-        return Message.success(null,commentPage);
+        return Message.success(null, commentPage);
     }
 
     @ResponseBody
     @GetMapping("{id}")
-    public Message list(@PathVariable("id") int commentId){
+    public Message list(@PathVariable("id") int commentId) {
         Comment comment = commentService.selectLeftJoinCommentUserById(commentId);
-        return Message.success(null,comment);
+        return Message.success(null, comment);
     }
 
     @ResponseBody
     @PostMapping
-    public Message insert(@Validated CommentReq commentReq){
+    public Message insert(@Validated CommentReq commentReq) {
         int commentId = commentService.insert(commentReq);
-        return Message.success(null,commentId);
+        return Message.success(null, commentId);
     }
 
     @GetMapping("reply/{id}")
-    public ModelAndView reply(@PathVariable("id") int commentId){
+    public ModelAndView reply(@PathVariable("id") int commentId) {
         ModelAndView mav = new ModelAndView("blog/reply");
         //根据评论id查询blog的id和name
         Blog blog = blogService.selectBlogByCommentId(commentId);
-        mav.addObject("blogId",blog.getId());
-        mav.addObject("blogName",blog.getName());
-        mav.addObject("commentId",commentId);
+        mav.addObject("blogId", blog.getId());
+        mav.addObject("blogName", blog.getName());
+        mav.addObject("commentId", commentId);
         return mav;
     }
 
     @ResponseBody
     @PostMapping("like/incr")
-    public Message incr(@RequestParam("id") int commentId){
+    public Message incr(@RequestParam("id") int commentId) {
         commentService.incr(commentId);
         return Message.success(null);
     }

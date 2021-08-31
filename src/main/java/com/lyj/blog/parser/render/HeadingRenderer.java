@@ -37,48 +37,48 @@ public class HeadingRenderer implements NodeRenderer {
         Heading heading = (Heading) node;
 
         String text = handleHeading(heading);
-        if(text==null) return;
+        if (text == null) return;
 
         HashMap<String, String> map = new HashMap<>();
-        map.put("text",text);
+        map.put("text", text);
         map.put("id", Parser.getHeadingId());
-        html.tag("h"+heading.getLevel(),map);
+        html.tag("h" + heading.getLevel(), map);
         html.text(text);
-        html.tag("/h"+heading.getLevel());
+        html.tag("/h" + heading.getLevel());
     }
 
     // 处理heading，返回标题内容
-    public static String handleHeadingForES(Heading heading){
-        String headingName=null;
-        if(heading.getFirstChild()==null){
+    public static String handleHeadingForES(Heading heading) {
+        String headingName = null;
+        if (heading.getFirstChild() == null) {
             return null;
         }
-        switch (heading.getLevel()){
+        switch (heading.getLevel()) {
             case 1:
-                headingName = "# " +((Text) heading.getFirstChild()).getLiteral();
+                headingName = "# " + ((Text) heading.getFirstChild()).getLiteral();
                 break;
             case 2:
-                headingName = "## " +((Text) heading.getFirstChild()).getLiteral();
+                headingName = "## " + ((Text) heading.getFirstChild()).getLiteral();
                 break;
             case 3:
-                headingName = "### " +((Text) heading.getFirstChild()).getLiteral();
+                headingName = "### " + ((Text) heading.getFirstChild()).getLiteral();
                 break;
             case 4:
-                headingName = "#### " +((Text) heading.getFirstChild()).getLiteral();
+                headingName = "#### " + ((Text) heading.getFirstChild()).getLiteral();
                 break;
             case 5:
-                headingName = "##### " +((Text) heading.getFirstChild()).getLiteral();
+                headingName = "##### " + ((Text) heading.getFirstChild()).getLiteral();
                 break;
             case 6:
-                headingName = "###### " +((Text) heading.getFirstChild()).getLiteral();
+                headingName = "###### " + ((Text) heading.getFirstChild()).getLiteral();
                 break;
         }
         return headingName;
     }
 
     // 处理heading，返回标题内容
-    public static String handleHeading(Heading heading){
-        if(heading.getFirstChild()==null){
+    public static String handleHeading(Heading heading) {
+        if (heading.getFirstChild() == null) {
             return null;
         }
         return ((Text) heading.getFirstChild()).getLiteral();

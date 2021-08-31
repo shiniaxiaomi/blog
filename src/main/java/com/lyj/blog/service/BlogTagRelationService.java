@@ -23,8 +23,8 @@ public class BlogTagRelationService {
     @Autowired
     BlogTagRelationMapper blogTagRelationMapper;
 
-    public void deleteBatchByTagIds(List<Integer> tagIds){
-        if(tagIds.size()==0){
+    public void deleteBatchByTagIds(List<Integer> tagIds) {
+        if (tagIds.size() == 0) {
             return;
         }
         blogTagRelationMapper.delete(new QueryWrapper<BlogTagRelation>().in("tag_id", tagIds));
@@ -38,11 +38,11 @@ public class BlogTagRelationService {
     }
 
 
-    public void insertBatch(int blogId,List<Integer> tagIds) {
-        if(tagIds.size()==0){
+    public void insertBatch(int blogId, List<Integer> tagIds) {
+        if (tagIds.size() == 0) {
             return;
         }
-        blogTagRelationMapper.insertBatch(blogId,tagIds);
+        blogTagRelationMapper.insertBatch(blogId, tagIds);
     }
 
 //    public Page<BlogTagRelation> selectBlogIdByTagId(int tagId,int page,int size){
@@ -51,6 +51,6 @@ public class BlogTagRelationService {
 //    }
 
     public void deleteByBlogId(int blogId) {
-        blogTagRelationMapper.delete(new QueryWrapper<BlogTagRelation>().eq("blog_id",blogId));
+        blogTagRelationMapper.delete(new QueryWrapper<BlogTagRelation>().eq("blog_id", blogId));
     }
 }

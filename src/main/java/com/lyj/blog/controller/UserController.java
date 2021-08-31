@@ -28,7 +28,7 @@ public class UserController {
 
     @ResponseBody
     @PostMapping("login")
-    public Message login(String username,String password){
+    public Message login(String username, String password) {
         User user = new User().setUserName(username).setPassword(password);
         userService.login(user);
         return Message.success("登入成功");
@@ -36,9 +36,9 @@ public class UserController {
 
     // 获取登入表单
     @GetMapping("login/form")
-    public ModelAndView loginForm(HttpSession session){
+    public ModelAndView loginForm(HttpSession session) {
         ModelAndView mav = new ModelAndView("admin/login");
-        mav.addObject("isLogin",session.getAttribute("isLogin")!=null);
+        mav.addObject("isLogin", session.getAttribute("isLogin") != null);
         return mav;
     }
 
@@ -46,7 +46,7 @@ public class UserController {
     @NeedLogin
     @ResponseBody
     @GetMapping("exitLogin")
-    public Message exitLogin(HttpSession session){
+    public Message exitLogin(HttpSession session) {
         session.removeAttribute("isLogin");
         return Message.success("退出成功");
     }

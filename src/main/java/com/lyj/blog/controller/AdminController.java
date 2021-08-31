@@ -55,61 +55,61 @@ public class AdminController {
     @ResponseBody
     @NeedLogin
     @GetMapping("keepHeartbeat")
-    public Message keepHeartbeat(){
+    public Message keepHeartbeat() {
         return Message.success(null);
     }
 
     @NeedLogin
-    @GetMapping({"","blog"})
-    public String blog(){
+    @GetMapping({"", "blog"})
+    public String blog() {
         return "admin/blog";
     }
 
     @NeedLogin
     @GetMapping("blog/{id}")
-    public ModelAndView editBlog(@PathVariable("id") int id){
+    public ModelAndView editBlog(@PathVariable("id") int id) {
         ModelAndView mav = new ModelAndView("admin/blog");
-        mav.addObject("blogId",id);
+        mav.addObject("blogId", id);
         return mav;
     }
 
     @NeedLogin
     @GetMapping("blog/private/{page}")
-    public ModelAndView privateBlogList(@PathVariable("page") int page){
+    public ModelAndView privateBlogList(@PathVariable("page") int page) {
         ModelAndView mav = new ModelAndView("blog/more");
         Page<Blog> blogPage = blogService.selectBlogItemsPage(null, true, page, Constant.SIZE);
-        Util.renderPageParam(mav,blogPage,"/admin/blog/private/","私有博客 分页");
-        mav.addObject("moreBlogList",blogPage.getRecords());//分页数据
+        Util.renderPageParam(mav, blogPage, "/admin/blog/private/", "私有博客 分页");
+        mav.addObject("moreBlogList", blogPage.getRecords());//分页数据
         return mav;
     }
 
     @NeedLogin
     @GetMapping("tag")
-    public String tag(){
+    public String tag() {
         return "admin/tag";
     }
 
     // 分页查询所有的文件
     @NeedLogin
     @GetMapping("file/{page}")
-    public ModelAndView fileDashboard(@PathVariable("page") int page){
+    public ModelAndView fileDashboard(@PathVariable("page") int page) {
         ModelAndView mav = new ModelAndView("admin/file");
-        Page<File> filePage = fileService.selectPageByBlogId(null,page, Constant.SIZE);
-        Util.renderPageParam(mav,filePage,"/admin/file/","所有文件 分页");
-        mav.addObject("fileList",filePage.getRecords());
+        Page<File> filePage = fileService.selectPageByBlogId(null, page, Constant.SIZE);
+        Util.renderPageParam(mav, filePage, "/admin/file/", "所有文件 分页");
+        mav.addObject("fileList", filePage.getRecords());
         return mav;
     }
 
     // 分页查询具体某个blog的所有的文件
     @NeedLogin
     @GetMapping("file/{blogId}/{page}")
-    public ModelAndView fileDashboard(@PathVariable("blogId") int blogId,@PathVariable("page") int page){
+    public ModelAndView fileDashboard(@PathVariable("blogId") int blogId, @PathVariable("page") int page) {
         ModelAndView mav = new ModelAndView("admin/file");
-        Page<File> filePage = fileService.selectPageByBlogId(blogId,page, Constant.SIZE);
+        Page<File> filePage = fileService.selectPageByBlogId(blogId, page, Constant.SIZE);
         String blogName = blogService.selectNameById(blogId);
-        Util.renderPageParam(mav,filePage,"/admin/file/"+blogId+"/",blogName+"文件 分页");
-        mav.addObject("fileList",filePage.getRecords());
-        mav.addObject("blogId",blogId);
+        Util.renderPageParam(mav, filePage, "/admin/file/" + blogId + "/", blogName + "文件 分页");
+        mav.addObject("fileList", filePage.getRecords());
+        mav.addObject("blogId", blogId);
         return mav;
     }
 
@@ -118,29 +118,29 @@ public class AdminController {
     @NeedLogin
     @ResponseBody
     @GetMapping("initEsData")
-    public Message initEsData(){
+    public Message initEsData() {
         // 先删除掉所有数据
         try {
             esService.deleteData("{\"query\":{\"match_all\":{}}}");
-        }catch (Exception e){
+        } catch (Exception e) {
             // 如果删除失败，判断是否无索引，是，则创建索引
             try {
                 esService.existIndex();
-            }catch (Exception e1){
+            } catch (Exception e1) {
                 esService.createIndex();
             }
         }
 
         // 将数据库中的blog查询出来，然后通过解析后保存到es中
         List<Blog> blogs = blogService.selectBlogList();
-        try{
-            for(Blog blog:blogs){
+        try {
+            for (Blog blog : blogs) {
                 blog.setTagNames(tagService.selectTagNameByBlogId(blog.getId()));//组装tag
                 String html = parser.parse(blog);
                 // 将html更新会数据库
-                blogService.updateHtmlById(html,blog.getId());
+                blogService.updateHtmlById(html, blog.getId());
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             // 回滚数据
             esService.deleteData("{\"query\":{\"match_all\":{}}}");

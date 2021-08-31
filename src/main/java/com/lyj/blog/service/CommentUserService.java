@@ -26,7 +26,7 @@ public class CommentUserService {
         return commentUserMapper.selectOne(new QueryWrapper<CommentUser>().eq("email", email));
     }
 
-    public void updateById(CommentUser update){
+    public void updateById(CommentUser update) {
         commentUserMapper.updateById(update);
     }
 
@@ -36,7 +36,7 @@ public class CommentUserService {
 
     public String selectEmailById(int userId) {
         CommentUser commentUser = commentUserMapper.selectOne(new QueryWrapper<CommentUser>().select("email").eq("id", userId));
-        if(commentUser==null){
+        if (commentUser == null) {
             return null;
         }
         return commentUser.getEmail();

@@ -18,7 +18,7 @@ public class EmailConfig {
 
     @DependsOn("loadConfig") //依赖于加载配置类，所以加载配置类会先加载
     @Bean
-    public JavaMailSender javaMailSender(){
+    public JavaMailSender javaMailSender() {
         int port = 465;
 
         JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();

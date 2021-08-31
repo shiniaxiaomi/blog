@@ -41,10 +41,10 @@ public class CatalogService {
      * 前端传入的值：name,pid,isFolder,icon
      */
     @Transactional
-    @CacheEvict(value = "Catalog",allEntries=true)
-    public int insert(Catalog catalog){
+    @CacheEvict(value = "Catalog", allEntries = true)
+    public int insert(Catalog catalog) {
         // 如果是创建文件夹
-        if(catalog.getIsFolder()){
+        if (catalog.getIsFolder()) {
             catalogMapper.insert(catalog);
             return catalog.getId();// 返回目录id
         }
@@ -62,21 +62,21 @@ public class CatalogService {
     }
 
     // 根据是否登入查询对应的数据
-    @Cacheable(value = "Catalog",key = "#isPrivate")
+    @Cacheable(value = "Catalog", key = "#isPrivate")
     public List<Catalog> selectCatalog(Boolean isPrivate) {
         QueryWrapper<Catalog> queryWrapper = new QueryWrapper<Catalog>().orderByDesc("is_folder").orderByAsc("name");
         // 如果传入的是false，则用户未登入，查询公有内容（如果为true，则查询所有内容）
-        if(!isPrivate){
+        if (!isPrivate) {
             queryWrapper.eq("is_private", false);
         }
         return catalogMapper.selectList(queryWrapper);
     }
 
     @Transactional
-    @CacheEvict(value = "Catalog",allEntries=true)
+    @CacheEvict(value = "Catalog", allEntries = true)
     public void delete(Catalog catalog) {
         // 如果是文件，则删除文件
-        if(!catalog.getIsFolder()){
+        if (!catalog.getIsFolder()) {
             blogService.delete(catalog.getBlogId());
         }
 
@@ -85,11 +85,11 @@ public class CatalogService {
     }
 
     @Transactional
-    @CacheEvict(value = "Catalog",allEntries=true)
+    @CacheEvict(value = "Catalog", allEntries = true)
     public void updateName(Catalog catalog) {
         // 如果是文件，更改blogName
-        if(!catalog.getIsFolder()){
-            blogService.updateName(catalog.getBlogId(),catalog.getName());
+        if (!catalog.getIsFolder()) {
+            blogService.updateName(catalog.getBlogId(), catalog.getName());
         }
 
         // 更新目录itemName
@@ -98,14 +98,14 @@ public class CatalogService {
     }
 
     @Transactional
-    @CacheEvict(value = "Catalog",allEntries=true)
+    @CacheEvict(value = "Catalog", allEntries = true)
     public void updatePid(Catalog catalog) {
         // 判断校验pid是否为文件夹
         Catalog pidCatalog = catalogMapper.selectOne(new QueryWrapper<Catalog>().select("is_folder").eq("id", catalog.getPid()));
-        if(pidCatalog==null){
+        if (pidCatalog == null) {
             throw new MessageException("没有对应的文件夹");
         }
-        if(!pidCatalog.getIsFolder()){
+        if (!pidCatalog.getIsFolder()) {
             throw new MessageException("移动失败，请选择对应的文件夹");
         }
 
@@ -114,48 +114,48 @@ public class CatalogService {
         // 移动,并更新私有状态
         catalogMapper.updateById(catalog);
         // 如果原始的私有状态与修改的私有状态相等，则只修改pid即可，无需修改私有状态
-        if(catalogDB.getIsPrivate()!=catalog.getIsPrivate()){
-            List<Integer> fileIds=new ArrayList<>();// 保存文件ids
-            List<Integer> folderIds=new ArrayList<>();// 保存文件夹ids
-            getFileAndFolderByCatalog(catalog,fileIds,folderIds);
+        if (catalogDB.getIsPrivate() != catalog.getIsPrivate()) {
+            List<Integer> fileIds = new ArrayList<>();// 保存文件ids
+            List<Integer> folderIds = new ArrayList<>();// 保存文件夹ids
+            getFileAndFolderByCatalog(catalog, fileIds, folderIds);
             // 批量更新文件的私有状态（包括了blog中缓存的私有状态）
-            if(fileIds.size()!=0){
+            if (fileIds.size() != 0) {
                 catalogMapper.update(new Catalog().setIsPrivate(catalog.getIsPrivate()),
-                        new UpdateWrapper<Catalog>().in("id",fileIds.toArray()));
+                        new UpdateWrapper<Catalog>().in("id", fileIds.toArray()));
                 blogMapper.update(new Blog().setIsPrivate(catalog.getIsPrivate()),
-                        new UpdateWrapper<Blog>().in("id",fileIds.toArray()));
+                        new UpdateWrapper<Blog>().in("id", fileIds.toArray()));
             }
             // 批量更新文件夹的私有状态
-            if(folderIds.size()!=0){
+            if (folderIds.size() != 0) {
                 catalogMapper.update(new Catalog().setIsPrivate(catalog.getIsPrivate()),
-                        new UpdateWrapper<Catalog>().in("id",folderIds.toArray()));
+                        new UpdateWrapper<Catalog>().in("id", folderIds.toArray()));
             }
             // 批量更新es中文件的私有状态
-            esService.updateIsPrivateByBlogIds(fileIds,catalog.getIsPrivate());
+            esService.updateIsPrivateByBlogIds(fileIds, catalog.getIsPrivate());
         }
     }
 
     // 根据catalog查询该节点下的所有文件和文件夹
-    private void getFileAndFolderByCatalog(Catalog catalog,List<Integer> fileIds,List<Integer> folderIds){
+    private void getFileAndFolderByCatalog(Catalog catalog, List<Integer> fileIds, List<Integer> folderIds) {
         // 如果当前移动节点是文件夹，则将其下面的所有节点都修改私有状态
-        if(catalog.getIsFolder()){
+        if (catalog.getIsFolder()) {
             List<Catalog> catalogs = catalogMapper.selectListByPid(catalog.getId());
-            ArrayDeque<Integer> folderQueue=new ArrayDeque<>();
-            for(Catalog item: catalogs){
-                if(!item.getIsFolder()){
+            ArrayDeque<Integer> folderQueue = new ArrayDeque<>();
+            for (Catalog item : catalogs) {
+                if (!item.getIsFolder()) {
                     fileIds.add(item.getId());
-                }else{
+                } else {
                     folderIds.add(item.getId());
                     folderQueue.push(item.getId());
                 }
             }
-            while(folderQueue.size()!=0){
+            while (folderQueue.size() != 0) {
                 Integer folderId = folderQueue.pop();
                 List<Catalog> items = catalogMapper.selectListByPid(folderId);
-                for(Catalog item: items){
-                    if(!item.getIsFolder()){
+                for (Catalog item : items) {
+                    if (!item.getIsFolder()) {
                         fileIds.add(item.getId());
-                    }else{
+                    } else {
                         folderIds.add(item.getId());
                         folderQueue.push(item.getId());
                     }
@@ -183,13 +183,13 @@ public class CatalogService {
 //    }
 
     // 根据blogId查询是否是私有的
-    @Cacheable(value = "Catalog",key = "#blogId")
+    @Cacheable(value = "Catalog", key = "#blogId")
     public Catalog selectIsPrivateByBlogId(int blogId) {
         return catalogMapper.selectOne(new QueryWrapper<Catalog>()
                 .select("id", "pid", "is_private").eq("blog_id", blogId));
     }
 
-    @Cacheable(value = "Catalog",key = "'folderList'")
+    @Cacheable(value = "Catalog", key = "'folderList'")
     public List<Catalog> selectFolder() {
         return catalogMapper.selectFolders();
     }

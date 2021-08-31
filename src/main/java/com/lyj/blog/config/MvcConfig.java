@@ -17,6 +17,7 @@ public class MvcConfig implements WebMvcConfigurer {
 
     /**
      * 拦截器的路径排除：先循环进行排除的正则校验，如果匹配，则直接返回false；排除的规则遍历完后，进行拦截的正则校验
+     *
      * @param registry
      */
     @Override
@@ -26,8 +27,8 @@ public class MvcConfig implements WebMvcConfigurer {
         //排除静态资源文件(排除的要根据请求频率从高到低排，底层实现实际上就是循环进行正则校验，如果匹配，则返回false，不继续下一个拦截器)
         registration.excludePathPatterns(
                 "/**/*.html",
-                "/**/*.js","/**/*.css","/favicon.ico","/**/*.png","/**/*.jpg",
-                "/**/*.gif","/**/*.map","/file/**","/**/*.ttf",
-                "/**/*.woff","/**/*.woff2","/**/*.svg");
+                "/**/*.js", "/**/*.css", "/favicon.ico", "/**/*.png", "/**/*.jpg",
+                "/**/*.gif", "/**/*.map", "/file/**", "/**/*.ttf",
+                "/**/*.woff", "/**/*.woff2", "/**/*.svg");
     }
 }

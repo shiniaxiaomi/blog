@@ -37,12 +37,12 @@ public class TagService {
     EsService esService;
 
 
-    @CacheEvict(value = "Tag",allEntries = true)
-    public void update(Tag tag){
+    @CacheEvict(value = "Tag", allEntries = true)
+    public void update(Tag tag) {
         tagMapper.updateById(tag);
     }
 
-    @CacheEvict(value = "Tag",allEntries = true)
+    @CacheEvict(value = "Tag", allEntries = true)
     public void insert(Tag tag) {
         tagMapper.insert(tag);
     }
@@ -53,7 +53,7 @@ public class TagService {
     }
 
     @Transactional
-    @CacheEvict(value = "Tag",allEntries = true)
+    @CacheEvict(value = "Tag", allEntries = true)
     public void deleteBatch(Integer[] tagIds) {
         List<Integer> ids = Arrays.asList(tagIds);
         // 删除对应tag
@@ -65,11 +65,12 @@ public class TagService {
 
     /**
      * 全量的同步标签关联状态
+     *
      * @param tags 目前blog所关联的tag
      */
     @Transactional
-    public void updateRelation(int blogId,Integer[] tags) {
-        if(tags==null){
+    public void updateRelation(int blogId, Integer[] tags) {
+        if (tags == null) {
             return;
         }
 
@@ -99,13 +100,13 @@ public class TagService {
         blogTagRelationService.deleteBatchByTagIds(deleteList);
 
         // 批量新增标签关系
-        blogTagRelationService.insertBatch(blogId,insertList);
+        blogTagRelationService.insertBatch(blogId, insertList);
 
         // 更新ES中的tagName（以参数参入的为准）
         List<Tag> tagList = tagMapper.selectList(new QueryWrapper<Tag>().select("name").in("id", tags));
         StringBuilder sb = new StringBuilder();
         tagList.forEach(tag -> sb.append(tag.getName()).append(","));
-        esService.updateTagNameByBlogId(blogId,sb.toString());
+        esService.updateTagNameByBlogId(blogId, sb.toString());
 
     }
 
@@ -113,12 +114,12 @@ public class TagService {
     public String selectTagNameByBlogId(Integer blogId) {
         List<String> tagNames = tagMapper.selectTagNameByBlogId(blogId);
         StringBuilder sb = new StringBuilder();
-        tagNames.forEach(tagName-> sb.append(tagName).append(","));
+        tagNames.forEach(tagName -> sb.append(tagName).append(","));
         return sb.toString();
     }
 
     public List<Tag> selectTagByBlogIds(List<Integer> blogIds) {
-        if(blogIds.size()==0){
+        if (blogIds.size() == 0) {
             return Collections.emptyList();
         }
         List<Tag> tags = tagMapper.selectTagByBlogIds(blogIds);

@@ -28,16 +28,16 @@ public class EsController {
 
     @NeedLogin
     @GetMapping
-    public String es(){
+    public String es() {
         return "admin/es";
     }
 
     @NeedLogin
     @ResponseBody
     @PostMapping("search")
-    public Message search(String json,String method) {
+    public Message search(String json, String method) {
         // get请求
-        if(method!=null && method.equals("get")){
+        if (method != null && method.equals("get")) {
             return esService.searchDataByGet(json);
         }
         return esService.searchDataByPost(json);

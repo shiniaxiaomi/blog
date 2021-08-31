@@ -21,23 +21,23 @@ public class ToolController {
 
     @ResponseBody
     @PostMapping("regular")
-    public String regularTest(String content,String regular){
+    public String regularTest(String content, String regular) {
         Pattern pattern = null;
         try {
-            pattern=Pattern.compile(regular);
-        }catch (Exception e){
+            pattern = Pattern.compile(regular);
+        } catch (Exception e) {
             e.printStackTrace();
-            return "正则表达式不正确："+e.getMessage();
+            return "正则表达式不正确：" + e.getMessage();
         }
         // 现在创建 matcher 对象
         Matcher matcher = pattern.matcher(content);
         // 打印
         StringBuilder sb = new StringBuilder();
-        while(matcher.find()) {
+        while (matcher.find()) {
             sb.append(matcher.group());
             sb.append("\n-------------\n");
         }
 
-        return "".equals(sb.toString())?"没有匹配到结果":sb.toString();
+        return "".equals(sb.toString()) ? "没有匹配到结果" : sb.toString();
     }
 }

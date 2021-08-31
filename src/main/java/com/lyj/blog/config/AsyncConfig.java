@@ -38,7 +38,7 @@ public class AsyncConfig implements AsyncConfigurer {
     @Override
     public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
         return (throwable, method, objects) -> {
-            log.error("异步任务处理异常",throwable);//记录一下日志
+            log.error("异步任务处理异常", throwable);//记录一下日志
         };
     }
 }

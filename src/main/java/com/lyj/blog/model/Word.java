@@ -10,7 +10,8 @@ import lombok.experimental.Accessors;
 
 /**
  * word
- * @author 
+ *
+ * @author
  */
 @Accessors(chain = true)
 @Data

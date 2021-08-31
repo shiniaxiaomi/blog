@@ -36,27 +36,28 @@ public abstract class Parser {
             }).build();//创建html渲染器
     //============================================================
     Pattern headingPattern = Pattern.compile("^#+ .*\n");//用于匹配标题
-    public static final String HeadingSplitLine="=======------=======";//内容分割线
+    public static final String HeadingSplitLine = "=======------=======";//内容分割线
 
-    private static StringBuilder sb=new StringBuilder();
-    private static List<String> headingIdList=new ArrayList<>();
-    private static int headingIdIndex=0;
+    private static StringBuilder sb = new StringBuilder();
+    private static List<String> headingIdList = new ArrayList<>();
+    private static int headingIdIndex = 0;
 
     // 添加ES搜索的展示文本
-    public static void appendEsText(String text){
+    public static void appendEsText(String text) {
         sb.append(text);
     }
 
 
     // 添加标题id
-    public static void addHeadingId(String headingId){
+    public static void addHeadingId(String headingId) {
         headingIdList.add(headingId);
     }
+
     // 清空数据
-    public static void clearData(){
-        sb=new StringBuilder();
-        headingIdList=new ArrayList<>();
-        headingIdIndex=0;
+    public static void clearData() {
+        sb = new StringBuilder();
+        headingIdList = new ArrayList<>();
+        headingIdIndex = 0;
     }
 
     public static String getHeadingId() {
@@ -65,18 +66,19 @@ public abstract class Parser {
 
     /**
      * 核心方法
+     *
      * @param blog 传入需要解析的blog
      * @return 返回解析后的html
      */
-    public String parse(Blog blog){
+    public String parse(Blog blog) {
         // 解析md并转化为html，收集heading信息（已经生成了headingId）
         String html = parseMdToHtml(blog.getMd());
 
         // 组装并生成ESHeading对象
-        List<EsHeading> esHeadings = buildEsHeading(sb, headingIdList,blog);
+        List<EsHeading> esHeadings = buildEsHeading(sb, headingIdList, blog);
 
         // 保存到ES中
-        insertHeadingToEs(headingIdList,esHeadings,blog);
+        insertHeadingToEs(headingIdList, esHeadings, blog);
 
         // 最后一步，一定要清空数据
         clearData();
@@ -86,7 +88,7 @@ public abstract class Parser {
 
     protected abstract List<EsHeading> buildEsHeading(StringBuilder sb, List<String> headingIdList, Blog blog);
 
-    protected abstract void insertHeadingToEs(List<String> headingIdList, List<EsHeading> esHeadings,Blog blog);
+    protected abstract void insertHeadingToEs(List<String> headingIdList, List<EsHeading> esHeadings, Blog blog);
 
     // 解析md为html，并收集heading的相关数据
     abstract String parseMdToHtml(String md);

@@ -7,6 +7,6 @@ package com.lyj.blog.config;
  */
 public interface Constant {
 
-    int SIZE=10; //分页的默认大小
+    int SIZE = 10; //分页的默认大小
 
 }

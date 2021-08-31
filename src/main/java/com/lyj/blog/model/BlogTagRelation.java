@@ -8,7 +8,8 @@ import lombok.Data;
 
 /**
  * blog_tag_relation
- * @author 
+ *
+ * @author
  */
 @Data
 public class BlogTagRelation implements Serializable {

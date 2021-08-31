@@ -25,13 +25,13 @@ public class UserService {
 
     public boolean login(User user) {
         User dbUser = userMapper.selectOne(new QueryWrapper<User>().select("password").eq("user_name", user.getUserName()));
-        if(dbUser==null){
+        if (dbUser == null) {
             throw new MessageException("用户名不存在");
         }
-        if(!dbUser.getPassword().equals(user.getPassword())){
+        if (!dbUser.getPassword().equals(user.getPassword())) {
             throw new MessageException("密码错误");
         }
-        session.setAttribute("isLogin",true);
+        session.setAttribute("isLogin", true);
         return true;
     }
 }

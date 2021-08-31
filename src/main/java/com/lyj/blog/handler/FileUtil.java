@@ -14,7 +14,7 @@ import java.util.zip.ZipOutputStream;
 public class FileUtil {
 
     // 创建一个zip压缩文件
-    public static String createZipFile(File sourceFile,String targetPath){
+    public static String createZipFile(File sourceFile, String targetPath) {
         // 将创建好的文件夹生成一个压缩包，并添加上备份日期
         try {
             // 目标zip文件
@@ -23,74 +23,74 @@ public class FileUtil {
                             .format(LocalDateTime.now()) + ".zip");
             ZipOutputStream zipOutputStream = new ZipOutputStream(
                     new BufferedOutputStream(new FileOutputStream(zipFile)), StandardCharsets.UTF_8);
-            compressedFile(zipOutputStream,sourceFile);//file源文件
+            compressedFile(zipOutputStream, sourceFile);//file源文件
             zipOutputStream.close();
             return zipFile.getName();
         } catch (IOException e) {
-            log.error("md文件夹压缩失败",e);
+            log.error("md文件夹压缩失败", e);
         }
 
         return null;
     }
 
     // 递归的压缩文件夹或文件
-    private static void compressedFile(ZipOutputStream zipOutputStream, File file){
-        if(file==null) return;
+    private static void compressedFile(ZipOutputStream zipOutputStream, File file) {
+        if (file == null) return;
 
         boolean isFile = file.isFile();
-        if(isFile){
+        if (isFile) {
             // 使用FileReader能够解决编码问题
-            try(BufferedReader reader = new BufferedReader(new FileReader(file))){
+            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
                 // 创建压缩包中的文件节点
                 zipOutputStream.putNextEntry(new ZipEntry(file.getName()));
                 String buff;
-                while((buff=reader.readLine())!=null){
+                while ((buff = reader.readLine()) != null) {
                     zipOutputStream.write(buff.getBytes());
                     zipOutputStream.write(System.lineSeparator().getBytes());//换行符
                 }
-            }catch (IOException e) {
-                log.error("压缩文件时，"+file.getAbsolutePath()+"文件压缩失败");
+            } catch (IOException e) {
+                log.error("压缩文件时，" + file.getAbsolutePath() + "文件压缩失败");
             }
         }
 
         File[] files = file.listFiles();
-        if(files==null) return;
+        if (files == null) return;
 
         // 创建压缩包中的文件夹节点
         try {
             zipOutputStream.putNextEntry(new ZipEntry(file.getName()));
-            for (File zipFile:files){
-                compressedFile(zipOutputStream,zipFile);
+            for (File zipFile : files) {
+                compressedFile(zipOutputStream, zipFile);
             }
         } catch (IOException e) {
-            log.error("压缩文件时，"+file.getAbsolutePath()+"文件夹压缩失败");
+            log.error("压缩文件时，" + file.getAbsolutePath() + "文件夹压缩失败");
         }
     }
 
     // 递归删除文件夹或文件
-    public static void deleteFileOrDir(File file){
-        if(file==null) return;
+    public static void deleteFileOrDir(File file) {
+        if (file == null) return;
 
         boolean isFile = file.isFile();
-        if(isFile){
+        if (isFile) {
             boolean delete = file.delete();
-            if(!delete){
-                throw new MessageException(file.getAbsolutePath()+"文件删除失败");
+            if (!delete) {
+                throw new MessageException(file.getAbsolutePath() + "文件删除失败");
             }
             return;
         }
 
         File[] files = file.listFiles();
-        if(files==null) return;
+        if (files == null) return;
 
-        for(File deleteFile:files){
+        for (File deleteFile : files) {
             deleteFileOrDir(deleteFile);
         }
 
         // 删除自己
         boolean delete = file.delete();
-        if(!delete){
-            throw new MessageException(file.getAbsolutePath()+"文件夹删除失败");
+        if (!delete) {
+            throw new MessageException(file.getAbsolutePath() + "文件夹删除失败");
         }
     }
 

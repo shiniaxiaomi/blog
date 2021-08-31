@@ -31,13 +31,13 @@ public class AsyncService {
 
     // 开启异步发送反馈邮件
     @Async
-    public void feedbackMail(String from,String content){
+    public void feedbackMail(String from, String content) {
         try {
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mailSender.createMimeMessage(), false);
             mimeMessageHelper.setFrom("lyj.8066@qq.com");
             mimeMessageHelper.setTo("lyj.8066@qq.com");
             mimeMessageHelper.setSubject("博客反馈意见");
-            mimeMessageHelper.setText("<html><div>反馈内容:<br>"+content+"</div><br><div>发送人:<br>"+from+"</div></html>",true);//邮件内容
+            mimeMessageHelper.setText("<html><div>反馈内容:<br>" + content + "</div><br><div>发送人:<br>" + from + "</div></html>", true);//邮件内容
             mailSender.send(mimeMessageHelper.getMimeMessage());//正式发送邮件
         } catch (Exception e) {
             throw new RuntimeException("邮件发送异常");
@@ -46,7 +46,7 @@ public class AsyncService {
 
     // 开启异步发送评论回复邮件
     @Async
-    public void sendMail(String toEmail, Map<String, Object> model){
+    public void sendMail(String toEmail, Map<String, Object> model) {
         try {
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mailSender.createMimeMessage(), false);
             mimeMessageHelper.setFrom("lyj.8066@qq.com");
@@ -54,8 +54,8 @@ public class AsyncService {
             mimeMessageHelper.setSubject("来自 http://luyingjie.cn 的评论回复");
 
             Template template = configuration.getTemplate("tool/email.ftl");
-            String html = FreeMarkerTemplateUtils.processTemplateIntoString(template,model);
-            mimeMessageHelper.setText(html,true);//邮件内容
+            String html = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
+            mimeMessageHelper.setText(html, true);//邮件内容
             mailSender.send(mimeMessageHelper.getMimeMessage());//正式发送邮件
         } catch (Exception e) {
             throw new RuntimeException("邮件发送异常");
@@ -65,7 +65,7 @@ public class AsyncService {
 
     // 开启异步发送通知邮件
     @Async
-    public void notifyEmail(int blogId,String html) {
+    public void notifyEmail(int blogId, String html) {
         try {
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mailSender.createMimeMessage(), false);
             mimeMessageHelper.setFrom("lyj.8066@qq.com");
@@ -73,7 +73,7 @@ public class AsyncService {
             mimeMessageHelper.setSubject("收到新评论");
 
             String sb = html + "<br><a href='http://" + host + "/blog/" + blogId + "'>查看博客</a>";
-            mimeMessageHelper.setText(sb,true);//邮件内容
+            mimeMessageHelper.setText(sb, true);//邮件内容
             mailSender.send(mimeMessageHelper.getMimeMessage());//正式发送邮件
         } catch (MessagingException e) {
             throw new RuntimeException("邮件发送异常");

@@ -23,11 +23,11 @@ public class RedisService {
     @Cacheable("VisitCountAll")
     public Integer selectVisitCountAll() {
         Integer count = blogMapper.selectSum();
-        return count==null?0:count;
+        return count == null ? 0 : count;
     }
 
     // 手动自增blog对应的访问次数(先看key存不存在，如果不存在，则设置成数据库当中的值)
-    public void incrVisitCountByBlogId(int blogId){
+    public void incrVisitCountByBlogId(int blogId) {
         try (RedisConnection connection = redisConnectionFactory.getConnection()) {
             Boolean exists = connection.exists(("VisitCount::" + blogId).getBytes());
             if (exists == null || !exists) {
@@ -42,20 +42,20 @@ public class RedisService {
 
     // 每天0点写一次库
     @Scheduled(cron = "0 0 0 * * *")
-    public void writeVisitCountToDB(){
-        try(RedisConnection connection = redisConnectionFactory.getConnection()){
+    public void writeVisitCountToDB() {
+        try (RedisConnection connection = redisConnectionFactory.getConnection()) {
             Set<byte[]> keys = connection.keys("VisitCount::*".getBytes());
-            if(keys==null){
+            if (keys == null) {
                 return;
             }
-            for(byte[] bytes:keys){
+            for (byte[] bytes : keys) {
                 byte[] keyBytes = connection.get(bytes);
-                if(keyBytes==null){
+                if (keyBytes == null) {
                     continue;
                 }
                 Integer visitCount = Integer.valueOf(new String(keyBytes));
                 Integer blogId = Integer.valueOf(new String(bytes).substring("VisitCount::".length()));
-                blogMapper.updateVisitCountByBlogId(blogId,visitCount);
+                blogMapper.updateVisitCountByBlogId(blogId, visitCount);
             }
         }
     }

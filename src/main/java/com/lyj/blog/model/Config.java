@@ -8,7 +8,8 @@ import lombok.Data;
 
 /**
  * config
- * @author 
+ *
+ * @author
  */
 @Data
 public class Config implements Serializable {

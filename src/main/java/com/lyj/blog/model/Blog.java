@@ -12,11 +12,12 @@ import lombok.experimental.Accessors;
 
 /**
  * blog
- * @author 
+ *
+ * @author
  */
 @Accessors(chain = true)
 @Data
-public class Blog implements Serializable  {
+public class Blog implements Serializable {
     @TableId(type = IdType.AUTO)
     private Integer id;
 

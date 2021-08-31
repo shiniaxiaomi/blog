@@ -9,7 +9,8 @@ import lombok.experimental.Accessors;
 
 /**
  * comment_user
- * @author 
+ *
+ * @author
  */
 @Accessors(chain = true)
 @Data

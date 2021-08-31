@@ -26,8 +26,8 @@ public class FileController {
     @NeedLogin
     @ResponseBody
     @PostMapping("deleteRelationByFileName")
-    public Message deleteRelationByFileNameAndBlogId(@RequestParam("name") String name,@RequestParam("blogId") int blogId){
-        fileService.deleteRelation(name,blogId);
+    public Message deleteRelationByFileNameAndBlogId(@RequestParam("name") String name, @RequestParam("blogId") int blogId) {
+        fileService.deleteRelation(name, blogId);
         return Message.success("删除成功");
     }
 
@@ -35,8 +35,8 @@ public class FileController {
     @NeedLogin
     @ResponseBody
     @PostMapping("deleteRelationByFileId")
-    public Message deleteRelationByFileIdAndBlogId(@RequestParam("fileId") int fileId,@RequestParam("blogId") int blogId){
-        fileService.deleteRelation(fileId,blogId);
+    public Message deleteRelationByFileIdAndBlogId(@RequestParam("fileId") int fileId, @RequestParam("blogId") int blogId) {
+        fileService.deleteRelation(fileId, blogId);
         return Message.success("删除成功");
     }
 
@@ -44,7 +44,7 @@ public class FileController {
     @NeedLogin
     @ResponseBody
     @PostMapping("delete")
-    public Message deleteFile(@RequestParam("id") int id){
+    public Message deleteFile(@RequestParam("id") int id) {
         fileService.delete(id);
         return Message.success("删除成功");
     }

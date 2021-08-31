@@ -9,7 +9,8 @@ import java.io.Serializable;
 
 /**
  * file
- * @author 
+ *
+ * @author
  */
 @Accessors(chain = true)
 @Data

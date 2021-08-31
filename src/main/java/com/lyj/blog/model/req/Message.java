@@ -17,23 +17,26 @@ public class Message {
     public Message() {
     }
 
-    public Message(boolean code, String msg ,Object data) {
+    public Message(boolean code, String msg, Object data) {
         this.code = code;
         this.data = data;
         this.msg = msg;
     }
 
-    public static Message success(String msg,Object data){
-        return new Message(true,msg,data);
+    public static Message success(String msg, Object data) {
+        return new Message(true, msg, data);
     }
-    public static Message success(String msg){
-        return new Message(true,msg,null);
+
+    public static Message success(String msg) {
+        return new Message(true, msg, null);
     }
-    public static Message error(String msg,Object data){
-        return new Message(false,msg,data);
+
+    public static Message error(String msg, Object data) {
+        return new Message(false, msg, data);
     }
-    public static Message error(String msg){
-        return new Message(false,msg,null);
+
+    public static Message error(String msg) {
+        return new Message(false, msg, null);
     }
 
     //直接转化为json

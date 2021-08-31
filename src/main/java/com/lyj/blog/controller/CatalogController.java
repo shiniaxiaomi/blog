@@ -31,16 +31,16 @@ public class CatalogController {
     @NeedLogin
     @ResponseBody
     @PostMapping("insert")
-    public Message insert(Catalog catalog){
+    public Message insert(Catalog catalog) {
         catalogService.insert(catalog);
-        return Message.success("添加成功",catalog);
+        return Message.success("添加成功", catalog);
     }
 
     // 删除文件夹或者文件
     @NeedLogin
     @ResponseBody
     @PostMapping("delete")
-    public Message delete(Catalog catalog){
+    public Message delete(Catalog catalog) {
         catalogService.delete(catalog);
         return Message.success("删除成功");
     }
@@ -49,7 +49,7 @@ public class CatalogController {
     @NeedLogin
     @ResponseBody
     @PostMapping("updateName")
-    public Message updateName(Catalog catalog){
+    public Message updateName(Catalog catalog) {
         catalogService.updateName(catalog);
         return Message.success("更新成功");
     }
@@ -58,7 +58,7 @@ public class CatalogController {
     @NeedLogin
     @ResponseBody
     @PostMapping("move")
-    public Message move(Catalog catalog){
+    public Message move(Catalog catalog) {
         catalogService.updatePid(catalog);
         return Message.success("移动成功");
     }
@@ -66,16 +66,16 @@ public class CatalogController {
 
     @ResponseBody
     @GetMapping
-    public Message selectCatalog(){
+    public Message selectCatalog() {
         Boolean isPrivate = Util.getIsPrivate(session);
-        List<Catalog> list= catalogService.selectCatalog(isPrivate);
-        if(list.size()==0){
+        List<Catalog> list = catalogService.selectCatalog(isPrivate);
+        if (list.size() == 0) {
             // 如果没有目录，则创建默认目录
             catalogService.insert(new Catalog().setName("私有").setIsFolder(true));
             catalogService.insert(new Catalog().setName("公有").setIsFolder(true));
-            list= catalogService.selectCatalog(isPrivate);
+            list = catalogService.selectCatalog(isPrivate);
         }
-        return Message.success(null,list);
+        return Message.success(null, list);
     }
 
 }
