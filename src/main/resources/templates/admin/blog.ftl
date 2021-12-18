@@ -178,6 +178,8 @@
                 }
                 // 保存完后，将修改状态设置为false
                 isEdit=false;
+                // 进行博客配置的修改
+                openBlogConfigDialog();
             }else{
                 layer.msg("保存失败");
             }
@@ -237,6 +239,13 @@
         $("#vditor .vditor-toolbar__item button[aria-label=大纲]").eq(0).click();
     }
 
+    // 打开该篇博客相关的配置进行勾选
+    function openBlogConfigDialog() {
+        loadConfig();// 加载对应的blog配置
+        resetTags();// 清除掉搜索高亮
+        $('#configModal').modal("show");
+    }
+
     $(function () {
 
         initTree(); // 初始化目录
@@ -272,9 +281,7 @@
             {
                 name: '配置信息', tip: '编辑', icon: '<i class="iconfont icon-ai-edit"></i>',tipPosition: 's',
                 click: () => {
-                    loadConfig();// 加载对应的blog配置
-                    resetTags();// 清除掉搜索高亮
-                    $('#configModal').modal("show");
+                    openBlogConfigDialog();
                 },
             },
             {
