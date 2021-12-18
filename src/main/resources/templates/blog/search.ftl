@@ -61,8 +61,8 @@
 
     // content: 传入的要转换的md内容
     function HandlerMd2Html(mdContent,keywords) {
-        // 过滤特殊符号、过滤代码语法标识
-        let md2HTML = lute.Md2HTML(mdContent.replace(/\</g,"&lt;").replace(/\>/g,"&gt;"));
+        // 将markdown解析成html
+        let md2HTML = lute.Md2HTML(mdContent);
         // 高亮内容
         for(let j=0;j<keywords.length;j++){
             // 正则表达式添加[^->], 为了避免替换掉html的>和后续生成的language-java等标识
