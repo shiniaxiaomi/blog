@@ -441,7 +441,9 @@ public class BlogService {
         }
         // 去掉最后的逗号
         for (Blog blog : blogPage.getRecords()) {
-            blog.setTagNames(blog.getTagNames().substring(0, blog.getTagNames().length() - 1));
+            if (StringUtils.hasText(blog.getTagNames())) {
+                blog.setTagNames(blog.getTagNames().substring(0, blog.getTagNames().length() - 1));
+            }
         }
 
         return blogPage;
