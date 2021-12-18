@@ -426,7 +426,7 @@ public class BlogService {
             tagKeywords = Arrays.stream(keyword.split(" ")).collect(Collectors.toList());
         }
 
-        Page<Blog> blogPage = blogMapper.searchBlogByKeywordAndTag(keywords, tagKeywords, new Page<>(page, 10));
+        Page<Blog> blogPage = blogMapper.searchBlogByKeywordAndTag(keywords, tagKeywords, new Page<>(page, 5));
 
         // 组装tagNames
         List<Integer> blogIds = blogPage.getRecords().stream().map(Blog::getId).collect(Collectors.toList());

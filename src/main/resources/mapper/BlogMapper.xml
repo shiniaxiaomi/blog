@@ -27,7 +27,7 @@
         SELECT sum(visit_count) FROM blog
     </select>
     <select id="searchBlogByKeywordAndTag" resultType="com.lyj.blog.model.Blog">
-        select blog.* from blog
+        select blog.id, blog.md_html, blog.name from blog
         <if test="tagKeywords != null">
             left join blog_tag_relation on blog.id = blog_tag_relation.blog_id
         </if>

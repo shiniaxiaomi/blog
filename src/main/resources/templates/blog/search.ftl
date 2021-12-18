@@ -59,6 +59,17 @@
 
     let buffArr=[];
 
+    // 直接在html高亮关键字
+    function highlightHtml(html,keywords) {
+        // 高亮内容
+        for(let j=0;j<keywords.length;j++){
+            // 正则表达式添加[^->], 为了避免替换掉html的>和后续生成的language-java等标识
+            // 正则表达式添加{0}, 为了避免多替换掉一个字符
+            html=html.replace(new RegExp("[^->]{0}"+keywords[j],"gi"),"<span style='color: red'>"+keywords[j]+"</span>");
+        }
+        return html;
+    }
+
     // content: 传入的要转换的md内容
     function HandlerMd2Html(mdContent,keywords) {
         // 将markdown解析成html
@@ -90,16 +101,27 @@
                 for(let i=0;i<resultList.length;i++){
                     let result=resultList[i];
                     let md2HTML="";
-                    // 如果内容不为空
-                    if(result.md.length>400){
+                    // 通过md渲染成html后高亮
+                    // if(result.md.length>400){
+                    //     // 缓存被隐藏的原始内容
+                    //     buffArr.push({id:i,content:HandlerMd2Html(result.md,keywords)});
+                    //     // 显示被截取的内容
+                    //     md2HTML=HandlerMd2Html(result.md.substring(0,400),keywords);
+                    //     md2HTML+="...<br>";
+                    //     md2HTML+=`<button type="button" class="btn btn-outline-secondary btn-sm" onclick="showMore(`+i+`)">显示更多</button>`;
+                    // }else{
+                    //     md2HTML=HandlerMd2Html(result.md,keywords);
+                    // }
+                    // 直接在html中高亮
+                    if(result.mdHtml.length>400){
                         // 缓存被隐藏的原始内容
-                        buffArr.push({id:i,content:HandlerMd2Html(result.md,keywords)});
+                        buffArr.push({id:i,content:highlightHtml(result.mdHtml,keywords)});
                         // 显示被截取的内容
-                        md2HTML=HandlerMd2Html(result.md.substring(0,400),keywords);
+                        md2HTML=highlightHtml(result.mdHtml.substring(0,400),keywords);
                         md2HTML+="...<br>";
                         md2HTML+=`<button type="button" class="btn btn-outline-secondary btn-sm" onclick="showMore(`+i+`)">显示更多</button>`;
                     }else{
-                        md2HTML=HandlerMd2Html(result.md,keywords);
+                        md2HTML=highlightHtml(result.mdHtml,keywords);
                     }
                     // 高亮标题
                     let highlightHeading=result.name;
