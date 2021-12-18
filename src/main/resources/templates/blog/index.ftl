@@ -85,12 +85,12 @@
                     </div>
                     <div class="gt-header-comment">
                         <form id="commentForm" onsubmit="return false;">
-                            <textarea id="comment_content" class="gt-header-textarea " placeholder="说点什么"
+                            <textarea id="commentContent" class="gt-header-textarea " placeholder="说点什么"
                                       style="overflow-wrap: break-word; resize: none; height: 100px;"></textarea>
                             <div class="gt-header-controls">
                                 <input id="username" name="username" class="comment-input" placeholder="Name : 必填" autocomplete="off">
                                 <input id="email" name="email" class="comment-input" placeholder="Email : 接收回复(选填)" autocomplete="off">
-                                <input id="github_username" name="github_username" class="comment-input" placeholder="GithubName : 选填" autocomplete="off">
+                                <input id="githubUsername" name="githubUsername" class="comment-input" placeholder="GithubName : 选填" autocomplete="off">
                                 <div style="float: right">
                                     <button id="cancelCommitBtn" class="gt-btn gt-btn-public" style="display: none" onclick="cancelCommit()"><span class="gt-btn-text">取消回复</span></button>
                                     <button id="replyBtn" class="gt-btn gt-btn-public" style="display: none" onclick="commitComment('reply')"><span class="gt-btn-text">回复</span></button>

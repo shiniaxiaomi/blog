@@ -19,13 +19,6 @@
     </properties>
 
     <dependencies>
-
-        <!-- 添加elasticsearch启动器 -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
-        </dependency>
-
         <!--freemarker-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

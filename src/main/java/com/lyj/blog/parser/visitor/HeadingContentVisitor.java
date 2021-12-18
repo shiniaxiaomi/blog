@@ -4,7 +4,7 @@ import com.lyj.blog.parser.Parser;
 import com.lyj.blog.parser.render.HeadingRenderer;
 import org.commonmark.node.*;
 
-import java.util.*;
+import java.util.UUID;
 
 /**
  * @author Yingjie.Lu

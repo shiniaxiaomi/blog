@@ -1,6 +1,7 @@
 package com.lyj.blog.service;
 
-import freemarker.template.*;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;

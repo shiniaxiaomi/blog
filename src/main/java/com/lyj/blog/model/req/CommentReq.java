@@ -2,7 +2,6 @@ package com.lyj.blog.model.req;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -21,6 +20,6 @@ public class CommentReq {
     @NotBlank
     String username;
     String email;
-    String github_username;
-    String comment_content;
+    String githubUsername;
+    String commentContent;
 }

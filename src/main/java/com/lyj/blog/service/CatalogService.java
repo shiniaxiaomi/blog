@@ -34,9 +34,6 @@ public class CatalogService {
     @Autowired
     BlogService blogService;
 
-    @Autowired
-    EsService esService;
-
     /**
      * 前端传入的值：name,pid,isFolder,icon
      */
@@ -114,7 +111,7 @@ public class CatalogService {
         // 移动,并更新私有状态
         catalogMapper.updateById(catalog);
         // 如果原始的私有状态与修改的私有状态相等，则只修改pid即可，无需修改私有状态
-        if (catalogDB.getIsPrivate() != catalog.getIsPrivate()) {
+        if (!catalogDB.getIsPrivate().equals(catalog.getIsPrivate())) {
             List<Integer> fileIds = new ArrayList<>();// 保存文件ids
             List<Integer> folderIds = new ArrayList<>();// 保存文件夹ids
             getFileAndFolderByCatalog(catalog, fileIds, folderIds);
@@ -130,8 +127,6 @@ public class CatalogService {
                 catalogMapper.update(new Catalog().setIsPrivate(catalog.getIsPrivate()),
                         new UpdateWrapper<Catalog>().in("id", folderIds.toArray()));
             }
-            // 批量更新es中文件的私有状态
-            esService.updateIsPrivateByBlogIds(fileIds, catalog.getIsPrivate());
         }
     }
 

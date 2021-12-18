@@ -39,4 +39,7 @@ public interface BlogMapper extends BaseMapper<Blog> {
 
     @Update("update blog set md_html = #{html} where id = #{BlogId}")
     void updateHtmlById(String html, Integer BlogId);
+
+    // 根据page、keywords集合、tag集合进行全文搜索
+    Page<Blog> searchBlogByKeywordAndTag(@Param("keywords") List<String> keywords, @Param("tagKeywords") List<String> tagKeywords, Page<?> page);
 }

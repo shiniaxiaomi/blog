@@ -2,7 +2,6 @@ package com.lyj.blog.parser;
 
 import com.lyj.blog.model.Blog;
 import com.lyj.blog.parser.attr.TodoListAttributeProvider;
-import com.lyj.blog.parser.model.EsHeading;
 import com.lyj.blog.parser.render.HeadingRenderer;
 import com.lyj.blog.parser.visitor.HeadingContentVisitor;
 import org.commonmark.Extension;
@@ -74,21 +73,11 @@ public abstract class Parser {
         // 解析md并转化为html，收集heading信息（已经生成了headingId）
         String html = parseMdToHtml(blog.getMd());
 
-        // 组装并生成ESHeading对象
-        List<EsHeading> esHeadings = buildEsHeading(sb, headingIdList, blog);
-
-        // 保存到ES中
-        insertHeadingToEs(headingIdList, esHeadings, blog);
-
         // 最后一步，一定要清空数据
         clearData();
 
         return html;
     }
-
-    protected abstract List<EsHeading> buildEsHeading(StringBuilder sb, List<String> headingIdList, Blog blog);
-
-    protected abstract void insertHeadingToEs(List<String> headingIdList, List<EsHeading> esHeadings, Blog blog);
 
     // 解析md为html，并收集heading的相关数据
     abstract String parseMdToHtml(String md);

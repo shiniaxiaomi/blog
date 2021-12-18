@@ -18,6 +18,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
@@ -26,10 +27,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -49,9 +47,6 @@ public class BlogService {
 
     @Autowired
     TagService tagService;
-
-    @Autowired
-    EsService esService;
 
     @Autowired
     FileService fileService;
@@ -85,15 +80,11 @@ public class BlogService {
         blogMapper.deleteById(id);
         // 删除博客与标签的关系
         blogTagRelationService.deleteByBlogId(id);
-        // 清除es中的索引
-        esService.deleteHeadingByBlogIdInES("blog", String.valueOf(id));
     }
 
     public void updateName(Integer blogId, String name) {
         Blog blog = new Blog().setId(blogId).setName(name);
         blogMapper.updateById(blog);
-        // 更新es对应的blog的名称
-        esService.updateBlogNameByBlogId(blogId, name);
     }
 
     public String getMD(int id) {
@@ -302,7 +293,7 @@ public class BlogService {
         try (
                 //自动关闭流
                 BufferedInputStream bis = new BufferedInputStream(multipartFile.getInputStream());
-                BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
+                BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file))
         ) {
             byte[] b = new byte[100];//也可以使用默认的缓冲区大小
             int len = 0;
@@ -338,7 +329,7 @@ public class BlogService {
         List<Blog> blogs = blogMapper.selectList(new QueryWrapper<Blog>().select("name", "md"));
         for (Blog blog : blogs) {
             File mdFile = new File(folder.getAbsolutePath() + "/" + blog.getName() + ".md");
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(mdFile));) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(mdFile))) {
                 writer.write(blog.getMd() != null ? blog.getMd() : "");
             } catch (IOException e) {
                 log.error("备份过程中，" + blog.getName() + "文件备份失败", e);
@@ -422,5 +413,37 @@ public class BlogService {
 
     public void stickBlog(int id, boolean isStick) {
         blogMapper.updateById(new Blog().setId(id).setIsStick(isStick));
+    }
+
+    public Page<Blog> search(int page, String keyword, String tagKeyword) {
+        List<String> keywords = null;
+        if (keyword.length() != 0) {
+            keywords = Arrays.stream(keyword.split(" ")).collect(Collectors.toList());
+        }
+
+        List<String> tagKeywords = null;
+        if (tagKeyword.length() != 0) {
+            tagKeywords = Arrays.stream(keyword.split(" ")).collect(Collectors.toList());
+        }
+
+        Page<Blog> blogPage = blogMapper.searchBlogByKeywordAndTag(keywords, tagKeywords, new Page<>(page, 20));
+
+        // 组装tagNames
+        List<Integer> blogIds = blogPage.getRecords().stream().map(Blog::getId).collect(Collectors.toList());
+        List<Tag> tags = tagService.selectTagByBlogIds(blogIds);
+        for (Blog blog : blogPage.getRecords()) {
+            for (Tag tag : tags) {
+                if (Objects.equals(blog.getId(), tag.getBlogId())) {
+                    blog.setTagNames(blog.getTagNames() + tag.getName() + ",");
+                }
+
+            }
+        }
+        // 去掉最后的逗号
+        for (Blog blog : blogPage.getRecords()) {
+            blog.setTagNames(blog.getTagNames().substring(0, blog.getTagNames().length() - 1));
+        }
+
+        return blogPage;
     }
 }

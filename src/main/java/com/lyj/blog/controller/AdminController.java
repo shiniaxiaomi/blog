@@ -10,16 +10,17 @@ import com.lyj.blog.model.File;
 import com.lyj.blog.model.req.Message;
 import com.lyj.blog.parser.Parser;
 import com.lyj.blog.service.BlogService;
-import com.lyj.blog.service.EsService;
 import com.lyj.blog.service.FileService;
 import com.lyj.blog.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
-import java.util.List;
 
 /**
  * @author Yingjie.Lu
@@ -35,9 +36,6 @@ public class AdminController {
 
     @Autowired
     BlogService blogService;
-
-    @Autowired
-    EsService esService;
 
     @Autowired
     HttpSession session;
@@ -111,43 +109,6 @@ public class AdminController {
         mav.addObject("fileList", filePage.getRecords());
         mav.addObject("blogId", blogId);
         return mav;
-    }
-
-
-    // 重新生成es中的搜索数据
-    @NeedLogin
-    @ResponseBody
-    @GetMapping("initEsData")
-    public Message initEsData() {
-        // 先删除掉所有数据
-        try {
-            esService.deleteData("{\"query\":{\"match_all\":{}}}");
-        } catch (Exception e) {
-            // 如果删除失败，判断是否无索引，是，则创建索引
-            try {
-                esService.existIndex();
-            } catch (Exception e1) {
-                esService.createIndex();
-            }
-        }
-
-        // 将数据库中的blog查询出来，然后通过解析后保存到es中
-        List<Blog> blogs = blogService.selectBlogList();
-        try {
-            for (Blog blog : blogs) {
-                blog.setTagNames(tagService.selectTagNameByBlogId(blog.getId()));//组装tag
-                String html = parser.parse(blog);
-                // 将html更新会数据库
-                blogService.updateHtmlById(html, blog.getId());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            // 回滚数据
-            esService.deleteData("{\"query\":{\"match_all\":{}}}");
-            return Message.error("搜索数据初始化失败！");
-        }
-
-        return Message.success("搜索数据初始化成功");
     }
 
 }
