@@ -6,6 +6,7 @@
 <#include "../common/right.ftl">
 <#include "../common/info.ftl">
 <@head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.3.5/dist/index.css" />
     <script src="https://cdn.jsdelivr.net/npm/vditor@3.3.5/dist/js/lute/lute.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/layer-v3.0.3@1.0.1/layer.min.js"></script>
     <style>
@@ -21,6 +22,9 @@
         /* 去掉样式 */
         .h1, h1, .h2, h2, .h3, h3, .h4, h4, .h5, h5, .h6, h6 {
             font-size: revert;
+        }
+        code {
+            color: black;
         }
     </style>
 </@head>
@@ -57,11 +61,13 @@
 
     // content: 传入的要转换的md内容
     function HandlerMd2Html(mdContent,keywords) {
-        // 过滤特殊符号
+        // 过滤特殊符号、过滤代码语法标识
         let md2HTML = lute.Md2HTML(mdContent.replace(/\</g,"&lt;").replace(/\>/g,"&gt;"));
         // 高亮内容
         for(let j=0;j<keywords.length;j++){
-            md2HTML=md2HTML.replace(new RegExp("[^language-]"+keywords[j],"gi"),"<span style='color: red'>"+keywords[j]+"</span>");
+            // 正则表达式添加[^->], 为了避免替换掉html的>和后续生成的language-java等标识
+            // 正则表达式添加{0}, 为了避免多替换掉一个字符
+            md2HTML=md2HTML.replace(new RegExp("[^->]{0}"+keywords[j],"gi"),"<span style='color: red'>"+keywords[j]+"</span>");
         }
         return md2HTML;
     }
@@ -102,9 +108,9 @@
                     }
                     str+=`
                         <div>
-                            <h5><a href="/blog/`+result.id+`">`+highlightHeading+`</a>
+                            <h1><a href="/blog/`+result.id+`">`+highlightHeading+`</a>
                             <span style="font-size: 12px">🔖`+result.tagNames+`</span>
-                            </h5>
+                            </h1>
                             <div class="vditor-reset" id="`+i+`">`+md2HTML+`</div>
                         </div><hr>
                     `;
