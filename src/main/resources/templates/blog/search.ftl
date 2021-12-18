@@ -18,6 +18,10 @@
         a{
             word-break: break-all;/*换行，防止溢出*/
         }
+        /* 去掉样式 */
+        .h1, h1, .h2, h2, .h3, h3, .h4, h4, .h5, h5, .h6, h6 {
+            font-size: revert;
+        }
     </style>
 </@head>
 <@body>
@@ -57,7 +61,7 @@
         let md2HTML = lute.Md2HTML(mdContent.replace(/\</g,"&lt;").replace(/\>/g,"&gt;"));
         // 高亮内容
         for(let j=0;j<keywords.length;j++){
-            md2HTML=md2HTML.replace(new RegExp(keywords[j],"gi"),"<span style='color: red'>"+keywords[j]+"</span>");
+            md2HTML=md2HTML.replace(new RegExp("[^language-]"+keywords[j],"gi"),"<span style='color: red'>"+keywords[j]+"</span>");
         }
         return md2HTML;
     }
