@@ -7,10 +7,8 @@ import com.lyj.blog.interceptor.NeedLogin;
 import com.lyj.blog.model.req.FilingResult;
 import com.lyj.blog.model.req.Message;
 import com.lyj.blog.model.Blog;
-import com.lyj.blog.model.req.EsSearch;
 import com.lyj.blog.service.BlogService;
 import com.lyj.blog.service.BlogTagRelationService;
-import com.lyj.blog.service.EsService;
 import com.lyj.blog.service.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -37,9 +35,6 @@ public class BlogController {
 
     @Autowired
     BlogTagRelationService blogTagRelationService;
-
-    @Autowired
-    EsService esService;
 
     @Autowired
     HttpSession session;
@@ -97,13 +92,6 @@ public class BlogController {
         ModelAndView mav = new ModelAndView("blog/search");
         mav.addObject("keyword", keyword);
         return mav;
-    }
-
-    @ResponseBody
-    @GetMapping("search/{page}")
-    public Message search(EsSearch esSearch, @PathVariable("page") int page) {
-        Map map = esService.search(esSearch, page);
-        return Message.success(null, map);
     }
 
     @GetMapping("{id}")

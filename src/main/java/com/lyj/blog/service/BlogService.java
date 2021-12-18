@@ -51,9 +51,6 @@ public class BlogService {
     TagService tagService;
 
     @Autowired
-    EsService esService;
-
-    @Autowired
     FileService fileService;
 
     @Autowired
@@ -85,15 +82,11 @@ public class BlogService {
         blogMapper.deleteById(id);
         // 删除博客与标签的关系
         blogTagRelationService.deleteByBlogId(id);
-        // 清除es中的索引
-        esService.deleteHeadingByBlogIdInES("blog", String.valueOf(id));
     }
 
     public void updateName(Integer blogId, String name) {
         Blog blog = new Blog().setId(blogId).setName(name);
         blogMapper.updateById(blog);
-        // 更新es对应的blog的名称
-        esService.updateBlogNameByBlogId(blogId, name);
     }
 
     public String getMD(int id) {

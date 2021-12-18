@@ -9,10 +9,7 @@ spring:
   freemarker:
     cache: false
 
-
 myConfig:
   file:
     location: upload
   host: localhost
-  elasticsearch:
-    url: localhost:9200

@@ -13,5 +13,3 @@ myConfig:
   file:
     location: /upload
   host: luyingjie.cn
-  elasticsearch:
-    url: 47.105.165.211:9200

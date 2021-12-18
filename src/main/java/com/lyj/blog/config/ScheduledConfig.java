@@ -15,7 +15,7 @@ public class ScheduledConfig {
     @Autowired
     BlogService blogService;
 
-    @Scheduled(cron = "0 0 0 1/2 * *") // 每两天的0点备份一次
+    @Scheduled(cron = "0 0 0 1 * *") // 每月1号的0点备份一次
     public void backups() {
         blogService.backups();
         log.info("md文档备份成功");

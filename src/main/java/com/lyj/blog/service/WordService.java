@@ -30,6 +30,8 @@ import java.util.stream.Collectors;
 @Service
 public class WordService {
 
+    Pattern pattern = Pattern.compile("[A-Za-z]*");
+
     @Autowired
     WordMapper wordMapper;
 
@@ -63,12 +65,13 @@ public class WordService {
     // 去重+统计
     public Object[] filterDuplicateAndStatistics(String[] split) {
         HashMap<String, Integer> map = new HashMap<>(10240);
-        Pattern pattern = Pattern.compile("[A-Za-z]*");
 
         for (String s : split) {
             // 去掉不符合条件的单词
             boolean matches = pattern.matcher(s).matches();
-            if (!matches) continue;
+            if (!matches) {
+                continue;
+            }
 
             if (!map.containsKey(s)) {
                 map.put(s, 1);
