@@ -12,12 +12,10 @@ import com.tencentcloudapi.common.profile.HttpProfile;
 import com.tencentcloudapi.tmt.v20180321.TmtClient;
 import com.tencentcloudapi.tmt.v20180321.models.TextTranslateBatchRequest;
 import com.tencentcloudapi.tmt.v20180321.models.TextTranslateBatchResponse;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -27,6 +25,7 @@ import java.util.stream.Collectors;
  * @description
  * @date 2020/7/26 11:43 下午
  */
+@Slf4j
 @Service
 public class WordService {
 
@@ -147,7 +146,7 @@ public class WordService {
 
             resp = client.TextTranslateBatch(req);
         } catch (TencentCloudSDKException e) {
-            System.out.println(e.toString());
+            log.error("翻译错误: ", e);
         }
 
         return resp;

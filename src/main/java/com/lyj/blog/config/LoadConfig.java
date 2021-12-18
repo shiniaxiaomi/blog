@@ -3,7 +3,6 @@ package com.lyj.blog.config;
 import com.lyj.blog.mapper.ConfigMapper;
 import com.lyj.blog.model.Config;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;

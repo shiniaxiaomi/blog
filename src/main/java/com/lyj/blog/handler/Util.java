@@ -1,8 +1,6 @@
 package com.lyj.blog.handler;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
@@ -25,12 +23,8 @@ public class Util {
     // 根据登入状态获取是否为私有的状态
     public static Boolean getIsPrivate(HttpSession session) {
         // 如果登入，则查询所有数据，所以isPrivate=null
-        if (session.getAttribute("isLogin") != null) {
-            return true;
-        } else {
-            // 如果未登入，则只查询非私有的数据，所以isPrivate=false
-            return false;
-        }
+        // 如果未登入，则只查询非私有的数据，所以isPrivate=false
+        return session.getAttribute("isLogin") != null;
     }
 
     // 返回是否登入的判断

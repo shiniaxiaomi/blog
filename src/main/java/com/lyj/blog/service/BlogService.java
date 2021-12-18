@@ -295,7 +295,7 @@ public class BlogService {
         try (
                 //自动关闭流
                 BufferedInputStream bis = new BufferedInputStream(multipartFile.getInputStream());
-                BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
+                BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file))
         ) {
             byte[] b = new byte[100];//也可以使用默认的缓冲区大小
             int len = 0;
@@ -331,7 +331,7 @@ public class BlogService {
         List<Blog> blogs = blogMapper.selectList(new QueryWrapper<Blog>().select("name", "md"));
         for (Blog blog : blogs) {
             File mdFile = new File(folder.getAbsolutePath() + "/" + blog.getName() + ".md");
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(mdFile));) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(mdFile))) {
                 writer.write(blog.getMd() != null ? blog.getMd() : "");
             } catch (IOException e) {
                 log.error("备份过程中，" + blog.getName() + "文件备份失败", e);
