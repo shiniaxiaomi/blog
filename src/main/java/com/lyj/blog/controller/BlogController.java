@@ -19,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Yingjie.Lu
@@ -175,6 +176,13 @@ public class BlogController {
             msg = "取消置顶成功";
         }
         return Message.success(msg);
+    }
+
+    @ResponseBody
+    @GetMapping("search/{page}")
+    public Message search(@PathVariable("page") int page, String keyword, String tagKeyword) {
+        Page<Blog> result = blogService.search(page, keyword, tagKeyword);
+        return Message.success(null, result);
     }
 
 }

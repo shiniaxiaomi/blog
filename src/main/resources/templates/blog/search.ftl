@@ -12,6 +12,9 @@
         .vditor-reset {
             font-size: 10px;
         }
+        .vditor-reset p {
+            margin-bottom: 0px;
+        }
         a{
             word-break: break-all;/*换行，防止溢出*/
         }
@@ -33,7 +36,7 @@
                 标签
                 <input type="text" class="form-control" id="tagKeyword" autocomplete="off" name="tagKeyword">
             </div>
-            <button class="btn btn-primary btn-sm" onclick="searchInES()">搜索</button>
+            <button class="btn btn-primary btn-sm" onclick="searchBlog()">搜索</button>
         </form>
         <div id="result"></div>
         <!--分页组件-->
@@ -59,13 +62,14 @@
         return md2HTML;
     }
 
-    function searchInES(page){
+    function searchBlog(page){
         if(page===undefined) page=1;
         buffArr=[];//清空缓存数据
         console.log($("#form").serialize())
         $.get("/blog/search/"+page,$("#form").serialize(),function (data,status) {
             if(status==="success" && data.code){
-                if(data.data.result.length===0){
+                let resultList = data.data.records;
+                if(resultList.length===0){
                     layer.msg("没有相应的结果");
                     return;
                 }
@@ -73,32 +77,29 @@
                 if(keywords===undefined) keywords=[];
                 // 构造搜索结果
                 let str="";
-                for(let i=0;i<data.data.result.length;i++){
-                    let result=data.data.result[i].sourceAsMap;
+                for(let i=0;i<resultList.length;i++){
+                    let result=resultList[i];
                     let md2HTML="";
                     // 如果内容不为空
-                    if(result.content!=null){
-                        if(result.content.length>400){
-                            // 缓存被隐藏的原始内容
-                            buffArr.push({id:i,content:HandlerMd2Html(result.content,keywords)});
-                            // 显示被截取的内容
-                            md2HTML=HandlerMd2Html(result.content.substring(0,400),keywords);
-                            md2HTML+="...<br>";
-                            md2HTML+=`<button type="button" class="btn btn-outline-secondary btn-sm" onclick="showMore(`+i+`)">显示更多</button>`;
-                        }else{
-                            md2HTML=HandlerMd2Html(result.content,keywords);
-                        }
+                    if(result.md.length>400){
+                        // 缓存被隐藏的原始内容
+                        buffArr.push({id:i,content:HandlerMd2Html(result.md,keywords)});
+                        // 显示被截取的内容
+                        md2HTML=HandlerMd2Html(result.md.substring(0,400),keywords);
+                        md2HTML+="...<br>";
+                        md2HTML+=`<button type="button" class="btn btn-outline-secondary btn-sm" onclick="showMore(`+i+`)">显示更多</button>`;
+                    }else{
+                        md2HTML=HandlerMd2Html(result.md,keywords);
                     }
                     // 高亮标题
-                    let highlightHeading=result.headingName;
+                    let highlightHeading=result.name;
                     for(let j=0;j<keywords.length;j++){
                         highlightHeading=highlightHeading.replace(new RegExp(keywords[j],"gi"),"<span style='color: red'>"+keywords[j]+"</span>");
                     }
                     str+=`
                         <div>
-                            <h5><a href="/blog/`+result.blogId+`#`+result.headingId+`">`+highlightHeading+`</a>
-                            <span style="font-size: 12px">📒`+result.blogName+`</span>
-                            <span style="font-size: 12px">🔖`+result.tagName+`</span>
+                            <h5><a href="/blog/`+result.id+`">`+highlightHeading+`</a>
+                            <span style="font-size: 12px">🔖`+result.tagNames+`</span>
                             </h5>
                             <div class="vditor-reset" id="`+i+`">`+md2HTML+`</div>
                         </div><hr>
@@ -109,30 +110,30 @@
                 // 构造分页组件
                 str="";
                 let json = data.data;
-                let previousPage=json.currentPage-1<1?json.pages-1:json.currentPage-1;
-                let nextPage=json.currentPage+1>json.pages-1?1:json.currentPage+1;
+                let previousPage=json.current-1<1?json.pages-1:json.current-1;
+                let nextPage=json.current+1>json.pages-1?1:json.current+1;
                 str+=`
                     <li class="page-item">
-                        <a class="page-link" href="javascript:void(0)" onclick="searchInES(`+previousPage+`)" aria-label="Previous">
+                        <a class="page-link" href="javascript:void(0)" onclick="searchBlog(`+previousPage+`)" aria-label="Previous">
                             <span aria-hidden="true">&laquo;</span>
                             <span class="sr-only">Previous</span>
                         </a>
                     </li>
                 `;
                 for(let i=1;i<json.pages;i++){
-                    if(json.currentPage===i){
+                    if(json.current===i){
                         str+=`
-                            <li class="page-item active"><a class="page-link" href="javascript:void(0)" onclick="searchInES(`+i+`)">`+i+`</a></li>
+                            <li class="page-item active"><a class="page-link" href="javascript:void(0)" onclick="searchBlog(`+i+`)">`+i+`</a></li>
                         `;
                     }else{
                         str+=`
-                            <li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="searchInES(`+i+`)">`+i+`</a></li>
+                            <li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="searchBlog(`+i+`)">`+i+`</a></li>
                         `;
                     }
                 }
                 str+=`
                     <li class="page-item">
-                        <a class="page-link" href="javascript:void(0)" onclick="searchInES(`+nextPage+`)" aria-label="Next">
+                        <a class="page-link" href="javascript:void(0)" onclick="searchBlog(`+nextPage+`)" aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>
                             <span class="sr-only">Next</span>
                         </a>
@@ -167,20 +168,20 @@
 
         $("#searchInput").keypress(function(e) {
             if (e.keyCode === 13) {
-                searchInES();
+                searchBlog();
             }
         });
         $("#contentKeyword").keypress(function(e) {
             if (e.keyCode === 13) {
-                searchInES();
+                searchBlog();
             }
         });
         $("#tagKeyword").keypress(function(e) {
             if (e.keyCode === 13) {
-                searchInES();
+                searchBlog();
             }
         });
 
-        searchInES();//默认搜索第一页
+        searchBlog();//默认搜索第一页
     })
 </script>

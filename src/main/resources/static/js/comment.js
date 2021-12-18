@@ -4,7 +4,7 @@ let replyId;
 let lute=Lute.New();//初始化md解析器
 
 // 在当前页插入一条评论
-function insertOneComment(commentId,content,createTime,username,github_username) {
+function insertOneComment(commentId,content,createTime,username,githubUsername) {
     // 更新总数
     let count = $("#gt-counts");
     count.text(parseInt(count.text())+1);
@@ -12,8 +12,8 @@ function insertOneComment(commentId,content,createTime,username,github_username)
     if(username===undefined){
         username=$("#username").val();
     }
-    if(github_username===undefined){
-        github_username = $("#github_username").val();
+    if(githubUsername===undefined){
+        githubUsername = $("#githubUsername").val();
     }
     // 评论内容
     let str=`
@@ -24,11 +24,11 @@ function insertOneComment(commentId,content,createTime,username,github_username)
                 <div class="gt-comment-content">
                     <div class="gt-comment-header">
                         <a class="gt-comment-username"
-                           href="https://github.com/`+github_username+`">`+username+`</a>
+                           href="https://github.com/`+githubUsername+`">`+username+`</a>
                         <span class="gt-comment-text">发表于</span>
                         <span class="gt-comment-date">大约 `+getUpdateTime(createTime)+`</span>
                         <a class="gt-like-small-button" href="javascript:void(0)" onclick="likeClick(this,`+commentId+`)">点赞<span>0</span></a>
-                        <a class="gt-reply-small-button" href="javascript:void(0)" onclick="reply('`+username+`',`+commentId+`,'`+github_username+`')">回复</a>
+                        <a class="gt-reply-small-button" href="javascript:void(0)" onclick="reply('`+username+`',`+commentId+`,'`+githubUsername+`')">回复</a>
                     </div>
                     <div class="gt-comment-body markdown-body">
                         `+lute.Md2HTML(content)+`
@@ -47,10 +47,10 @@ function insertOneComment(commentId,content,createTime,username,github_username)
 function selectEmailAndUserName() {
     let username = window.localStorage.getItem("username");
     let email = window.localStorage.getItem("email");
-    let github_username = window.localStorage.getItem("github_username");
+    let githubUsername = window.localStorage.getItem("githubUsername");
     $("#username").val(username===""?null:username);
     $("#email").val(email===""?null:email);
-    $("#github_username").val(github_username===""?null:github_username);
+    $("#githubUsername").val(githubUsername===""?null:githubUsername);
 }
 
 function getCommentById(commentId,blog_id) {
@@ -58,7 +58,7 @@ function getCommentById(commentId,blog_id) {
     $.get("/comment/"+commentId,function (data,status) {
         if(status==="success" && data.code){
             let record = data.data;
-            insertOneComment(commentId,record.content,new Date(record.createTime),record.username,record.github_username);
+            insertOneComment(commentId,record.content,new Date(record.createTime),record.username,record.githubUsername);
         }
     })
 }
@@ -188,15 +188,15 @@ function likeClick(dom,commentId) {
 }
 
 // 回复评论
-function reply(username,commentId,github_username) {
+function reply(username,commentId,githubUsername) {
     // 更新评论的id
     replyId=commentId;
     $("#cancelCommitBtn").show();
     $("#replyBtn").show();
     $("#commitCommentBtn").hide();
     // 将要回复的原始内容设置到编辑框中
-    let textarea = $("#comment_content");
-    textarea.val("> [@"+username+"](https://github.com/"+github_username+") [查看内容](/comment/"+commentId+")\n\n");
+    let textarea = $("#commentContent");
+    textarea.val("> [@"+username+"](https://github.com/"+githubUsername+") [查看内容](/comment/"+commentId+")\n\n");
 
     // 将页面跳转到评论区域
     let target = textarea;
@@ -217,7 +217,7 @@ function cancelCommit() {
     $("#commitCommentBtn").show();
     replyId=undefined;
     //清空输入框
-    $("#comment_content").val("");
+    $("#commentContent").val("");
 }
 
 
@@ -248,21 +248,21 @@ function commitComment(replyFlag){
     }
 
     //校验github用户名长度
-    let github_username = $("#github_username").val().trim();
-    if(github_username!=="" && github_username.length>30) {
+    let githubUsername = $("#githubUsername").val().trim();
+    if(githubUsername!=="" && githubUsername.length>30) {
         layer.msg("github用户名过长");
         return;
     }
 
     //校验内容长度
-    let comment_content = $("#comment_content").val().trim();
-    if(comment_content==="") {
+    let commentContent = $("#commentContent").val().trim();
+    if(commentContent==="") {
         layer.msg("评论不能为空");
         return;
     }
     // 将输入的评论内容转换为html
-    comment_content = lute.Md2HTML(comment_content);
-    if(comment_content!=="" && comment_content.length>1000) {
+    commentContent = lute.Md2HTML(commentContent);
+    if(commentContent!=="" && commentContent.length>1000) {
         layer.msg("评论过长");
         return;
     }
@@ -273,12 +273,12 @@ function commitComment(replyFlag){
     if(replyId!==undefined){
         form+="&replyId="+replyId;
     }
-    form+="&comment_content="+comment_content;
+    form+="&commentContent="+commentContent;
 
     //提交内容
     $.post("/comment",form,function (data,status) {
         if(status==="success" && data.code){
-            let textarea = $("#comment_content");
+            let textarea = $("#commentContent");
             layer.msg("评论成功",{time: 1000});
             //将评论内容插入到第一条
             insertOneComment(data.data,textarea.val(),new Date());
@@ -287,8 +287,8 @@ function commitComment(replyFlag){
                 window.localStorage.setItem("username",username);
             if(email!==undefined && email!=="")
                 window.localStorage.setItem("email",email);
-            if(github_username!==undefined && github_username!=="")
-                window.localStorage.setItem("github_username",github_username);
+            if(githubUsername!==undefined && githubUsername!=="")
+                window.localStorage.setItem("githubUsername",githubUsername);
             //清空编辑框
             textarea.val("");
             //如果是回复，则点击取消回复
@@ -304,16 +304,16 @@ function commitComment(replyFlag){
 
 // 预览评论内容
 function preview(){
-    let comment_content = $("#comment_content").val();
+    let commentContent = $("#commentContent").val();
 
     //校验内容长度
-    if(comment_content!=="" && comment_content.length>200) {
+    if(commentContent!=="" && commentContent.length>200) {
         layer.msg("评论过长");
         return;
     }
 
     // 将输入的评论内容转换为html
-    let html = lute.Md2HTML(comment_content);
+    let html = lute.Md2HTML(commentContent);
     //使用layer直接弹出html的内容（使用lute直接解析md文档为html）
     layer.open({
         type: 1,

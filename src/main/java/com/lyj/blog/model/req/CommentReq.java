@@ -20,6 +20,6 @@ public class CommentReq {
     @NotBlank
     String username;
     String email;
-    String github_username;
-    String comment_content;
+    String githubUsername;
+    String commentContent;
 }

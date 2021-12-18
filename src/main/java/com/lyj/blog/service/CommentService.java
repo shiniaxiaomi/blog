@@ -80,14 +80,14 @@ public class CommentService {
     @Transactional
     @CacheEvict(value = "CommentPage", key = "#commentReq.blogId + ',' + 1") //当有评论时，去掉第一页的缓存
     public int insert(CommentReq commentReq) {
-        String userName = commentReq.getUsername().equals("") ? null : commentReq.getUsername();
-        String email = commentReq.getEmail().equals("") ? null : commentReq.getEmail();
-        String githubName = commentReq.getGithub_username().equals("") ? null : commentReq.getGithub_username();
+        String userName = "".equals(commentReq.getUsername()) ? null : commentReq.getUsername();
+        String email = "".equals(commentReq.getEmail()) ? null : commentReq.getEmail();
+        String githubName = "".equals(commentReq.getGithubUsername()) ? null : commentReq.getGithubUsername();
         Integer commentUserId = updateCommentUser(userName, email, githubName);
 
         // 插入评论
         Comment comment = new Comment().setBlogId(commentReq.getBlogId()).setReplyId(commentReq.getReplyId())
-                .setCommentUserId(commentUserId).setContent(commentReq.getComment_content());
+                .setCommentUserId(commentUserId).setContent(commentReq.getCommentContent());
         commentMapper.insert(comment);
 
         // 发送评论邮件通知
@@ -101,7 +101,7 @@ public class CommentService {
                 Comment comment_reply = commentMapper.selectOne(new QueryWrapper<Comment>().select("content").eq("id", commentReq.getReplyId()));
                 Map<String, Object> model = new HashMap<>();
                 model.put("originalComment", comment_reply.getContent());// 原始评论内容
-                model.put("replyComment", commentReq.getComment_content()); // 回复内容
+                model.put("replyComment", commentReq.getCommentContent()); // 回复内容
                 model.put("replyLink", "http://" + host + "/comment/reply/" + commentReq.getReplyId());// 回复链接
                 asyncService.sendMail(toEmail, model);
             }

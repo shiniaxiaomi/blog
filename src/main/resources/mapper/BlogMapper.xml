@@ -26,4 +26,27 @@
     <select id="selectSum" resultType="java.lang.Integer">
         SELECT sum(visit_count) FROM blog
     </select>
+    <select id="searchBlogByKeywordAndTag" resultType="com.lyj.blog.model.Blog">
+        select blog.* from blog
+        <if test="tagKeywords != null">
+            left join blog_tag_relation on blog.id = blog_tag_relation.blog_id
+        </if>
+        where 1 = 1
+        <if test="keywords != null">
+            <foreach collection="keywords" item="keyword">
+                and ( blog.md like CONCAT('%', #{keyword}, '%')
+                        or
+                      blog.name like CONCAT('%', #{keyword}, '%'))
+            </foreach>
+        </if>
+        <if test="tagKeywords != null">
+            and blog_tag_relation.tag_id in (
+                select tag.id from tag
+                where 1 = 1
+                <foreach collection="tagKeywords" item="tagKeyword">
+                    and tag.name like CONCAT('%', #{tagKeyword}, '%')
+                </foreach>
+            )
+        </if>
+    </select>
 </mapper>

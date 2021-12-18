@@ -18,6 +18,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
@@ -26,10 +27,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -415,5 +413,37 @@ public class BlogService {
 
     public void stickBlog(int id, boolean isStick) {
         blogMapper.updateById(new Blog().setId(id).setIsStick(isStick));
+    }
+
+    public Page<Blog> search(int page, String keyword, String tagKeyword) {
+        List<String> keywords = null;
+        if (keyword.length() != 0) {
+            keywords = Arrays.stream(keyword.split(" ")).collect(Collectors.toList());
+        }
+
+        List<String> tagKeywords = null;
+        if (tagKeyword.length() != 0) {
+            tagKeywords = Arrays.stream(keyword.split(" ")).collect(Collectors.toList());
+        }
+
+        Page<Blog> blogPage = blogMapper.searchBlogByKeywordAndTag(keywords, tagKeywords, new Page<>(page, 20));
+
+        // 组装tagNames
+        List<Integer> blogIds = blogPage.getRecords().stream().map(Blog::getId).collect(Collectors.toList());
+        List<Tag> tags = tagService.selectTagByBlogIds(blogIds);
+        for (Blog blog : blogPage.getRecords()) {
+            for (Tag tag : tags) {
+                if (Objects.equals(blog.getId(), tag.getBlogId())) {
+                    blog.setTagNames(blog.getTagNames() + tag.getName() + ",");
+                }
+
+            }
+        }
+        // 去掉最后的逗号
+        for (Blog blog : blogPage.getRecords()) {
+            blog.setTagNames(blog.getTagNames().substring(0, blog.getTagNames().length() - 1));
+        }
+
+        return blogPage;
     }
 }

@@ -69,7 +69,7 @@ public class Blog implements Serializable {
     private List<Tag> tags;
 
     @TableField(exist = false)
-    private String tagNames;
+    private String tagNames = "";
 
     private static final long serialVersionUID = 1L;
 }
