@@ -6,7 +6,7 @@
 <#include "../common/right.ftl">
 <#include "../common/sidebar.ftl">
 <@head>
-    <script src="https://cdn.jsdelivr.net/npm/layer-v3.0.3@1.0.1/layer.min.js"></script>
+    <script src="/layer/layer.min.js"></script>
     <script src="/js/tag.js"></script>
 </@head>
 <@body>

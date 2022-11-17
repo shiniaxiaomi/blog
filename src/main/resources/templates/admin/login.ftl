@@ -4,7 +4,7 @@
 <#include "../common/body.ftl">
 <#include "../common/right.ftl">
 <@head>
-    <script src="https://cdn.jsdelivr.net/npm/layer-v3.0.3@1.0.1/layer.min.js"></script>
+    <script src="/layer/layer.min.js"></script>
 </@head>
 <@body>
     <@right class="">

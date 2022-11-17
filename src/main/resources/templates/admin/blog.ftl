@@ -7,16 +7,16 @@
 <#include "../common/sidebar.ftl">
 <@head>
     <!-- vditor -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.3.5/dist/index.css" />
-    <script src="https://cdn.jsdelivr.net/npm/vditor@3.3.5/dist/index.min.js" defer></script>
+    <link rel="stylesheet" href="/vditor/index.css" />
+    <script src="/vditor/index.min.js" defer></script>
     <!--icons-->
     <link rel="stylesheet" href="http://at.alicdn.com/t/font_1990451_7h3xgxts4oe.css">
     <!--ztree-->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ztree@3.5.24/css/zTreeStyle/zTreeStyle.css">
+    <link rel="stylesheet" href="/ztree/zTreeStyle.css">
 
     <!--相关js-->
-    <script src="https://cdn.jsdelivr.net/npm/layer-v3.0.3@1.0.1/layer.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/ztree@3.5.24/js/jquery.ztree.all.min.js"></script>
+    <script src="/layer/layer.min.js"></script>
+    <script src="/ztree/jquery.ztree.all.min.js"></script>
 
     <script src="/js/catalog.js"></script>
     <script src="/js/tag.js"></script>
