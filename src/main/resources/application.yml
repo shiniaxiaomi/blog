@@ -8,7 +8,7 @@ spring:
     url: jdbc:mysql://localhost:3306/blog?useSSL=false&allowPublicKeyRetrieval=true
     username: root
     password: 123456
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: com.mysql.jdbc.Driver
   resources:
     static-locations: classpath:/static/,file:${myConfig.file.location}
   redis:
